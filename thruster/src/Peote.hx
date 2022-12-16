@@ -10,12 +10,17 @@ class Peote {
 		display = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display);
 
+		rectangleBuffer = new Buffer<Rectangle>(256, 256, true);
+		var rectangleProgram = new Program(rectangleBuffer);
+		display.addProgram(rectangleProgram);
+
 		lineBuffer = new Buffer<Rectangle>(16);
 		var lineProgram = new Program(lineBuffer);
 		display.addProgram(lineProgram);
 	}
 
 	public static function update(elapsed_seconds:Float) {
+		rectangleBuffer.update();
 		lineBuffer.update();
 	}
 
@@ -73,6 +78,13 @@ class Peote {
 	static var peoteview:PeoteView;
 	static var display:Display;
 	static var lineBuffer:Buffer<Rectangle>;
+	static var rectangleBuffer:Buffer<Rectangle>;
+
+	public static function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:Color):Rectangle {
+		var rectangle = new Rectangle(x, y, width, height, 0, color);
+		rectangleBuffer.addElement(rectangle);
+		return rectangle;
+	}
 }
 
 class Rectangle implements Element {
