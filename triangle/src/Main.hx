@@ -1,5 +1,6 @@
 package;
 
+import Peote;
 import Geometry;
 import haxe.CallStack;
 import lime.app.Application;
@@ -26,6 +27,7 @@ class Main extends Application {
 	public function startSample(window:Window) {
 		Peote.init(window);
 		triangle = new IsoscelesModel();
+		polygon = Peote.make_polygon(triangle.points, Color.GREEN);
 		x_center = window.width * 0.5;
 		y_center = window.height * 0.5;
 		isReady = true;
@@ -38,24 +40,24 @@ class Main extends Application {
 	override function onPreloadComplete():Void {
 		// access embeded assets from here
 	}
-	var rotation:Float = 0;
-	var time:Float = 0;
+
+
 	override function update(deltaTime:Int):Void {
-		if(!isReady){
+		if (!isReady) {
 			return;
 		}
-		var elapsed_seconds = deltaTime / 1000;
+
+		elapsed_seconds = deltaTime / 1000;
 		time += elapsed_seconds;
 
-		Peote.clear();
-		
 		// occasionally increase the rotation
 		if (Std.int(time * 60) % 3 == 0) {
 			rotation += 0.05;
 		}
-		
-		DrawTrianglePoints(triangle.points, x_center, y_center, rotation, 20, Color.GREEN);
-		
+
+		// update polygon transformation to apply rotation
+		polygon.transform(x_center, y_center, rotation, scale);
+
 		Peote.update(elapsed_seconds);
 	}
 
@@ -63,29 +65,9 @@ class Main extends Application {
 	var triangle:IsoscelesModel;
 	var x_center:Float;
 	var y_center:Float;
-}
-
-function DrawTrianglePoints(points:Array<Point>, x_center:Float, y_center:Float, rotation:Float, scale:Float, color:Color){
-	var rotation_sin = Math.sin(rotation);
-	var rotation_cos = Math.cos(rotation);
-
-	// first apply rotation to the model points
-	var points_transformed:Array<Point> = [for(i in 0...points.length) {
-		x: points[i].x * rotation_cos - points[i].y * rotation_sin,
-		y: points[i].x * rotation_sin + points[i].y * rotation_cos
-	}];
-
-	// now scale the transformed points (change size)
-	for(i in 0...points.length){
-		points_transformed[i].x = points_transformed[i].x * scale;
-		points_transformed[i].y = points_transformed[i].y * scale;
-	}
-
-	// now translate the transformed point positions
-	for(i in 0...points.length){
-		points_transformed[i].x = points_transformed[i].x + x_center;
-		points_transformed[i].y = points_transformed[i].y + y_center;
-	}
-
-	Peote.draw_polygon(points_transformed, color);
+	var polygon:Polygon;
+	var rotation:Float = 0;
+	var scale:Float = 20;
+	var time:Float = 0;
+	var elapsed_seconds:Float = 0;
 }
