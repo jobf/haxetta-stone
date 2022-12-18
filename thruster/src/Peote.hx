@@ -1,4 +1,4 @@
-import Geometry;
+import Vector;
 import lime.ui.Window;
 import peote.view.*;
 
@@ -19,14 +19,15 @@ class Peote {
 		display.addProgram(lineProgram);
 	}
 
-	public static function update(elapsed_seconds:Float) {
+	public static function draw(){
 		rectangleBuffer.update();
 		lineBuffer.update();
 	}
 
-	public static function make_polygon(model:Array<Point>, color:Color):Polygon {
+	public static function make_polygon(model:Array<Vector>, color:Color):Polygon {
 		return {
 			model: model,
+			color: color,
 			lines: [
 				for (point in model)
 					{
@@ -54,7 +55,7 @@ class Peote {
 		lineBuffer.addElement(lines[lines.length - 1]);
 	}
 
-	public static function draw_polygon(vertices:Array<Point>, color:Color) {
+	public static function draw_polygon(vertices:Array<Vector>, color:Color) {
 		if (vertices.length < 2) {
 			return;
 		}
@@ -112,11 +113,12 @@ class Rectangle implements Element {
 @:structInit
 class Line {
 	public var element(default, null):Rectangle;
-	public var point_from(default, null):Point;
+	public var point_from(default, null):Vector;
+
 	var a:Float = 0;
 	var b:Float = 0;
 
-	public function draw(point_to:Point) {
+	public function draw(point_to:Vector) {
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
 
@@ -135,31 +137,39 @@ class Line {
 @:structInit
 class Polygon {
 	var lines:Array<Line>;
-	var model:Array<Point>;
 
-	var rotation_sin:Float = 0; 
-	var rotation_cos:Float = 0; 
+	public var model(default, null):Array<Vector>;
+
+	var rotation_sin:Float = 0;
+	var rotation_cos:Float = 0;
+
+	public var color:Color;
 
 	public function transform(x:Float, y:Float, rotation:Float, scale:Float) {
 		rotation_sin = Math.sin(rotation);
 		rotation_cos = Math.cos(rotation);
 
 		for (n => line in lines) {
-			//rotate
+			// rotate
 			line.point_from.x = model[n].x * rotation_cos - model[n].y * rotation_sin;
 			line.point_from.y = model[n].x * rotation_sin + model[n].y * rotation_cos;
 
-			//scale
+			// scale
 			line.point_from.x = line.point_from.x * scale;
 			line.point_from.y = line.point_from.y * scale;
 
-			//translate
+			// translate
 			line.point_from.x = line.point_from.x + x;
 			line.point_from.y = line.point_from.y + y;
 		}
 
 		for (a in 0...lines.length) {
+			lines[a % lines.length].element.color = color;
 			lines[a % lines.length].draw(lines[(a + 1) % lines.length].point_from);
 		}
+	}
+
+	public function points():Array<Vector>{
+		return lines.map(line -> line.point_from);
 	}
 }

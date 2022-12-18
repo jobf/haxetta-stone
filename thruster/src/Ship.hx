@@ -1,10 +1,8 @@
 import Particles;
 import peote.view.Color;
-import Geometry;
-import Peote.Polygon;
-import Physics;
-
-using Physics.MotionComponentLogic;
+import Models;
+import Peote;
+using Vector;
 
 class Ship {
 	public var motion(default, null):MotionComponent;
@@ -12,7 +10,7 @@ class Ship {
 	var triangle:Polygon;
 	var gravity:Float = 250;
 	var rotation:Float = 0;
-	var thruster_position:Point;
+	var thruster_position:Vector;
 	var scale = 6;
 	var particles_thruster:Emitter;
 
@@ -22,6 +20,9 @@ class Ship {
 		// set deceleration for slowing down the ship when notr accelerating
 		motion.deceleration.x = gravity * 0.5;
 		motion.deceleration.y = gravity * 0.5;
+
+		motion.velocity_maximum.x = 60;
+		motion.velocity_maximum.y = 60;
 
 		// set up shape model
 		var model = new IsoscelesModel();
@@ -37,13 +38,14 @@ class Ship {
 	public function update(elapsed_seconds:Float) {
 		rotation = rotation + (0.05 * rotation_direction);
 		motion.compute_motion(elapsed_seconds);
-		triangle.transform(motion.position.x, motion.position.y, rotation, scale);
 
 		var rotation_sin = Math.sin(rotation);
 		var rotation_cos = Math.cos(rotation);
-		
+		x_acceleration =  rotation_sin * gravity;
+		y_acceleration = -rotation_cos * gravity;
+		steer();
 		// rotate
-		var thruster_position_translated:Point = {
+		var thruster_position_translated:Vector = {
 			x: thruster_position.x * rotation_cos - thruster_position.y * rotation_sin,
 			y: thruster_position.x * rotation_sin + thruster_position.y * rotation_cos
 		};
@@ -64,30 +66,42 @@ class Ship {
 		particles_thruster.rotation = rotation;
 	}
 
-	public function set_acceleration(should_enable:Bool):Void {
-		if (should_enable) {
-			particles_thruster.is_emitting = true;
+	public function draw(){
+		triangle.transform(motion.position.x, motion.position.y, rotation, scale);
+	}
+
+	public function set_color(color:Color){
+		triangle.color = color;
+	}
+
+	var is_accelerating:Bool = false;
+	var is_braking:Bool = false;
+
+	function steer(){
+		if(is_braking){
+			motion.acceleration.x = -x_acceleration * 0.12;
+			motion.acceleration.y = -y_acceleration * 0.12;
+			return;
+		}
+
+		if(is_accelerating){
 			// give ship some thrust, using rotation to determine direction
-			motion.acceleration.x = Math.sin(rotation) * gravity;
-			motion.acceleration.y = -Math.cos(rotation) * gravity;
-		} else {
-			particles_thruster.is_emitting = false;
-			// stop accelerating, so deceleration can come into effect
+			motion.acceleration.x = x_acceleration;
+			motion.acceleration.y = y_acceleration;
+		}
+		else{
 			motion.acceleration.x = 0;
 			motion.acceleration.y = 0;
 		}
 	}
 
+	public function set_acceleration(should_enable:Bool):Void {
+		is_accelerating = should_enable;
+		particles_thruster.is_emitting = is_accelerating;
+	}
+
 	public function set_brakes(should_enable:Bool) {
-		if (should_enable) {
-			// motion.acceleration.x = 0;
-			// motion.acceleration.y = 0;
-			motion.deceleration.x = gravity * 2.0;
-			motion.deceleration.y = gravity * 2.0;
-		} else {
-			motion.deceleration.x = gravity * 0.5;
-			motion.deceleration.y = gravity * 0.5;
-		}
+		is_braking = should_enable;
 	}
 
 	var rotation_direction:Int = 0;
@@ -95,4 +109,12 @@ class Ship {
 	public function set_rotation_direction(direction:Int) {
 		rotation_direction = direction;
 	}
+
+	public function collision_points():Array<Vector> {
+		return triangle.points();
+	}
+
+	var x_acceleration(default, null):Float;
+
+	var y_acceleration(default, null):Float;
 }

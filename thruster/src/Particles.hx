@@ -1,7 +1,6 @@
-import Peote.Rectangle;
+import Peote;
 import peote.view.Color;
-import Physics;
-using Physics.MotionComponentLogic;
+using Vector;
 
 
 class Emitter {
@@ -17,7 +16,7 @@ class Emitter {
 	/** size of particle pool **/
 	var maximum_particles:Int = 100;
 	
-	/** amount of time between particle emissions emission **/
+	/** amount of time between particle emissions emissi on **/
 	public var seconds_between_particles:Float = 0.003;
 	var seconds_until_next_particle:Float = 0;
 

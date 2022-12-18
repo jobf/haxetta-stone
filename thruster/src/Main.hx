@@ -1,5 +1,7 @@
 package;
 
+import lime.graphics.RenderContext;
+import peote.view.Color;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import Peote;
@@ -29,7 +31,9 @@ class Main extends Application {
 		x_center = Std.int(window.width * 0.5);
 		y_center = Std.int(window.height * 0.5);
 		ship = new Ship(x_center, y_center);
+		obstacle = new Asteroid(x_center + 100, y_center + 45);
 		isReady = true;
+
 	}
 
 	// ------------------------------------------------------------
@@ -70,7 +74,15 @@ class Main extends Application {
 		elapsed_seconds = deltaTime / 1000;
 		time += elapsed_seconds;
 		ship.update(elapsed_seconds);
-		Peote.update(elapsed_seconds);
+		ship.set_color(obstacle.overlaps_polygon(ship.collision_points()) ? Color.RED : Color.WHITE);
+		obstacle.update(elapsed_seconds);
+	}
+	
+	override function render(context:RenderContext) {
+		super.render(context);
+		obstacle.draw();
+		ship.draw();
+		Peote.draw();
 	}
 
 	var isReady:Bool;
@@ -80,4 +92,6 @@ class Main extends Application {
 	var elapsed_seconds:Float = 0;
 
 	var ship:Ship;
+
+	var obstacle:Asteroid;
 }
