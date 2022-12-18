@@ -12,3 +12,9 @@ To build and run the project via hashlink -
 ```shell
 lime test hl
 ```
+
+Or web - 
+
+```shell
+lime test html5
+```

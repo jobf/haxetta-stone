@@ -1,6 +1,4 @@
 import GraphicsAbstract;
-import peote.view.Color;
-
 using Vector;
 
 
@@ -76,10 +74,10 @@ class Emitter {
 	}
 
 	function create_particle() {
-		final color:Color = 0xBF8040ff;
-		final alpha_min = 80;
+		final color:Int = 0xBF8040ff;
+		// final alpha_min = 80;
 		// randomise alpha
-		color.a = Std.int((Math.random() * 255) + alpha_min);
+		// color.a = Std.int((Math.random() * 255) + alpha_min);
 
 		var particle = make_particle(
 			x,

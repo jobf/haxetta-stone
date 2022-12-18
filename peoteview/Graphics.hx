@@ -105,7 +105,7 @@ class Line extends AbstractLine {
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
 
 		// line thickness
-		element.w = 2;
+		element.w = 1;
 
 		// line length
 		element.h = Math.sqrt(a * a + b * b);
@@ -119,7 +119,6 @@ class Particle extends AbstractParticle{
 		super(x, y, size, color, lifetime_seconds);
 		element = Peote.make_rectangle(x, y, size, size, color);
 	}
-
 
 	public function draw() {
 		element.x = motion.position.x;

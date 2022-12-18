@@ -53,7 +53,6 @@ class Main extends Application {
 			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, color, size, lifetime_seconds)
 		}
 
-
 		var implementation_input:InputAbstract = {
 			get_button_state: button -> button_states[button]
 		};
