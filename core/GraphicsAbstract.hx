@@ -1,3 +1,5 @@
+import Engine;
+
 using Vector;
 
 abstract class AbstractLine {
@@ -38,9 +40,6 @@ class Polygon {
 		return lines.map(line -> line.point_from);
 	}
 }
-
-typedef ParticleFactory = (x:Float, y:Float, size:Float, color:Int, lifetime_seconds:Float) -> AbstractParticle;
-typedef PolygonFactory = (model:Array<Vector>, color:Int) -> Polygon;
 
 abstract class AbstractParticle {
 	var size:Int;
@@ -104,4 +103,14 @@ abstract class AbstractParticle {
 		// set new size
 		this.size = size;
 	}
+}
+
+typedef ParticleFactory = (x:Float, y:Float, size:Int, color:Int, lifetime_seconds:Float) -> AbstractParticle;
+typedef PolygonFactory = (model:Array<Vector>, color:Int) -> Polygon;
+
+@:structInit
+class GraphicsConcrete{
+	public var make_polygon:PolygonFactory;
+	public var make_particle:ParticleFactory;
+	public var viewport_bounds:RectangleGeometry;
 }

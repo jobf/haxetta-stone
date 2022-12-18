@@ -1,7 +1,8 @@
 package;
 
-import GraphicsImplementation;
+import Engine;
 import GraphicsAbstract;
+import Graphics;
 import lime.graphics.RenderContext;
 import peote.view.Color;
 import lime.ui.KeyCode;
@@ -26,19 +27,42 @@ class Main extends Application {
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------
-
+	
 	public function startSample(window:Window) {
 		Peote.init(window);
-		x_center = Std.int(window.width * 0.5);
-		y_center = Std.int(window.height * 0.5);
+
+		var bounds_viewport:RectangleGeometry = {
+			y: 0,
+			x: 0,
+			width: window.width,
+			height: window.height
+		}
 		
-		var particle_factory:ParticleFactory = (x, y, size, color, lifetime_seconds) -> new Particle(Std.int(x), Std.int(y), Std.int(size), color, lifetime_seconds);
-		var polygon_factory:PolygonFactory = (model, color) -> Peote.make_polygon(model, color);
+		var bounds_scene:RectangleGeometry = {
+			y: 0,
+			x: 0,
+			width: window.width,
+			height: window.height
+		}
 
-		ship = new Ship(x_center, y_center, particle_factory, polygon_factory);
-		obstacle = new Asteroid(x_center + 100, y_center + 45, polygon_factory);
+		var black = 0x000000ff;
+		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+
+		var implementation_graphics:GraphicsConcrete = {
+			viewport_bounds: bounds_viewport,
+			make_polygon: (model, color) -> Peote.make_polygon(model, color),
+			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, color, size, lifetime_seconds)
+		}
+
+		game = new Game(init_scene, implementation_graphics);
+
+		@:privateAccess
+		var scene:SpaceScene = cast game.current_scene;
+		@:privateAccess
+		ship = scene.ship;
+		
+
 		isReady = true;
-
 	}
 
 	// ------------------------------------------------------------
@@ -51,6 +75,7 @@ class Main extends Application {
 
 	override function onKeyDown(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyDown(keyCode, modifier);
+		
 		switch keyCode {
 			case DOWN: ship.set_acceleration(true);
 			case UP: ship.set_brakes(true);
@@ -78,25 +103,21 @@ class Main extends Application {
 
 		elapsed_seconds = deltaTime / 1000;
 		time += elapsed_seconds;
-		ship.update(elapsed_seconds);
-		ship.set_color(obstacle.overlaps_polygon(ship.collision_points()) ? Color.RED : Color.WHITE);
-		obstacle.update(elapsed_seconds);
+		game.update(elapsed_seconds);
 	}
 	
 	override function render(context:RenderContext) {
 		super.render(context);
-		obstacle.draw();
-		ship.draw();
+		game.draw();
+		
 		Peote.draw();
 	}
 
 	var isReady:Bool;
-	var x_center:Int;
-	var y_center:Int;
 	var time:Float = 0;
 	var elapsed_seconds:Float = 0;
 
-	var ship:Ship;
+	var game:Game;
 
-	var obstacle:Asteroid;
+	var ship:Ship;
 }

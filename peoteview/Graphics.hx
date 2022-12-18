@@ -54,6 +54,10 @@ class Peote {
 		rectangleBuffer.addElement(rectangle);
 		return rectangle;
 	}
+
+	public static function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+		return new Particle(Std.int(x), Std.int(y),size, color, lifetime_seconds);
+	}
 }
 
 class Rectangle implements Element {

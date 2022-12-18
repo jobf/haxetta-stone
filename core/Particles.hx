@@ -46,11 +46,11 @@ class Emitter {
 
 	public var rotation:Float = 0;
 
-	public function new(x:Int, y:Int, particle_factory:ParticleFactory) {
+	public function new(x:Int, y:Int, make_particle:ParticleFactory) {
 		particles = [];
 		this.x = x;
 		this.y = y;
-		this.particle_factory = particle_factory;
+		this.make_particle = make_particle;
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -65,7 +65,7 @@ class Emitter {
 
 		if (seconds_until_next_particle <= 0) {
 			if (particles.length < maximum_particles) {
-				make_particle();
+				create_particle();
 			} else {
 				recycle_particle();
 			}
@@ -75,12 +75,20 @@ class Emitter {
 		}
 	}
 
-	function make_particle() {
+	function create_particle() {
 		final color:Color = 0xBF8040ff;
 		final alpha_min = 80;
 		// randomise alpha
 		color.a = Std.int((Math.random() * 255) + alpha_min);
-		var particle = particle_factory(x, y, Std.int(particle_size), color, particle_life_seconds);
+
+		var particle = make_particle(
+			x,
+			y,
+			Std.int(particle_size),
+			color,
+			particle_life_seconds
+		);
+
 		set_trajectory(particle);
 		particles.push(particle);
 	}
@@ -113,7 +121,7 @@ class Emitter {
 		this.y = y;
 	}
 
-	var particle_factory:(x:Float, y:Float, size:Float, color:Int, lifetime_seconds:Float) -> AbstractParticle;
+	var make_particle:ParticleFactory;
 
 	public function draw() {
 		for (particle in particles) {
