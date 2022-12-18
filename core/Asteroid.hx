@@ -1,6 +1,5 @@
-import peote.view.Color;
 import Models;
-import Peote.Polygon;
+import GraphicsAbstract;
 using Vector;
 
 class Asteroid {
@@ -13,13 +12,14 @@ class Asteroid {
 	var model:AsteroidModel;
 	var shape_points:Array<Vector>;
 
-	public function new(x:Int, y:Int) {
+	public function new(x:Int, y:Int, make_polygon:PolygonFactory) {
 		// set up motion
 		motion = new MotionComponent(x, y);
 		rotation_direction = Math.random() > 0.5 ? -1 : 1;
 		// set up shape 
 		model = new AsteroidModel(x, y, 7, 6, 8);
-		shape = Peote.make_polygon(model.points, Color.MAGENTA);
+		final color = 0xFF00FFff;
+		shape = make_polygon(model.points, color);
 		shape_points = shape.points();
 	}
 
@@ -30,7 +30,7 @@ class Asteroid {
 	}
 
 	public function draw(){
-		shape.transform(motion.position.x, motion.position.y, rotation, scale);
+		shape.draw(motion.position.x, motion.position.y, rotation, scale);
 		shape_points = shape.points();
 	}
 	

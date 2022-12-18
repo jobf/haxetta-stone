@@ -13,7 +13,8 @@
 	<app main="Main" path="dist" file="Main" />
 	<!-- <define name="stats" if="html5" /> -->
 	
-	<source path="src" />
+	<source path="../core" />
+	<source path="." />
 	
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />

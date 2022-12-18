@@ -1,23 +1,26 @@
-import Peote;
+import GraphicsAbstract;
 import peote.view.Color;
+
 using Vector;
+
 
 
 class Emitter {
 	/** starting x position of particles **/
 	var x:Int;
-	
+
 	/** starting y position of particles **/
 	var y:Int;
 
 	/** pool of particles for recycling **/
-	var particles:Array<Particle>;
+	var particles:Array<AbstractParticle>;
 
 	/** size of particle pool **/
 	var maximum_particles:Int = 100;
-	
+
 	/** amount of time between particle emissions emissi on **/
 	public var seconds_between_particles:Float = 0.003;
+
 	var seconds_until_next_particle:Float = 0;
 
 	/** lowest x speed used when determining random x acceleration **/
@@ -43,10 +46,11 @@ class Emitter {
 
 	public var rotation:Float = 0;
 
-	public function new(x:Int, y:Int) {
+	public function new(x:Int, y:Int, particle_factory:ParticleFactory) {
 		particles = [];
 		this.x = x;
 		this.y = y;
+		this.particle_factory = particle_factory;
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -54,7 +58,7 @@ class Emitter {
 			p.update(elapsed_seconds);
 		}
 
-		if(!is_emitting){
+		if (!is_emitting) {
 			// do not make particles when not emitting
 			return;
 		}
@@ -76,7 +80,7 @@ class Emitter {
 		final alpha_min = 80;
 		// randomise alpha
 		color.a = Std.int((Math.random() * 255) + alpha_min);
-		var particle = new Particle(x, y, Std.int(particle_size), color, particle_life_seconds);
+		var particle = particle_factory(x, y, Std.int(particle_size), color, particle_life_seconds);
 		set_trajectory(particle);
 		particles.push(particle);
 	}
@@ -92,7 +96,7 @@ class Emitter {
 		}
 	}
 
-	function set_trajectory(particle:Particle){
+	function set_trajectory(particle:AbstractParticle) {
 		// some variation for x and y
 		var x_speed = (x_speed_maximum * Math.random()) + x_speed_minimum;
 		var y_speed = (y_speed_maximum * Math.random()) + y_speed_minimum;
@@ -108,68 +112,69 @@ class Emitter {
 		this.x = x;
 		this.y = y;
 	}
-}
 
-class Particle {
-	var size:Int;
-	var color:Color;
-	var motion:MotionComponent;
-	var lifetime_seconds:Float;
-	var lifetime_seconds_remaining:Float;
-	var element:Rectangle;
+	var particle_factory:(x:Float, y:Float, size:Float, color:Int, lifetime_seconds:Float) -> AbstractParticle;
 
-	public var is_expired(default, null):Bool;
-
-	public function new(x:Int, y:Int, size:Int, color:Color, lifetime_seconds:Float) {
-		this.color = color;
-		this.size = size;
-		this.lifetime_seconds = lifetime_seconds;
-		this.lifetime_seconds_remaining = lifetime_seconds;
-		is_expired = false;
-		this.motion = new MotionComponent(x, y);
-		this.element = Peote.make_rectangle(x, y, size, size, color);
-	}
-
-	public function update(elapsed_seconds:Float) {
-		if (!is_expired) {
-			// only run this logic if the particle is not expired
-
-			// calculate new position
-			motion.compute_motion(elapsed_seconds);
-			element.x = motion.position.x;
-			element.y = motion.position.y;
-
-			// enough enough time has passed, expire the particle so it can be recycled
-			lifetime_seconds_remaining -= elapsed_seconds;
-			if (lifetime_seconds_remaining <= 0) {
-				// change expired state so update logic is no longer run
-				is_expired = true;
-			}
+	public function draw() {
+		for (particle in particles) {
+			particle.draw();
 		}
 	}
 
-	public function set_trajectory(x_acceleration:Float, y_acceleration:Float) {
-		motion.acceleration.x = x_acceleration;
-		motion.acceleration.y = y_acceleration;
-	}
-
-	public function reset_to(x:Int, y:Int, size:Int) {
-		// reset life time
-		is_expired = false;
-		lifetime_seconds_remaining = lifetime_seconds;
-
-		// reset motion
-		motion.acceleration.x = 0;
-		motion.acceleration.y = 0;
-		motion.velocity.x = 0;
-		motion.velocity.y = 0;
-		motion.deceleration.y = 0;
-
-		// set new position
-		motion.position.x = Std.int(x);
-		motion.position.y = Std.int(y);
-
-		// set new size
-		this.size = size;
-	}
 }
+
+// class Particle {
+// 	var size:Int;
+// 	var color:Color;
+// 	var motion:MotionComponent;
+// 	var lifetime_seconds:Float;
+// 	var lifetime_seconds_remaining:Float;
+// 	var element:Rectangle;
+// 	public var is_expired(default, null):Bool;
+// 	public function new(x:Int, y:Int, size:Int, color:Color, lifetime_seconds:Float) {
+// 		this.color = color;
+// 		this.size = size;
+// 		this.lifetime_seconds = lifetime_seconds;
+// 		this.lifetime_seconds_remaining = lifetime_seconds;
+// 		is_expired = false;
+// 		this.motion = new MotionComponent(x, y);
+// 		this.element = Peote.make_rectangle(x, y, size, size, color);
+// 	}
+// 	public function update(elapsed_seconds:Float) {
+// 		if (!is_expired) {
+// 			// only run this logic if the particle is not expired
+// 			// calculate new position
+// 			motion.compute_motion(elapsed_seconds);
+// 			// enough enough time has passed, expire the particle so it can be recycled
+// 			lifetime_seconds_remaining -= elapsed_seconds;
+// 			if (lifetime_seconds_remaining <= 0) {
+// 				// change expired state so update logic is no longer run
+// 				is_expired = true;
+// 			}
+// 		}
+// 	}
+// 	public function draw(){
+// 		element.x = motion.position.x;
+// 		element.y = motion.position.y;
+// 	}
+// 	public function set_trajectory(x_acceleration:Float, y_acceleration:Float) {
+// 		motion.acceleration.x = x_acceleration;
+// 		motion.acceleration.y = y_acceleration;
+// 	}
+// 	public function reset_to(x:Int, y:Int, size:Int) {
+// 		// reset life time
+// 		is_expired = false;
+// 		lifetime_seconds_remaining = lifetime_seconds;
+// 		// reset motion
+// 		motion.acceleration.x = 0;
+// 		motion.acceleration.y = 0;
+// 		motion.velocity.x = 0;
+// 		motion.velocity.y = 0;
+// 		motion.deceleration.y = 0;
+// 		// set new position
+// 		motion.position.x = Std.int(x);
+// 		motion.position.y = Std.int(y);
+// 		// set new size
+// 		this.size = size;
+// 	}
+// }

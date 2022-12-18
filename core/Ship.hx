@@ -1,7 +1,6 @@
 import Particles;
-import peote.view.Color;
 import Models;
-import Peote;
+import GraphicsAbstract;
 using Vector;
 
 class Ship {
@@ -14,7 +13,7 @@ class Ship {
 	var scale = 6;
 	var particles_thruster:Emitter;
 
-	public function new(x:Int, y:Int) {
+	public function new(x:Int, y:Int, particles:ParticleFactory, make_polygon:PolygonFactory) {
 		// set up motion
 		motion = new MotionComponent(x, y);
 		// set deceleration for slowing down the ship when notr accelerating
@@ -26,13 +25,16 @@ class Ship {
 
 		// set up shape model
 		var model = new IsoscelesModel();
-		triangle = Peote.make_polygon(model.points, Color.MAGENTA);
+		var white:Int = 0xFFFFFFff;
+		triangle = make_polygon(model.points, white);
 
 		// set up particles
 		thruster_position = {x:  0.0, y: 3.0 };
 		var x_particles = Std.int(thruster_position.x);
 		var y_particles = Std.int(thruster_position.y);
-		particles_thruster = new Emitter(x_particles, y_particles);
+
+
+		particles_thruster = new Emitter(x_particles, y_particles, particles);
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -44,33 +46,22 @@ class Ship {
 		x_acceleration =  rotation_sin * gravity;
 		y_acceleration = -rotation_cos * gravity;
 		steer();
-		// rotate
-		var thruster_position_translated:Vector = {
-			x: thruster_position.x * rotation_cos - thruster_position.y * rotation_sin,
-			y: thruster_position.x * rotation_sin + thruster_position.y * rotation_cos
-		};
-
-		// scale
-		thruster_position_translated.x = thruster_position_translated.x * scale;
-		thruster_position_translated.y = thruster_position_translated.y * scale;
-
-		// transform
-		thruster_position_translated.x = thruster_position_translated.x + motion.position.x;
-		thruster_position_translated.y = thruster_position_translated.y + motion.position.y;
 		
-		var x_particles = Std.int(thruster_position_translated.x);
-		var y_particles = Std.int(thruster_position_translated.y);
+		var thruster_position_transformed = thruster_position.vector_transform(scale, motion.position.x, motion.position.y, rotation_sin, rotation_cos);
 
-		particles_thruster.set_position(x_particles, y_particles);
-		particles_thruster.update(elapsed_seconds);
+		var x_particles = Std.int(thruster_position_transformed.x);
+		var y_particles = Std.int(thruster_position_transformed.y);
+		particles_thruster.set_position(x_particles , y_particles);
 		particles_thruster.rotation = rotation;
+		particles_thruster.update(elapsed_seconds);
 	}
 
 	public function draw(){
-		triangle.transform(motion.position.x, motion.position.y, rotation, scale);
+		particles_thruster.draw();
+		triangle.draw(motion.position.x, motion.position.y, rotation, scale);
 	}
 
-	public function set_color(color:Color){
+	public function set_color(color:Int){
 		triangle.color = color;
 	}
 

@@ -1,10 +1,11 @@
 package;
 
+import GraphicsImplementation;
+import GraphicsAbstract;
 import lime.graphics.RenderContext;
 import peote.view.Color;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
-import Peote;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
@@ -30,8 +31,12 @@ class Main extends Application {
 		Peote.init(window);
 		x_center = Std.int(window.width * 0.5);
 		y_center = Std.int(window.height * 0.5);
-		ship = new Ship(x_center, y_center);
-		obstacle = new Asteroid(x_center + 100, y_center + 45);
+		
+		var particle_factory:ParticleFactory = (x, y, size, color, lifetime_seconds) -> new Particle(Std.int(x), Std.int(y), Std.int(size), color, lifetime_seconds);
+		var polygon_factory:PolygonFactory = (model, color) -> Peote.make_polygon(model, color);
+
+		ship = new Ship(x_center, y_center, particle_factory, polygon_factory);
+		obstacle = new Asteroid(x_center + 100, y_center + 45, polygon_factory);
 		isReady = true;
 
 	}

@@ -154,7 +154,7 @@ class MotionComponentLogic {
 	}
 }
 
-class IntersectComponentLogic {
+class VectorLogic {
 	public static function polygon_overlaps_point(polygon_model:Array<Vector>, target:Vector):Bool {
 		var collision = false;
 		for (a in 0...polygon_model.length) {
@@ -166,5 +166,27 @@ class IntersectComponentLogic {
 			}
 		}
 		return collision;
+	}
+
+	public static function vector_transform(vector:Vector, scale:Float, x:Float, y:Float, ?rotation_sin:Float, ?rotation_cos:Float, ?rotation:Float):Vector {
+
+		// rotate
+		var rotation_sin = rotation_sin == null ? Math.sin(rotation) : rotation_sin;
+		var rotation_cos = rotation_cos == null ? Math.cos(rotation) : rotation_cos;
+
+		var transformed:Vector = {
+			x: vector.x* rotation_cos - vector.y * rotation_sin,
+			y: vector.x* rotation_sin + vector.y * rotation_cos
+		};
+
+		// scale
+		transformed.x = transformed.x * scale;
+		transformed.y = transformed.y * scale;
+
+		// transform
+		transformed.x = transformed.x + x;
+		transformed.y = transformed.y + y;
+
+		return transformed;
 	}
 }
