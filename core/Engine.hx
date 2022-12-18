@@ -1,11 +1,14 @@
+import InputAbstract;
 import GraphicsAbstract;
 
 class Game {
 	var current_scene:Scene;
-	public var graphics(default, null):GraphicsConcrete;
+	public var graphics(default, null):GraphicsAbstract;
+	public var input(default, null):InputAbstract;
 
-	public function new(scene_constructor:Game->Scene, graphics:GraphicsConcrete) {
+	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract, input:InputAbstract) {
 		this.graphics = graphics;
+		this.input = input;
 		current_scene = scene_constructor(this);
 		current_scene.init();
 	}

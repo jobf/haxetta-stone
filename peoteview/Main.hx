@@ -1,10 +1,9 @@
-package;
 
-import Engine;
+import InputAbstract;
 import GraphicsAbstract;
 import Graphics;
+import Engine;
 import lime.graphics.RenderContext;
-import peote.view.Color;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import haxe.CallStack;
@@ -48,19 +47,18 @@ class Main extends Application {
 		var black = 0x000000ff;
 		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
 
-		var implementation_graphics:GraphicsConcrete = {
+		var implementation_graphics:GraphicsAbstract = {
 			viewport_bounds: bounds_viewport,
 			make_polygon: (model, color) -> Peote.make_polygon(model, color),
 			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, color, size, lifetime_seconds)
 		}
 
-		game = new Game(init_scene, implementation_graphics);
 
-		@:privateAccess
-		var scene:SpaceScene = cast game.current_scene;
-		@:privateAccess
-		ship = scene.ship;
-		
+		var implementation_input:InputAbstract = {
+			get_button_state: button -> button_states[button]
+		};
+
+		game = new Game(init_scene, implementation_graphics, implementation_input);
 
 		isReady = true;
 	}
@@ -73,25 +71,34 @@ class Main extends Application {
 		// access embeded assets from here
 	}
 
+	var button_states:Map<Button, ButtonState> = [
+		NONE => NONE,
+		KEY_LEFT => NONE,
+		KEY_RIGHT => NONE,
+		KEY_UP => NONE,
+		KEY_DOWN => NONE,
+	];
+
 	override function onKeyDown(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyDown(keyCode, modifier);
 		
 		switch keyCode {
-			case DOWN: ship.set_acceleration(true);
-			case UP: ship.set_brakes(true);
-			case LEFT: ship.set_rotation_direction(-1);
-			case RIGHT: ship.set_rotation_direction(1);
+			case DOWN: button_states[KEY_DOWN] = PRESSED;
+			case UP: button_states[KEY_UP] = PRESSED;
+			case LEFT: button_states[KEY_LEFT] = PRESSED;
+			case RIGHT: button_states[KEY_RIGHT] = PRESSED;
 			case _: return;
 		}
 	}
 
 	override function onKeyUp(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyUp(keyCode, modifier);
+
 		switch keyCode {
-			case DOWN: ship.set_acceleration(false);
-			case UP: ship.set_brakes(false);
-			case LEFT: ship.set_rotation_direction(0);
-			case RIGHT: ship.set_rotation_direction(0);
+			case DOWN: button_states[KEY_DOWN] = RELEASED;
+			case UP: button_states[KEY_UP] = RELEASED;
+			case LEFT: button_states[KEY_LEFT] = RELEASED;
+			case RIGHT: button_states[KEY_RIGHT] = RELEASED;
 			case _: return;
 		}
 	}
@@ -118,6 +125,4 @@ class Main extends Application {
 	var elapsed_seconds:Float = 0;
 
 	var game:Game;
-
-	var ship:Ship;
 }

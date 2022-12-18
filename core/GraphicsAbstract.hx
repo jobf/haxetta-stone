@@ -109,7 +109,7 @@ typedef ParticleFactory = (x:Float, y:Float, size:Int, color:Int, lifetime_secon
 typedef PolygonFactory = (model:Array<Vector>, color:Int) -> Polygon;
 
 @:structInit
-class GraphicsConcrete{
+class GraphicsAbstract{
 	public var make_polygon:PolygonFactory;
 	public var make_particle:ParticleFactory;
 	public var viewport_bounds:RectangleGeometry;
