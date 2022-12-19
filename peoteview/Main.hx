@@ -15,7 +15,7 @@ class Main extends Application {
 		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
 				try
-					startSample(window)
+					init(window)
 				catch (_)
 					trace(CallStack.toString(CallStack.exceptionStack()), _);
 			default:
@@ -23,11 +23,7 @@ class Main extends Application {
 		}
 	}
 
-	// ------------------------------------------------------------
-	// --------------- SAMPLE STARTS HERE -------------------------
-	// ------------------------------------------------------------
-	
-	public function startSample(window:Window) {
+	public function init(window:Window) {
 		Peote.init(window);
 
 		var bounds_viewport:RectangleGeometry = {
@@ -58,22 +54,24 @@ class Main extends Application {
 		isReady = true;
 	}
 
-	// ------------------------------------------------------------
-	// ----------------- LIME EVENTS ------------------------------
-	// ------------------------------------------------------------
+	override function update(deltaTime:Int):Void {
+		super.update(deltaTime);
+		
+		if (!isReady) {
+			return;
+		}
 
-	override function onPreloadComplete():Void {
-		// access embeded assets from here
+		elapsed_seconds = deltaTime / 1000;
+		time += elapsed_seconds;
+		game.update(elapsed_seconds);
 	}
-
-	var button_states:Map<Button, ButtonState> = [
-		NONE => NONE,
-		KEY_LEFT => NONE,
-		KEY_RIGHT => NONE,
-		KEY_UP => NONE,
-		KEY_DOWN => NONE,
-	];
-
+	
+	override function render(context:RenderContext) {
+		super.render(context);
+		game.draw();
+		
+		Peote.draw();
+	}
 
 	override function onKeyDown(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyDown(keyCode, modifier);
@@ -96,53 +94,10 @@ class Main extends Application {
 			case _: return;
 		}
 	}
-	// 	switch keyCode {
-	// 		case DOWN: button_states[KEY_DOWN] = PRESSED;
-	// 		case UP: button_states[KEY_UP] = PRESSED;
-	// 		case LEFT: button_states[KEY_LEFT] = PRESSED;
-	// 		case RIGHT: button_states[KEY_RIGHT] = PRESSED;
-	// 		case _: return;
-	// 	}
-	// }
 
-	// override function onKeyUp(keyCode:KeyCode, modifier:KeyModifier) {
-	// 	super.onKeyUp(keyCode, modifier);
-
-	// 	switch keyCode {
-	// 		case DOWN: button_states[KEY_DOWN] = RELEASED;
-	// 		case UP: button_states[KEY_UP] = RELEASED;
-	// 		case LEFT: button_states[KEY_LEFT] = RELEASED;
-	// 		case RIGHT: button_states[KEY_RIGHT] = RELEASED;
-	// 		case _: return;
-	// 	}
-	// }
-
-	override function update(deltaTime:Int):Void {
-		super.update(deltaTime);
-		if (!isReady) {
-			return;
-		}
-
-		// if(this.)
-		// 
-		// if(this.)
-		// if(window.)
-
-		elapsed_seconds = deltaTime / 1000;
-		time += elapsed_seconds;
-		game.update(elapsed_seconds);
-	}
-	
-	override function render(context:RenderContext) {
-		super.render(context);
-		game.draw();
-		
-		Peote.draw();
-	}
 
 	var isReady:Bool;
 	var time:Float = 0;
 	var elapsed_seconds:Float = 0;
-
 	var game:Game;
 }

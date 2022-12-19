@@ -14,11 +14,11 @@ See directories for framework implementations
 
 Low level macro driven OpenGL abstractions over Lime Application Framework - https://github.com/maitag/peote-view
 
-### raylibhx
+### raylibhx/
 
 C based OpenGL via raylib hxcpp bindings - https://github.com/foreignsasquatch/raylib-hx
 
-### flixel
+### flixel/
 
 High level 2D game framework over OpenFL (also Lime Application Framework) - https://github.com/HaxeFlixel/flixel
 
