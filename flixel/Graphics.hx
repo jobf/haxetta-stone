@@ -49,7 +49,7 @@ class Line extends AbstractLine {
 
 	public function draw(point_to:Vector, color:RGBA):Void {
 		//update color 
-		set_color(element, color);
+		set_element_color(element, color);
 
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
@@ -76,12 +76,12 @@ class Particle extends AbstractParticle{
 	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
 		super(x, y, size, color, lifetime_seconds);
 		element = new FlxSprite(x, y);
-		element.makeGraphic(1, 1, FlxColor.WHITE);
+		element.makeGraphic(1, 1,FlxColor.WHITE, true);
 	}
 
 	public function draw() {
 		//update color 
-		set_color(element, color);
+		set_element_color(element, color);
 		
 		// update position
 		element.x = motion.position.x;
@@ -93,11 +93,21 @@ class Particle extends AbstractParticle{
 	}
 }
 
-function set_color(element:FlxSprite, color:RGBA){
+function cast_color(color:RGBA):FlxColor{
 	var color_flixel = FlxColor.WHITE;
 	color_flixel.red = color.r;
 	color_flixel.green = color.g;
 	color_flixel.blue = color.b;
 	color_flixel.alpha = color.a;
+	return color_flixel;
+}
+
+function set_element_color(element:FlxSprite, color:RGBA){
+	var color_flixel = FlxColor.WHITE;
+	color_flixel.red = color.r;
+	color_flixel.green = color.g;
+	color_flixel.blue = color.b;
 	element.color = color_flixel;
+	color_flixel.alpha = color.a;
+	element.alpha = color_flixel.alphaFloat;
 }

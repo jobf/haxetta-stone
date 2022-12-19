@@ -43,9 +43,9 @@ class Particle extends AbstractParticle{
 	public function draw() {
 		var x = Std.int(motion.position.x);
 		var y = Std.int(motion.position.y);
+		color_raylib = to_raylib_color(color);
 		Rl.drawRectangle(x, y, size, size, color_raylib);
 	}
-
 }
 
 function to_raylib_color(color:RGBA):RlColor{

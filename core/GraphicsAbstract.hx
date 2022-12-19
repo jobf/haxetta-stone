@@ -71,6 +71,7 @@ abstract class AbstractParticle {
 			if (lifetime_seconds_remaining <= 0) {
 				// change expired state so update logic is no longer run
 				is_expired = true;
+				color.a = 0;
 			}
 		}
 	}
@@ -82,7 +83,17 @@ abstract class AbstractParticle {
 		motion.acceleration.y = y_acceleration;
 	}
 
-	public function reset_to(x:Int, y:Int, size:Int) {
+	public function set_color(color:RGBA){
+		if(!is_expired){
+
+			this.color = color;
+		}
+		else{
+			this.color.a = 0;
+		}
+	}
+
+	public function reset_to(x:Int, y:Int, size:Int, color:RGBA) {
 		// reset life time
 		is_expired = false;
 		lifetime_seconds_remaining = lifetime_seconds;
@@ -100,6 +111,8 @@ abstract class AbstractParticle {
 
 		// set new size
 		this.size = size;
+
+		this.color = color;
 	}
 }
 

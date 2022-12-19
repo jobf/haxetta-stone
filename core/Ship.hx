@@ -29,26 +29,35 @@ class Ship {
 		triangle = make_polygon(model.points, white);
 
 		// set up particles
-		thruster_position = {x:  0.0, y: 3.0 };
+		thruster_position = {x:  0.0, y: 3.9 };
 		var x_particles = Std.int(thruster_position.x);
 		var y_particles = Std.int(thruster_position.y);
 
 
 		particles_thruster = new Emitter(x_particles, y_particles, particles);
 	}
-
+	var ticks:Int = 0;
 	public function update(elapsed_seconds:Float) {
 		rotation = rotation + (0.05 * rotation_direction);
 		motion.compute_motion(elapsed_seconds);
 		// trace('rotation $rotation');
-
+		ticks++;
 		var rotation_sin = Math.sin(rotation);
 		var rotation_cos = Math.cos(rotation);
 		x_acceleration =  rotation_sin * gravity;
 		y_acceleration = -rotation_cos * gravity;
 		steer();
+		final offset_max:Float = 1.70;
+		final offset_min:Float = 0.70;
+		var direction = (ticks % 2 == 0) ? -1 : 1;
+		var x_alter = (Math.random() * offset_max) + offset_min;
+		// thruster_position.x = thruster_position.x + x_alter;
+		var altered:Vector = {
+			y: thruster_position.y,
+			x: thruster_position.x + x_alter * direction
+		}
 		
-		var thruster_position_transformed = thruster_position.vector_transform(scale, motion.position.x, motion.position.y, rotation_sin, rotation_cos);
+		var thruster_position_transformed = altered.vector_transform(scale, motion.position.x, motion.position.y, rotation_sin, rotation_cos);
 
 		var x_particles = Std.int(thruster_position_transformed.x);
 		var y_particles = Std.int(thruster_position_transformed.y);

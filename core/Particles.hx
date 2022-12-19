@@ -1,7 +1,6 @@
 import GraphicsAbstract;
+
 using Vector;
-
-
 
 class Emitter {
 	/** starting x position of particles **/
@@ -14,30 +13,30 @@ class Emitter {
 	var particles:Array<AbstractParticle>;
 
 	/** size of particle pool **/
-	var maximum_particles:Int = 100;
+	var maximum_particles:Int = 30;
 
 	/** amount of time between particle emissions emissi on **/
-	public var seconds_between_particles:Float = 0.003;
+	public var seconds_between_particles:Float = 0.097;
 
 	var seconds_until_next_particle:Float = 0;
 
 	/** lowest x speed used when determining random x acceleration **/
-	public var x_speed_minimum:Float = 100;
+	public var x_speed_minimum:Float = 20;
 
 	/** highest x speed used when determining random y acceleration **/
-	public var x_speed_maximum:Float = 1000;
+	public var x_speed_maximum:Float = 30;
 
 	/** lowest y speed used when determining random y acceleration **/
-	public var y_speed_minimum:Float = 400;
+	public var y_speed_minimum:Float = 20;
 
 	/** highest y speed used when determining random y acceleration **/
-	public var y_speed_maximum:Float = 1000;
+	public var y_speed_maximum:Float = 30;
 
 	/** width and height of particles **/
-	public var particle_size:Float = 4;
+	public var particle_size:Float = 14;
 
 	/** how many seconds the particle will be active before it can be recycled **/
-	public var particle_life_seconds:Float = 2.5;
+	public var particle_life_seconds:Float = 0.495;
 
 	/** if the emitter should emit particles or not **/
 	public var is_emitting:Bool = false;
@@ -74,18 +73,7 @@ class Emitter {
 	}
 
 	function create_particle() {
-		final color:Int = 0xBF8040ff;
-		// final alpha_min = 80;
-		// randomise alpha
-		// color.a = Std.int((Math.random() * 255) + alpha_min);
-
-		var particle = make_particle(
-			x,
-			y,
-			Std.int(particle_size),
-			color,
-			particle_life_seconds
-		);
+		var particle = make_particle(x, y, Std.int(particle_size), variateColor(), particle_life_seconds);
 
 		set_trajectory(particle);
 		particles.push(particle);
@@ -94,12 +82,20 @@ class Emitter {
 	function recycle_particle() {
 		for (p in particles) {
 			if (p.is_expired) {
-				p.reset_to(x, y, Std.int(particle_size));
+				p.reset_to(x, y, Std.int(particle_size), variateColor());
 				set_trajectory(p);
 				// break out of the loop because only want to recycle one particle
 				break;
 			}
 		}
+	}
+
+	function variateColor():RGBA {
+		final color:RGBA = 0xBF8010ff;
+		final alpha_min = 30;
+		// randomise alpha
+		color.a = Std.int((Math.random() * 70) + alpha_min);
+		return color;
 	}
 
 	function set_trajectory(particle:AbstractParticle) {
@@ -123,64 +119,10 @@ class Emitter {
 
 	public function draw() {
 		for (particle in particles) {
+			if(particle.is_expired){
+				particle.set_color(0x00000000);
+			}
 			particle.draw();
 		}
 	}
-
 }
-
-// class Particle {
-// 	var size:Int;
-// 	var color:Color;
-// 	var motion:MotionComponent;
-// 	var lifetime_seconds:Float;
-// 	var lifetime_seconds_remaining:Float;
-// 	var element:Rectangle;
-// 	public var is_expired(default, null):Bool;
-// 	public function new(x:Int, y:Int, size:Int, color:Color, lifetime_seconds:Float) {
-// 		this.color = color;
-// 		this.size = size;
-// 		this.lifetime_seconds = lifetime_seconds;
-// 		this.lifetime_seconds_remaining = lifetime_seconds;
-// 		is_expired = false;
-// 		this.motion = new MotionComponent(x, y);
-// 		this.element = Peote.make_rectangle(x, y, size, size, color);
-// 	}
-// 	public function update(elapsed_seconds:Float) {
-// 		if (!is_expired) {
-// 			// only run this logic if the particle is not expired
-// 			// calculate new position
-// 			motion.compute_motion(elapsed_seconds);
-// 			// enough enough time has passed, expire the particle so it can be recycled
-// 			lifetime_seconds_remaining -= elapsed_seconds;
-// 			if (lifetime_seconds_remaining <= 0) {
-// 				// change expired state so update logic is no longer run
-// 				is_expired = true;
-// 			}
-// 		}
-// 	}
-// 	public function draw(){
-// 		element.x = motion.position.x;
-// 		element.y = motion.position.y;
-// 	}
-// 	public function set_trajectory(x_acceleration:Float, y_acceleration:Float) {
-// 		motion.acceleration.x = x_acceleration;
-// 		motion.acceleration.y = y_acceleration;
-// 	}
-// 	public function reset_to(x:Int, y:Int, size:Int) {
-// 		// reset life time
-// 		is_expired = false;
-// 		lifetime_seconds_remaining = lifetime_seconds;
-// 		// reset motion
-// 		motion.acceleration.x = 0;
-// 		motion.acceleration.y = 0;
-// 		motion.velocity.x = 0;
-// 		motion.velocity.y = 0;
-// 		motion.deceleration.y = 0;
-// 		// set new position
-// 		motion.position.x = Std.int(x);
-// 		motion.position.y = Std.int(y);
-// 		// set new size
-// 		this.size = size;
-// 	}
-// }
