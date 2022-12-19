@@ -32,6 +32,7 @@
 	<set name="BUILD_DIR" value="dist" />
 	
 	<source path="../core" />
+	<source path="../asteroids" />
 	<source path="." />
 
 	<!-- _______________________________ Libraries ______________________________ -->

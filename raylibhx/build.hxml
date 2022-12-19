@@ -1,5 +1,6 @@
 -lib raylib-hx
 -cp ../core
+-cp ../asteroids
 -cp src
 -main Main
 -cpp dist/cpp/
