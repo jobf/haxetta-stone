@@ -6,7 +6,7 @@ enum Button {
 	KEY_DOWN;
 }
 
-enum ButtonState{
+enum ButtonState {
 	NONE;
 	PRESSED;
 	RELEASED;
@@ -14,5 +14,14 @@ enum ButtonState{
 
 @:structInit
 class InputAbstract {
-	public var get_button_state:Button->ButtonState;
+	public var on_pressed:(button:Button) -> Void = b -> trace(b);
+	public var on_released:(button:Button) -> Void = b -> trace(b);
+
+	public function button_press(button:Button) {
+		on_pressed(button);
+	}
+
+	public function button_release(button:Button) {
+		on_released(button);
+	}
 }

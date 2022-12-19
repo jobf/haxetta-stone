@@ -6,9 +6,9 @@ class Game {
 	public var graphics(default, null):GraphicsAbstract;
 	public var input(default, null):InputAbstract;
 
-	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract, input:InputAbstract) {
+	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract) {
 		this.graphics = graphics;
-		this.input = input;
+		input = {};
 		current_scene = scene_constructor(this);
 		current_scene.init();
 	}
@@ -25,7 +25,6 @@ class Game {
 abstract class Scene {
 	var game:Game;
 	var bounds:RectangleGeometry;
-
 	public var color(default, null):Int;
 
 	public function new(game:Game, bounds:RectangleGeometry, color:Int) {

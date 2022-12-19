@@ -53,11 +53,7 @@ class Main extends Application {
 			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, color, size, lifetime_seconds)
 		}
 
-		var implementation_input:InputAbstract = {
-			get_button_state: button -> button_states[button]
-		};
-
-		game = new Game(init_scene, implementation_graphics, implementation_input);
+		game = new Game(init_scene, implementation_graphics);
 
 		isReady = true;
 	}
@@ -78,34 +74,59 @@ class Main extends Application {
 		KEY_DOWN => NONE,
 	];
 
+
 	override function onKeyDown(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyDown(keyCode, modifier);
-		
 		switch keyCode {
-			case DOWN: button_states[KEY_DOWN] = PRESSED;
-			case UP: button_states[KEY_UP] = PRESSED;
-			case LEFT: button_states[KEY_LEFT] = PRESSED;
-			case RIGHT: button_states[KEY_RIGHT] = PRESSED;
+			case DOWN: game.input.button_press(KEY_DOWN);
+			case UP: game.input.button_press(KEY_UP);
+			case LEFT: game.input.button_press(KEY_LEFT);
+			case RIGHT: game.input.button_press(KEY_RIGHT);
 			case _: return;
 		}
 	}
 
 	override function onKeyUp(keyCode:KeyCode, modifier:KeyModifier) {
 		super.onKeyUp(keyCode, modifier);
-
 		switch keyCode {
-			case DOWN: button_states[KEY_DOWN] = RELEASED;
-			case UP: button_states[KEY_UP] = RELEASED;
-			case LEFT: button_states[KEY_LEFT] = RELEASED;
-			case RIGHT: button_states[KEY_RIGHT] = RELEASED;
+			case DOWN: game.input.button_release(KEY_DOWN);
+			case UP: game.input.button_release(KEY_UP);
+			case LEFT: game.input.button_release(KEY_LEFT);
+			case RIGHT: game.input.button_release(KEY_RIGHT);
 			case _: return;
 		}
 	}
+	// 	switch keyCode {
+	// 		case DOWN: button_states[KEY_DOWN] = PRESSED;
+	// 		case UP: button_states[KEY_UP] = PRESSED;
+	// 		case LEFT: button_states[KEY_LEFT] = PRESSED;
+	// 		case RIGHT: button_states[KEY_RIGHT] = PRESSED;
+	// 		case _: return;
+	// 	}
+	// }
+
+	// override function onKeyUp(keyCode:KeyCode, modifier:KeyModifier) {
+	// 	super.onKeyUp(keyCode, modifier);
+
+	// 	switch keyCode {
+	// 		case DOWN: button_states[KEY_DOWN] = RELEASED;
+	// 		case UP: button_states[KEY_UP] = RELEASED;
+	// 		case LEFT: button_states[KEY_LEFT] = RELEASED;
+	// 		case RIGHT: button_states[KEY_RIGHT] = RELEASED;
+	// 		case _: return;
+	// 	}
+	// }
 
 	override function update(deltaTime:Int):Void {
+		super.update(deltaTime);
 		if (!isReady) {
 			return;
 		}
+
+		// if(this.)
+		// 
+		// if(this.)
+		// if(window.)
 
 		elapsed_seconds = deltaTime / 1000;
 		time += elapsed_seconds;

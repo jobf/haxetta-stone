@@ -40,6 +40,7 @@ class Ship {
 	public function update(elapsed_seconds:Float) {
 		rotation = rotation + (0.05 * rotation_direction);
 		motion.compute_motion(elapsed_seconds);
+		// trace('rotation $rotation');
 
 		var rotation_sin = Math.sin(rotation);
 		var rotation_cos = Math.cos(rotation);

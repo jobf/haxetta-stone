@@ -1,5 +1,5 @@
-import InputAbstract;
 import Controller;
+import InputAbstract;
 import Engine;
 
 class SpaceScene extends Scene {
@@ -17,31 +17,43 @@ class SpaceScene extends Scene {
 
 		ship = new Ship(x_center, y_center, game.graphics.make_particle, game.graphics.make_polygon);
 		obstacle = new Asteroid(x_center + 100, y_center + 45, game.graphics.make_polygon);
-		var actions:ControllerActions = {
-			// up: {
-			// 	on_pressed: ()-> ship.set_brakes(true),
-			// 	on_released: ()-> ship.set_brakes(false)
-			// },
-			right: {
-				on_pressed: () -> ship.set_rotation_direction(1),
-				on_released: () -> ship.set_rotation_direction(0)
-			},
-			left: {
+
+		var actions:Map<Button, Action> = [
+			KEY_LEFT => {
 				on_pressed: () -> ship.set_rotation_direction(-1),
 				on_released: () -> ship.set_rotation_direction(0)
 			},
-			down: {
+			KEY_RIGHT => {
+				on_pressed: () -> ship.set_rotation_direction(1),
+				on_released: () -> ship.set_rotation_direction(0)
+			},
+			KEY_DOWN => {
 				on_pressed: () -> ship.set_acceleration(true),
 				on_released: () -> ship.set_acceleration(false)
+			},
+		];
+		controller = new Controller(actions, game.input);
+
+		game.input.on_pressed = button -> {
+			switch button {
+				case KEY_LEFT: controller.handle_button(PRESSED, KEY_LEFT);
+				case KEY_RIGHT: controller.handle_button(PRESSED, KEY_RIGHT);
+				case KEY_DOWN: controller.handle_button(PRESSED, KEY_DOWN);
+				case _: return;
 			}
 		}
 
-
-		controller = new Controller(actions, game.input);
+		game.input.on_released = button -> {
+			switch button {
+				case KEY_LEFT: controller.handle_button(RELEASED, KEY_LEFT);
+				case KEY_RIGHT: controller.handle_button(RELEASED, KEY_RIGHT);
+				case KEY_DOWN: controller.handle_button(RELEASED, KEY_DOWN);
+				case _: return;
+			}
+		}
 	}
 
 	public function update(elapsed_seconds:Float) {
-		controller.update();
 		ship.update(elapsed_seconds);
 
 		final red:Int = 0xFF0000ff;

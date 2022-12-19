@@ -1,3 +1,5 @@
+import haxe.io.Input;
+import sys.ssl.Key;
 import Rl;
 import InputAbstract;
 import GraphicsAbstract;
@@ -6,14 +8,6 @@ import Engine;
 
 class Main {
 	static var game:Game;
-
-	static var button_states:Map<Button, ButtonState> = [
-		NONE => NONE,
-		KEY_LEFT => NONE,
-		KEY_RIGHT => NONE,
-		KEY_UP => NONE,
-		KEY_DOWN => NONE,
-	];
 
 	static function main() {
 		var bounds_viewport:RectangleGeometry = {
@@ -41,15 +35,11 @@ class Main {
 			make_particle: (x, y, size, color, lifetime_seconds) -> Raylib.make_particle(x, y, color, size, lifetime_seconds)
 		}
 
-		var implementation_input:InputAbstract = {
-			get_button_state: button -> button_states[button]
-		};
-
-		game = new Game(init_scene, implementation_graphics, implementation_input);
+		game = new Game(init_scene, implementation_graphics);
 
 		while (!Rl.windowShouldClose()) {
 			Rl.clearBackground(Colors.BLACK); // todo
-			update_button_states();
+			handle_input();
 			game.update(Rl.getFrameTime());
 			Rl.beginDrawing();
 			game.draw();
@@ -59,14 +49,30 @@ class Main {
 		Rl.closeWindow();
 	}
 
-	static inline function get_key_state(key:Keys):ButtonState{
-		return Rl.isKeyPressed(key) ? PRESSED : Rl.isKeyReleased(key) ? RELEASED : NONE;
-	}
-
-	static function update_button_states() {
-		button_states[KEY_LEFT] = get_key_state(Keys.LEFT);
-		button_states[KEY_RIGHT] = get_key_state(Keys.RIGHT);
-		button_states[KEY_UP] = get_key_state(Keys.UP);
-		button_states[KEY_DOWN] = get_key_state(Keys.DOWN);
+	static function handle_input() {
+		if(Rl.isKeyPressed(Keys.LEFT)){
+			game.input.button_press(KEY_LEFT);
+		}
+		if(Rl.isKeyPressed(Keys.RIGHT)){
+			game.input.button_press(KEY_RIGHT);
+		}
+		if(Rl.isKeyPressed(Keys.UP)){
+			game.input.button_press(KEY_UP);
+		}
+		if(Rl.isKeyPressed(Keys.DOWN)){
+			game.input.button_press(KEY_DOWN);
+		}
+		if(Rl.isKeyReleased(Keys.LEFT)){
+			game.input.button_release(KEY_LEFT);
+		}
+		if(Rl.isKeyReleased(Keys.RIGHT)){
+			game.input.button_release(KEY_RIGHT);
+		}
+		if(Rl.isKeyReleased(Keys.UP)){
+			game.input.button_release(KEY_UP);
+		}
+		if(Rl.isKeyReleased(Keys.DOWN)){
+			game.input.button_release(KEY_DOWN);
+		}
 	}
 }

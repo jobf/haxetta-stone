@@ -15,26 +15,24 @@ class ControllerActions {
 }
 
 class Controller {
-	var actions:ControllerActions;
+	var actions:Map<Button, Action>;
 	var input:InputAbstract;
 
-	public function new(actions:ControllerActions, input:InputAbstract) {
+	public function new(actions:Map<Button, Action>, input:InputAbstract) {
 		this.actions = actions;
 		this.input = input;
 	}
 
-	function handle_button(state:ButtonState, action:Action){
+	public function handle_button(state:ButtonState, button:Button){
+
 		switch state {
-			case PRESSED: action.on_pressed();
-			case RELEASED: action.on_released();
+			case PRESSED: {
+				actions[button].on_pressed();
+			}
+			case RELEASED: {
+				actions[button].on_released();
+			};
 			case NONE:
 		}
-	}
-
-	public function update() {
-		handle_button(input.get_button_state(KEY_LEFT), actions.left);
-		handle_button(input.get_button_state(KEY_RIGHT), actions.right);
-		handle_button(input.get_button_state(KEY_UP), actions.up);
-		handle_button(input.get_button_state(KEY_DOWN), actions.down);
 	}
 }

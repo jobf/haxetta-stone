@@ -10,8 +10,17 @@ Multiple frameworks will provide alternate implementations for the systems, curr
 
 See directories for framework implementations
 
- - peoteview : uses Peote View (OpenGL via Lime Application Framework) - https://github.com/maitag/peote-view
- - raylibhx : uses raylib-hx (OpenGL via raylib externs) https://github.com/foreignsasquatch/raylib-hx
+### peoteview/
+
+Low level macro driven OpenGL abstractions over Lime Application Framework - https://github.com/maitag/peote-view
+
+### raylibhx
+
+C based OpenGL via raylib hxcpp bindings - https://github.com/foreignsasquatch/raylib-hx
+
+### flixel
+
+High level 2D game framework over OpenFL (also Lime Application Framework) - https://github.com/HaxeFlixel/flixel
 
 ## The Game
 
