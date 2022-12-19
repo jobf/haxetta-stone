@@ -49,8 +49,8 @@ class Main extends Application {
 
 		var implementation_graphics:GraphicsAbstract = {
 			viewport_bounds: bounds_viewport,
-			make_polygon: (model, color) -> Peote.make_polygon(model, color),
-			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, color, size, lifetime_seconds)
+			make_polygon: (model, color) -> Peote.make_polygon(model, cast color),
+			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, cast color, size, lifetime_seconds)
 		}
 
 		game = new Game(init_scene, implementation_graphics);

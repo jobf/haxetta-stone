@@ -20,17 +20,12 @@ class Line extends AbstractLine {
 		super(point_from);
 	}
 
-	public function draw(point_to:Vector, color:Int):Void {
+	public function draw(point_to:Vector, color:RGBA):Void {
 		var from_x = Std.int(point_from.x);
 		var from_y = Std.int(point_from.y);
 		var to_x = Std.int(point_to.x);
 		var to_y = Std.int(point_to.y);
-		var color_abstract:ColorAbstract = color;
-		color_raylib = Rl.Color.create(color_abstract.r,
-			color_abstract.g,
-			color_abstract.b,
-			color_abstract.a
-		);
+		color_raylib = to_raylib_color(color);
 		Rl.drawLine(from_x, from_y, to_x, to_y, color_raylib);
 	}
 
@@ -40,14 +35,9 @@ class Line extends AbstractLine {
 class Particle extends AbstractParticle{
 	var color_raylib:Color;
 
-	public function new(x:Int, y:Int, size:Int, color:Int, lifetime_seconds:Float){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
 		super(x, y, size, color, lifetime_seconds);
-		var color_abstract: ColorAbstract = color;
-		color_raylib = Rl.Color.create(color_abstract.r,
-			color_abstract.g,
-			color_abstract.b,
-			color_abstract.a
-		);
+		color_raylib = to_raylib_color(color);
 	}
 
 	public function draw() {
@@ -56,4 +46,12 @@ class Particle extends AbstractParticle{
 		Rl.drawRectangle(x, y, size, size, color_raylib);
 	}
 
+}
+
+function to_raylib_color(color:RGBA):RlColor{
+	return RlColor.create(color.r,
+		color.g,
+		color.b,
+		color.a
+	);
 }

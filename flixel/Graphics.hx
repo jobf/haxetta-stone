@@ -7,7 +7,7 @@ import GraphicsAbstract;
 using flixel.util.FlxSpriteUtil;
 
 class Flixel{
-	public static function make_polygon(model:Array<Vector>, color:Int):Polygon {
+	public static function make_polygon(model:Array<Vector>, color:RGBA):Polygon {
 		return {
 			model: model,
 			color: color,
@@ -37,7 +37,7 @@ class Line extends AbstractLine {
 	var b:Float = 0;
 	public var element(default, null):FlxSprite;
 
-	public function new(point_from:Vector, color:Int) {
+	public function new(point_from:Vector, color:RGBA) {
 		super(point_from);
 		element = new FlxSprite(
 			Std.int(point_from.x), 
@@ -47,94 +47,57 @@ class Line extends AbstractLine {
 		element.origin.y = 0;
 	}
 
-	function set_color(color:Int){
-		color_flixel = FlxColor.WHITE;
-		color_abstract = color;
-		color_flixel.red = color_abstract.r;
-		color_flixel.green = color_abstract.g;
-		color_flixel.blue = color_abstract.b;
-		color_flixel.alpha = color_abstract.a;
-		element.color = color_flixel;
-	}
+	public function draw(point_to:Vector, color:RGBA):Void {
+		//update color 
+		set_color(element, color);
 
-	public function draw(point_to:Vector, color:Int):Void {
-		set_color(color);
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
-		// // line thickness
-		var width = 1;
-		// // line length
-		var height = Math.sqrt(a * a + b * b);
-		element.scale.y = height;
+		
+		// line length
+		element.scale.y = Math.sqrt(a * a + b * b);
 
+		// line start position
 		element.x = point_from.x;
 		element.y = point_from.y;
+
+		// line rotation
 		element.angle = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
 	}
 
-	var color_abstract:ColorAbstract;
+	var color_abstract:RGBA;
 	var color_flixel:FlxColor;
 }
 
 class Particle extends AbstractParticle{
 	public var element:FlxSprite;
+	var color_flixel:FlxColor;
 
-	public function new(x:Int, y:Int, size:Int, color:Int, lifetime_seconds:Float){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
 		super(x, y, size, color, lifetime_seconds);
 		element = new FlxSprite(x, y);
 		element.makeGraphic(1, 1, FlxColor.WHITE);
 	}
-	
-	function set_color(color:Int){
-		color_flixel = FlxColor.WHITE;
-		color_abstract = color;
-		color_flixel.red = color_abstract.r;
-		color_flixel.green = color_abstract.g;
-		color_flixel.blue = color_abstract.b;
-		color_flixel.alpha = color_abstract.a;
-		element.color = color_flixel;
-	}
+
 	public function draw() {
+		//update color 
+		set_color(element, color);
+		
+		// update position
 		element.x = motion.position.x;
 		element.y = motion.position.y;
-		set_color(color);
+		
+		// update size
 		element.scale.x = size;
 		element.scale.y = size;
-		// // element.color = color;
-		// element.width = size;
-		// element.height = size;
 	}
-
-	var color_abstract:ColorAbstract;
-	var color_flixel:FlxColor;
 }
 
-class Rectangle extends FlxSprite{
-	public var rotation(get, set):Float;
-	
-	function get_rotation():Float {
-		return angle;
-	}
-
-	function set_rotation(value:Float):Float {
-		angle = value;
-		return angle;
-	}
-
-	public function new(x:Int, y:Int, width:Int, height:Int, color_abstract:ColorAbstract){
-		super(x, y);
-		color = FlxColor.WHITE;
-		color.red = color_abstract.r;
-		color.green = color_abstract.g;
-		color.blue = color_abstract.b;
-		color.alpha = color_abstract.a;
-		// makeGraphic(width, height, FlxColor.TRANSPARENT, true);
-	}
-
-	public function clear(){
-
-		// if(this.graphic !=null && this.graphic.bitmap != null){
-		// 	makeGraphic(Std.int(width), Std.int(height), FlxColor.TRANSPARENT, true);
-		// }
-	}
+function set_color(element:FlxSprite, color:RGBA){
+	var color_flixel = FlxColor.WHITE;
+	color_flixel.red = color.r;
+	color_flixel.green = color.g;
+	color_flixel.blue = color.b;
+	color_flixel.alpha = color.a;
+	element.color = color_flixel;
 }

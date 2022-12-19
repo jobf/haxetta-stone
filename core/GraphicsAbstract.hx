@@ -9,7 +9,7 @@ abstract class AbstractLine {
 		this.point_from = point_from;
 	}
 	
-	abstract public function draw(point_to:Vector, color:Int):Void;
+	abstract public function draw(point_to:Vector, color:RGBA):Void;
 }
 
 @:structInit
@@ -21,7 +21,7 @@ class Polygon {
 	var rotation_sin:Float = 0;
 	var rotation_cos:Float = 0;
 
-	public var color:Int;
+	public var color:RGBA;
 
 	public function draw(x:Float, y:Float, rotation:Float, scale:Float) {
 		rotation_sin = Math.sin(rotation);
@@ -43,14 +43,14 @@ class Polygon {
 
 abstract class AbstractParticle {
 	var size:Int;
-	var color:Int;
+	var color:RGBA;
 	var motion:MotionComponent;
 	var lifetime_seconds:Float;
 	var lifetime_seconds_remaining:Float;
 
 	public var is_expired(default, null):Bool;
 
-	public function new(x:Int, y:Int, size:Int, color:Int, lifetime_seconds:Float) {
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float) {
 		this.color = color;
 		this.size = size;
 		this.lifetime_seconds = lifetime_seconds;
@@ -73,8 +73,6 @@ abstract class AbstractParticle {
 				is_expired = true;
 			}
 		}
-		draw();
-
 	}
 
 	abstract public function draw():Void;
@@ -105,8 +103,8 @@ abstract class AbstractParticle {
 	}
 }
 
-typedef ParticleFactory = (x:Float, y:Float, size:Int, color:Int, lifetime_seconds:Float) -> AbstractParticle;
-typedef PolygonFactory = (model:Array<Vector>, color:Int) -> Polygon;
+typedef ParticleFactory = (x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float) -> AbstractParticle;
+typedef PolygonFactory = (model:Array<Vector>, color:RGBA) -> Polygon;
 
 @:structInit
 class GraphicsAbstract{
@@ -115,7 +113,7 @@ class GraphicsAbstract{
 	public var viewport_bounds:RectangleGeometry;
 }
 
-abstract ColorAbstract(Int) from Int to Int from UInt to UInt
+abstract RGBA(Int) from Int to Int from UInt to UInt
 {
 	inline function new(rgba:Int) this = rgba;
 	

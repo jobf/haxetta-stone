@@ -40,7 +40,7 @@ class Peote {
 	public static function make_polygon(model:Array<Vector>, color:Color):Polygon {
 		return {
 			model: model,
-			color: color,
+			color: cast color,
 			lines: [ for (point in model) make_line(point.x, point.y, color)]
 		}
 	}
@@ -88,14 +88,14 @@ class Line extends AbstractLine {
 	var b:Float = 0;
 	var element:Rectangle;
 
-	public function new(point_from:Vector, color:Int) {
+	public function new(point_from:Vector, color:RGBA) {
 		super(point_from);
-		element = Peote.make_rectangle(point_from.x, point_from.y, 0, 0, color);
+		element = Peote.make_rectangle(point_from.x, point_from.y, 0, 0, cast color);
 	}
 
-	public function draw(point_to:Vector, color:Int):Void {
+	public function draw(point_to:Vector, color:RGBA):Void {
 		
-		element.color = color;
+		element.color = cast color;
 		
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
@@ -115,15 +115,15 @@ class Line extends AbstractLine {
 class Particle extends AbstractParticle{
 	var element:Rectangle;
 
-	public function new(x:Int, y:Int, size:Int, color:Int, lifetime_seconds:Float){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
 		super(x, y, size, color, lifetime_seconds);
-		element = Peote.make_rectangle(x, y, size, size, color);
+		element = Peote.make_rectangle(x, y, size, size, cast color);
 	}
 
 	public function draw() {
 		element.x = motion.position.x;
 		element.y = motion.position.y;
-		element.color = color;
+		element.color = cast color;
 		element.w = size;
 		element.h = size;
 
