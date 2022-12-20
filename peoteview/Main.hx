@@ -1,6 +1,6 @@
 
+import lime.ui.MouseButton;
 import InputAbstract;
-import GraphicsAbstract;
 import Graphics;
 import Engine;
 import lime.graphics.RenderContext;
@@ -24,8 +24,6 @@ class Main extends Application {
 	}
 
 	public function init(window:Window) {
-		Peote.init(window);
-
 		var bounds_viewport:RectangleGeometry = {
 			y: 0,
 			x: 0,
@@ -40,17 +38,19 @@ class Main extends Application {
 			height: window.height
 		}
 
+
 		var black = 0x000000ff;
+
 		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
 
-		var implementation_graphics:GraphicsAbstract = {
-			viewport_bounds: bounds_viewport,
-			make_polygon: (model, color) -> Peote.make_polygon(model, cast color),
-			make_particle: (x, y, size, color, lifetime_seconds) -> Peote.make_particle(x, y, cast color, size, lifetime_seconds)
-		}
+		var implementation_graphics = new Graphics(window, bounds_viewport);
 
 		game = new Game(init_scene, implementation_graphics);
-
+		game.input.get_mouse_position = () -> mouse_position;
+		mouse_position = {
+			y: 0,
+			x: 0
+		}
 		isReady = true;
 	}
 
@@ -69,8 +69,6 @@ class Main extends Application {
 	override function render(context:RenderContext) {
 		super.render(context);
 		game.draw();
-		
-		Peote.draw();
 	}
 
 	override function onKeyDown(keyCode:KeyCode, modifier:KeyModifier) {
@@ -95,9 +93,35 @@ class Main extends Application {
 		}
 	}
 
+	override function onMouseDown(x:Float, y:Float, button:MouseButton) {
+		super.onMouseDown(x, y, button);
+		switch button {
+			case LEFT: game.input.button_press(MOUSE_LEFT);
+			case MIDDLE: game.input.button_press(MOUSE_MIDDLE);
+			case RIGHT: game.input.button_press(MOUSE_RIGHT);
+		}
+	}
+
+	override function onMouseUp(x:Float, y:Float, button:MouseButton) {
+		super.onMouseUp(x, y, button);
+		switch button {
+			case LEFT: game.input.button_release(MOUSE_LEFT);
+			case MIDDLE: game.input.button_release(MOUSE_MIDDLE);
+			case RIGHT: game.input.button_release(MOUSE_RIGHT);
+		}
+	}
+
+	override function onMouseMove(x:Float, y:Float) {
+		super.onMouseMove(x, y);
+		mouse_position.x = x;
+		mouse_position.y = y;
+	}
+
 
 	var isReady:Bool;
 	var time:Float = 0;
 	var elapsed_seconds:Float = 0;
 	var game:Game;
+
+	var mouse_position(default, null):Vector;
 }

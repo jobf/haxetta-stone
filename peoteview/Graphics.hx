@@ -1,13 +1,14 @@
+import Engine;
 import GraphicsAbstract;
 import Vector;
 
 import lime.ui.Window;
 import peote.view.*;
 
-class Peote {
-	static var lines:Array<Rectangle> = [];
+class Graphics extends GraphicsAbstract{
+	public function new(window:Window, viewport_bounds:RectangleGeometry){
+		super(viewport_bounds);
 
-	public static function init(window:Window) {
 		peoteview = new PeoteView(window);
 		display = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display);
@@ -16,49 +17,39 @@ class Peote {
 		var rectangleProgram = new Program(rectangleBuffer);
 		display.addProgram(rectangleProgram);
 
-		lineBuffer = new Buffer<Rectangle>(16);
+		lineBuffer = new Buffer<Rectangle>(256, 256, true);
 		var lineProgram = new Program(lineBuffer);
 		display.addProgram(lineProgram);
 	}
 
-	public static function draw() {
+	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
+		var element = new Rectangle();
+		lineBuffer.addElement(element);
+		return new Line({
+			x: from_x,
+			y: from_x
+		}, element);
+	}
+
+	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:Color):Rectangle {
+		var element = new Rectangle(x, y, width, height, 0, color);
+		rectangleBuffer.addElement(element);
+		return element;
+	}
+
+	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+		var element = make_rectangle(x, y, size, size, color);
+		return new Particle(Std.int(x), Std.int(y),size, color, lifetime_seconds, element);
+	}
+	public function draw() {
 		rectangleBuffer.update();
 		lineBuffer.update();
 	}
 
-	static function make_line(x:Float, y:Float, color:Int):AbstractLine {
-		var element = new Rectangle();
-		lineBuffer.addElement(element);
-		var line:Line = new Line({
-			x: x,
-			y: y
-		}, color);
-
-		return line;
-	}
-
-	public static function make_polygon(model:Array<Vector>, color:Color):Polygon {
-		return {
-			model: model,
-			color: cast color,
-			lines: [ for (point in model) make_line(point.x, point.y, color)]
-		}
-	}
-
-	static var peoteview:PeoteView;
-	static var display:Display;
-	static var lineBuffer:Buffer<Rectangle>;
-	static var rectangleBuffer:Buffer<Rectangle>;
-
-	public static function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:Color):Rectangle {
-		var rectangle = new Rectangle(x, y, width, height, 0, color);
-		rectangleBuffer.addElement(rectangle);
-		return rectangle;
-	}
-
-	public static function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
-		return new Particle(Std.int(x), Std.int(y),size, color, lifetime_seconds);
-	}
+	var peoteview:PeoteView;
+	var display:Display;
+	var lineBuffer:Buffer<Rectangle>;
+	var rectangleBuffer:Buffer<Rectangle>;
 }
 
 class Rectangle implements Element {
@@ -88,9 +79,9 @@ class Line extends AbstractLine {
 	var b:Float = 0;
 	var element:Rectangle;
 
-	public function new(point_from:Vector, color:RGBA) {
+	public function new(point_from:Vector, element:Rectangle) {
 		super(point_from);
-		element = Peote.make_rectangle(point_from.x, point_from.y, 0, 0, cast color);
+		this.element = element;
 	}
 
 	public function draw(point_to:Vector, color:RGBA):Void {
@@ -115,9 +106,9 @@ class Line extends AbstractLine {
 class Particle extends AbstractParticle{
 	var element:Rectangle;
 
-	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float, element:Rectangle){
 		super(x, y, size, color, lifetime_seconds);
-		element = Peote.make_rectangle(x, y, size, size, cast color);
+		this.element = element;
 	}
 
 	public function draw() {
@@ -126,7 +117,5 @@ class Particle extends AbstractParticle{
 		element.color = cast color;
 		element.w = size;
 		element.h = size;
-
-		// trace('${ motion.position.x}');
 	}
 }

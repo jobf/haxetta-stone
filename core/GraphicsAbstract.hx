@@ -119,11 +119,25 @@ abstract class AbstractParticle {
 typedef ParticleFactory = (x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float) -> AbstractParticle;
 typedef PolygonFactory = (model:Array<Vector>, color:RGBA) -> Polygon;
 
-@:structInit
-class GraphicsAbstract{
-	public var make_polygon:PolygonFactory;
-	public var make_particle:ParticleFactory;
+
+abstract class GraphicsAbstract{
 	public var viewport_bounds:RectangleGeometry;
+
+	public function new(viewport_bounds:RectangleGeometry) {
+		this.viewport_bounds = viewport_bounds;
+	}
+
+	abstract public function draw():Void;
+	abstract public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine;
+	abstract public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle;
+
+	public function make_polygon(model:Array<Vector>, color:RGBA):Polygon{
+		return {
+			model: model,
+			color: color,
+			lines: [ for (i => point in model) make_line(point.x, point.y, color)]
+		}
+	}
 }
 
 abstract RGBA(Int) from Int to Int from UInt to UInt

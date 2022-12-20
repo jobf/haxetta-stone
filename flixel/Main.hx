@@ -2,7 +2,6 @@ import openfl.display.Sprite;
 import flixel.FlxGame;
 import flixel.FlxG;
 import flixel.FlxState;
-import GraphicsAbstract;
 import Graphics;
 import Engine;
 
@@ -12,7 +11,6 @@ class PlayState extends FlxState {
 
 	override public function create() {
 		super.create();
-		Flixel.init(this);
 		var bounds_viewport:RectangleGeometry = {
 			width: 640,
 			height: 480
@@ -28,11 +26,8 @@ class PlayState extends FlxState {
 		var black = 0x000000ff;
 		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
 
-		var implementation_graphics:GraphicsAbstract = {
-			viewport_bounds: bounds_viewport,
-			make_polygon: (model, color) -> Flixel.make_polygon(model, color),
-			make_particle: (x, y, size, color, lifetime_seconds) -> Flixel.make_particle(x, y, color, size, lifetime_seconds)
-		}
+		var implementation_graphics = new Graphics(this, bounds_viewport);
+
 		game = new Game(init_scene, implementation_graphics);
 	}
 

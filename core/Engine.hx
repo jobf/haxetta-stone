@@ -19,6 +19,7 @@ class Game {
 
 	public function draw() {
 		current_scene.draw();
+		graphics.draw();
 	}
 }
 

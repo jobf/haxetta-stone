@@ -1,17 +1,23 @@
 import Rl;
 import GraphicsAbstract;
 
-class Raylib{
-	public static function make_polygon(model:Array<Vector>, color:Int):Polygon {
-		return {
-			model: model,
-			color: color,
-			lines: [ for (point in model) new Line(point, color)]
-		}
+class Graphics extends GraphicsAbstract{
+	public function draw() {
+		// nothing to do 
 	}
 
-	public static function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
-		return new Particle(Std.int(x), Std.int(y), size, color, lifetime_seconds);
+	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
+		return new Line({
+			x: from_x,
+			y: from_y
+		}, color);
+	}
+
+	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+		return new Particle(
+			Std.int(x), 
+			Std.int(y), 
+			size, color, lifetime_seconds);
 	}
 }
 

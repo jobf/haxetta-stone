@@ -1,8 +1,4 @@
-import haxe.io.Input;
-import sys.ssl.Key;
 import Rl;
-import InputAbstract;
-import GraphicsAbstract;
 import Graphics;
 import Engine;
 
@@ -28,12 +24,7 @@ class Main {
 
 		var black = 0x000000ff;
 		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-
-		var implementation_graphics:GraphicsAbstract = {
-			viewport_bounds: bounds_viewport,
-			make_polygon: (model, color) -> Raylib.make_polygon(model, color),
-			make_particle: (x, y, size, color, lifetime_seconds) -> Raylib.make_particle(x, y, color, size, lifetime_seconds)
-		}
+		var implementation_graphics = new Graphics(bounds_viewport);
 
 		game = new Game(init_scene, implementation_graphics);
 

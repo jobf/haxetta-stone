@@ -1,36 +1,46 @@
-import flixel.math.FlxPoint;
-import flixel.FlxG;
+import Engine;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import GraphicsAbstract;
 using flixel.util.FlxSpriteUtil;
 
-class Flixel{
-	public static function make_polygon(model:Array<Vector>, color:RGBA):Polygon {
-		return {
-			model: model,
-			color: color,
-			lines: [ for (point in model) {
-				var line = new Line(point, color);
-				sprites.add(line.element);
-				line;
-			}]
-		}
+class Graphics extends GraphicsAbstract{
+	var elements:FlxGroup;
+
+	public function new(elements:FlxGroup, viewport_bounds:RectangleGeometry){
+		super(viewport_bounds);
+		this.elements = elements;
 	}
 
-	public static function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
-		var particle = new Particle(Std.int(x), Std.int(y), size, color, lifetime_seconds);
-		sprites.add(particle.element);
+	public function draw() {
+		// nothing to do ...
+		// ... yet ?
+	}
+
+	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
+		var line = new Line({
+			x: from_x,
+			y: from_y,
+		}, color);
+
+		elements.add(line.element);
+		return line;
+	}
+
+	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+		var particle = new Particle(
+			Std.int(x),
+			Std.int(y),
+			size,
+			color,
+			lifetime_seconds);
+
+		elements.add(particle.element);
 		return particle;
 	}
-
-	public static function init(state:FlxGroup) {
-		sprites = state;
-	}
-
-	static var sprites:FlxGroup;
 }
+
 
 class Line extends AbstractLine {
 	var a:Float = 0;
