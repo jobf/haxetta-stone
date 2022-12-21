@@ -40,8 +40,8 @@ class EditorTests extends Test {
 		var editor = new Editor(viewport, points_in_editor_x, points_in_editor_y);
 
 		var position_mouse:Vector = {
-			x: 100,
-			y: 100
+			x: 0,
+			y: 0
 		}
 
 		var position_editor = editor.view_to_editor_point(position_mouse);
