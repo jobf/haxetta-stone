@@ -38,12 +38,11 @@ class Main extends Application {
 			height: window.height
 		}
 
-
 		var black = 0x000000ff;
+		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
 
-		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-
-		var implementation_graphics = new Graphics(window, bounds_viewport);
+		implementation_graphics = new Graphics(window, bounds_viewport);
 
 		game = new Game(init_scene, implementation_graphics);
 		game.input.get_mouse_position = () -> mouse_position;
@@ -113,8 +112,7 @@ class Main extends Application {
 
 	override function onMouseMove(x:Float, y:Float) {
 		super.onMouseMove(x, y);
-		mouse_position.x = x;
-		mouse_position.y = y;
+		mouse_position = implementation_graphics.translate_mouse(x, y);
 	}
 
 
@@ -124,4 +122,6 @@ class Main extends Application {
 	var game:Game;
 
 	var mouse_position(default, null):Vector;
+
+	var implementation_graphics:Graphics;
 }

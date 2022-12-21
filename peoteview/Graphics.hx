@@ -50,6 +50,13 @@ class Graphics extends GraphicsAbstract{
 	var display:Display;
 	var lineBuffer:Buffer<Rectangle>;
 	var rectangleBuffer:Buffer<Rectangle>;
+
+	public function translate_mouse(x:Float, y:Float):Vector {
+		return {
+			x: display.localX(x),
+			y: display.localY(y)
+		}
+	}
 }
 
 class Rectangle implements Element {
