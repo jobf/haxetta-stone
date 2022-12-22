@@ -9,12 +9,13 @@ class Ship {
 	var thruster_position:Vector;
 	var scale = 6;
 	var particles_thruster:Emitter;
+	var graphics:GraphicsAbstract;
 
-	public function new(x:Int, y:Int, particles:ParticleFactory, make_polygon:PolygonFactory) {
+	public function new(x:Int, y:Int, graphics:GraphicsAbstract) {
 		// set up shape model
 		var model = new IsoscelesModel();
 		var white:Int = 0xFFFFFFff;
-		entity = new Entity(model.points, x, y, 0.05, make_polygon);
+		entity = new Entity(model.points, x, y, 0.05, graphics);
 
 		entity.motion.deceleration.x = entity.weight * 0.5;
 		entity.motion.deceleration.y = entity.weight * 0.5;
@@ -27,7 +28,7 @@ class Ship {
 		var y_particles = Std.int(thruster_position.y);
 
 
-		particles_thruster = new Emitter(x_particles, y_particles, particles);
+		particles_thruster = new Emitter(x_particles, y_particles, graphics);
 		set_rotation_direction(0);
 	}
 	var ticks:Int = 0;

@@ -33,7 +33,7 @@ class Emitter {
 	public var y_speed_maximum:Float = 30;
 
 	/** width and height of particles **/
-	public var particle_size:Float = 14;
+	public var particle_size:Float;
 
 	/** how many seconds the particle will be active before it can be recycled **/
 	public var particle_life_seconds:Float = 0.495;
@@ -43,11 +43,14 @@ class Emitter {
 
 	public var rotation:Float = 0;
 
-	public function new(x:Int, y:Int, make_particle:ParticleFactory) {
+	var graphics:GraphicsAbstract;
+
+	public function new(x:Int, y:Int, graphics:GraphicsAbstract) {
 		particles = [];
 		this.x = x;
 		this.y = y;
-		this.make_particle = make_particle;
+		this.particle_size = 14;
+		this.graphics = graphics;
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -73,8 +76,8 @@ class Emitter {
 	}
 
 	function create_particle() {
-		var particle = make_particle(x, y, Std.int(particle_size), variateColor(), particle_life_seconds);
-
+		var particle = graphics.make_particle(x, y, Std.int(particle_size), variateColor(), particle_life_seconds);
+		particle.set_color(variateColor());
 		set_trajectory(particle);
 		particles.push(particle);
 	}
@@ -114,8 +117,6 @@ class Emitter {
 		this.x = x;
 		this.y = y;
 	}
-
-	var make_particle:ParticleFactory;
 
 	public function draw() {
 		for (particle in particles) {

@@ -9,11 +9,11 @@ class Asteroid {
 	var weight:Float = 250;
 	var scale = 6;
 
-	public function new(x:Int, y:Int, make_polygon:PolygonFactory) {
+	public function new(x:Int, y:Int, graphics:GraphicsAbstract) {
 		// set up shape model
 		var model = new AsteroidModel(x, y, 7, 6, 8);
 		var white:Int = 0xFF00FFff;
-		entity = new Entity(model.points, x, y, 0.005, make_polygon);
+		entity = new Entity(model.points, x, y, 0.005, graphics);
 		entity.set_rotation_direction(Math.random() > 0.5 ? -1 : 1);
 	}
 

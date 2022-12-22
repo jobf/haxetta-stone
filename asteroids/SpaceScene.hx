@@ -16,8 +16,8 @@ class SpaceScene extends Scene {
 		x_center = Std.int(bounds.width * 0.5);
 		y_center = Std.int(bounds.height * 0.5);
 
-		ship = new Ship(x_center, y_center, game.graphics.make_particle, game.graphics.make_polygon);
-		asteroid = new Asteroid(x_center + 100, y_center + 45, game.graphics.make_polygon);
+		ship = new Ship(x_center, y_center, game.graphics);
+		asteroid = new Asteroid(x_center + 100, y_center + 45, game.graphics);
 
 		var actions:Map<Button, Action> = [
 			KEY_LEFT => {

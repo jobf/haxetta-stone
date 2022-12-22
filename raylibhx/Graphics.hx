@@ -13,7 +13,7 @@ class Graphics extends GraphicsAbstract{
 		}, color);
 	}
 
-	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
 		return new Particle(
 			Std.int(x), 
 			Std.int(y), 

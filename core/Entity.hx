@@ -13,7 +13,7 @@ class Entity {
 	var model_points:Array<Vector>;
 	var lines_points:Array<Vector>;
 
-	public function new(model:Array<Vector>, x:Int, y:Int, rotation_speed:Float, make_polygon:PolygonFactory) {
+	public function new(model:Array<Vector>, x:Int, y:Int, rotation_speed:Float, graphics:GraphicsAbstract) {
 		// set up motion
 		motion = new MotionComponent(x, y);
 		this.rotation_speed = rotation_speed;
@@ -21,7 +21,7 @@ class Entity {
 		// set up lines 
 		model_points = model;
 		final color = 0xFF00FFff;
-		lines = make_polygon(model_points, color);
+		lines = graphics.make_polygon(model_points, color);
 		lines_points = lines.points();
 	}
 

@@ -28,7 +28,7 @@ class Graphics extends GraphicsAbstract{
 		return line;
 	}
 
-	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
+	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
 		var particle = new Particle(
 			Std.int(x),
 			Std.int(y),
@@ -86,7 +86,8 @@ class Particle extends AbstractParticle{
 	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
 		super(x, y, size, color, lifetime_seconds);
 		element = new FlxSprite(x, y);
-		element.makeGraphic(1, 1,FlxColor.WHITE, true);
+		element.makeGraphic(1, 1, FlxColor.WHITE, true);
+		set_element_color(element, color);
 	}
 
 	public function draw() {

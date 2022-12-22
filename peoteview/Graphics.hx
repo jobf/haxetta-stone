@@ -23,7 +23,7 @@ class Graphics extends GraphicsAbstract{
 	}
 
 	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
-		var element = new Rectangle();
+		var element = new Rectangle(from_x, from_y, 1, 1);
 		lineBuffer.addElement(element);
 		return new Line({
 			x: from_x,
@@ -31,15 +31,16 @@ class Graphics extends GraphicsAbstract{
 		}, element);
 	}
 
-	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:Color):Rectangle {
-		var element = new Rectangle(x, y, width, height, 0, color);
+	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:RGBA):Rectangle {
+		final rotation = 0;
+		var element = new Rectangle(x, y, width, height, rotation, cast color);
 		rectangleBuffer.addElement(element);
 		return element;
 	}
 
-	public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle {
-		var element = make_rectangle(x, y, size, size, color);
-		return new Particle(Std.int(x), Std.int(y),size, color, lifetime_seconds, element);
+	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
+		var element = make_rectangle(x, y, size, size, cast color);
+		return new Particle(Std.int(x), Std.int(y), size, cast color, lifetime_seconds, element);
 	}
 	public function draw() {
 		rectangleBuffer.update();
@@ -71,7 +72,7 @@ class Rectangle implements Element {
 
 	var OPTIONS = {alpha: true};
 
-	public function new(positionX:Float = 0, positionY:Float = 0, width:Float = 0, height:Float = 10, rotation:Float = 0, color:Int = 0x556677ff) {
+	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
 		this.x = positionX;
 		this.y = positionY;
 		this.w = width;

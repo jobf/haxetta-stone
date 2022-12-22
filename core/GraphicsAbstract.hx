@@ -116,10 +116,6 @@ abstract class AbstractParticle {
 	}
 }
 
-typedef ParticleFactory = (x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float) -> AbstractParticle;
-typedef PolygonFactory = (model:Array<Vector>, color:RGBA) -> Polygon;
-
-
 abstract class GraphicsAbstract{
 	public var viewport_bounds:RectangleGeometry;
 
@@ -129,7 +125,7 @@ abstract class GraphicsAbstract{
 
 	abstract public function draw():Void;
 	abstract public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine;
-	abstract public function make_particle(x:Float, y:Float, color:Int, size:Int, lifetime_seconds:Float):AbstractParticle;
+	abstract public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle;
 
 	public function make_polygon(model:Array<Vector>, color:RGBA):Polygon{
 		return {
