@@ -1,12 +1,13 @@
 import Engine;
 import GraphicsAbstract;
 import Vector;
-
 import lime.ui.Window;
 import peote.view.*;
 
-class Graphics extends GraphicsAbstract{
-	public function new(window:Window, viewport_bounds:RectangleGeometry){
+class Graphics extends GraphicsAbstract {
+	var lines:Array<Line> = [];
+
+	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 
 		peoteview = new PeoteView(window);
@@ -22,13 +23,17 @@ class Graphics extends GraphicsAbstract{
 		display.addProgram(lineProgram);
 	}
 
-	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
-		var element = new Rectangle(from_x, from_y, 1, 1);
+	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
+		var element = new Rectangle(from_x, from_y, 1, 1, 0, cast color);
 		lineBuffer.addElement(element);
-		return new Line({
+		lines.push(new Line({
 			x: from_x,
-			y: from_x
-		}, element);
+			y: from_y
+		}, {
+			x: to_x,
+			y: to_y
+		}, element));
+		return lines[lines.length - 1];
 	}
 
 	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:RGBA):Rectangle {
@@ -42,7 +47,11 @@ class Graphics extends GraphicsAbstract{
 		var element = make_rectangle(x, y, size, size, cast color);
 		return new Particle(Std.int(x), Std.int(y), size, cast color, lifetime_seconds, element);
 	}
+
 	public function draw() {
+		for (line in lines) {
+			line.draw();
+		}
 		rectangleBuffer.update();
 		lineBuffer.update();
 	}
@@ -61,8 +70,6 @@ class Graphics extends GraphicsAbstract{
 }
 
 class Rectangle implements Element {
-	@pivotX public var px_offset:Float = 0.0;
-	@pivotY public var py_offset:Float = 0.0;
 	@rotation public var rotation:Float = 0.0;
 	@sizeX @varying public var w:Float;
 	@sizeY @varying public var h:Float;
@@ -87,15 +94,15 @@ class Line extends AbstractLine {
 	var b:Float = 0;
 	var element:Rectangle;
 
-	public function new(point_from:Vector, element:Rectangle) {
-		super(point_from);
+	public function new(point_from:Vector, point_to:Vector, element:Rectangle) {
+		super(point_from, point_to, cast element.color);
 		this.element = element;
+		draw();
 	}
 
-	public function draw(point_to:Vector, color:RGBA):Void {
-		
+	public function draw():Void {
 		element.color = cast color;
-		
+
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
 
@@ -111,10 +118,10 @@ class Line extends AbstractLine {
 	}
 }
 
-class Particle extends AbstractParticle{
+class Particle extends AbstractParticle {
 	var element:Rectangle;
 
-	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float, element:Rectangle){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float, element:Rectangle) {
 		super(x, y, size, color, lifetime_seconds);
 		this.element = element;
 	}

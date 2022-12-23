@@ -6,14 +6,17 @@ class Game {
 	public var graphics(default, null):GraphicsAbstract;
 	public var input(default, null):InputAbstract;
 
-	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract) {
+	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract, input:InputAbstract) {
 		this.graphics = graphics;
-		input = {};
+		this.input = input;
 		current_scene = scene_constructor(this);
 		current_scene.init();
 	}
 
 	public function update(elapsed_seconds:Float) {
+		input.update_mouse_position();
+		input.raise_mouse_button_events();
+		input.raise_keyboard_button_events();
 		current_scene.update(elapsed_seconds);
 	}
 

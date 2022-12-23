@@ -3,25 +3,34 @@ import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import GraphicsAbstract;
+
 using flixel.util.FlxSpriteUtil;
 
-class Graphics extends GraphicsAbstract{
+class Graphics extends GraphicsAbstract {
 	var elements:FlxGroup;
+	var lines:FlxTypedGroup<FlxLine>;
 
-	public function new(elements:FlxGroup, viewport_bounds:RectangleGeometry){
+	public function new(elements:FlxGroup, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.elements = elements;
+		lines = new FlxTypedGroup<FlxLine>();
+		elements.add(lines);
 	}
 
 	public function draw() {
-		// nothing to do ...
-		// ... yet ?
+		// ?
+		for (line in lines) {
+			line.draw();
+		}
 	}
 
-	public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine {
+	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
 		var line = new Line({
 			x: from_x,
-			y: from_y,
+			y: from_y
+		}, {
+			x: to_x,
+			y: to_y
 		}, color);
 
 		elements.add(line.element);
@@ -29,61 +38,34 @@ class Graphics extends GraphicsAbstract{
 	}
 
 	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
-		var particle = new Particle(
-			Std.int(x),
-			Std.int(y),
-			size,
-			color,
-			lifetime_seconds);
+		var particle = new Particle(Std.int(x), Std.int(y), size, color, lifetime_seconds);
 
 		elements.add(particle.element);
 		return particle;
 	}
 }
 
-
 class Line extends AbstractLine {
-	var a:Float = 0;
-	var b:Float = 0;
-	public var element(default, null):FlxSprite;
+	public var element(default, null):FlxLine;
 
-	public function new(point_from:Vector, color:RGBA) {
-		super(point_from);
-		element = new FlxSprite(
-			Std.int(point_from.x), 
-			Std.int(point_from.y));
-		element.makeGraphic(1, 1);
-		element.origin.x = 0;
-		element.origin.y = 0;
+	public function new(point_from:Vector, point_to:Vector, color:RGBA) {
+		super(point_from, point_to, color);
+		element = new FlxLine(point_from, point_to, color);
 	}
 
-	public function draw(point_to:Vector, color:RGBA):Void {
-		//update color 
-		set_element_color(element, color);
-
-		a = point_to.x - point_from.x;
-		b = point_to.y - point_from.y;
-		
-		// line length
-		element.scale.y = Math.sqrt(a * a + b * b);
-
-		// line start position
-		element.x = point_from.x;
-		element.y = point_from.y;
-
-		// line rotation
-		element.angle = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
+	public function draw():Void {
+		// flixel will call draw on objects which extend FlxSprite
+		// so do nothing
+		return;
 	}
-
-	var color_abstract:RGBA;
-	var color_flixel:FlxColor;
 }
 
-class Particle extends AbstractParticle{
+class Particle extends AbstractParticle {
 	public var element:FlxSprite;
+
 	var color_flixel:FlxColor;
 
-	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float){
+	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float) {
 		super(x, y, size, color, lifetime_seconds);
 		element = new FlxSprite(x, y);
 		element.makeGraphic(1, 1, FlxColor.WHITE, true);
@@ -91,20 +73,20 @@ class Particle extends AbstractParticle{
 	}
 
 	public function draw() {
-		//update color 
+		// update color
 		set_element_color(element, color);
-		
+
 		// update position
 		element.x = motion.position.x;
 		element.y = motion.position.y;
-		
+
 		// update size
 		element.scale.x = size;
 		element.scale.y = size;
 	}
 }
 
-function cast_color(color:RGBA):FlxColor{
+function cast_color(color:RGBA):FlxColor {
 	var color_flixel = FlxColor.WHITE;
 	color_flixel.red = color.r;
 	color_flixel.green = color.g;
@@ -113,7 +95,7 @@ function cast_color(color:RGBA):FlxColor{
 	return color_flixel;
 }
 
-function set_element_color(element:FlxSprite, color:RGBA){
+function set_element_color(element:FlxSprite, color:RGBA) {
 	var color_flixel = FlxColor.WHITE;
 	color_flixel.red = color.r;
 	color_flixel.green = color.g;
@@ -121,4 +103,45 @@ function set_element_color(element:FlxSprite, color:RGBA){
 	element.color = color_flixel;
 	color_flixel.alpha = color.a;
 	element.alpha = color_flixel.alphaFloat;
+}
+
+
+class FlxLine extends FlxSprite {
+	var point_from:Vector;
+	var point_to:Vector;
+	var color_abstract:RGBA;
+	var a:Float;
+	var b:Float;
+
+	public function new(from:Vector, to:Vector, color:RGBA) {
+		super(from.x, from.y);
+		this.point_from = from;
+		this.point_to = to;
+		makeGraphic(1, 1, FlxColor.WHITE);
+		origin.x = 0;
+		origin.y = 0;
+		color_abstract = color;
+		this.color = cast_color(color_abstract);
+	}
+
+	public override function draw() {
+		// update color
+		this.color = cast_color(color_abstract);
+
+		a = point_to.x - point_from.x;
+		b = point_to.y - point_from.y;
+
+		// line length
+		scale.y = Math.sqrt(a * a + b * b);
+
+		// line start position
+		x = point_from.x;
+		y = point_from.y;
+
+		// line rotation
+		angle = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
+
+		// continue flixel draw call
+		super.draw();
+	}
 }

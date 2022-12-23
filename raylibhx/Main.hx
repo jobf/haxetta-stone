@@ -23,14 +23,17 @@ class Main {
 		}
 
 		var black = 0x000000ff;
-		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		
+		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		
 		var implementation_graphics = new Graphics(bounds_viewport);
+		var implementation_input = new Input();
 
-		game = new Game(init_scene, implementation_graphics);
+		game = new Game(init_scene, implementation_graphics, implementation_input);
 
 		while (!Rl.windowShouldClose()) {
 			Rl.clearBackground(Colors.BLACK); // todo
-			handle_input();
 			game.update(Rl.getFrameTime());
 			Rl.beginDrawing();
 			game.draw();
@@ -38,32 +41,5 @@ class Main {
 		}
 
 		Rl.closeWindow();
-	}
-
-	static function handle_input() {
-		if(Rl.isKeyPressed(Keys.LEFT)){
-			game.input.button_press(KEY_LEFT);
-		}
-		if(Rl.isKeyPressed(Keys.RIGHT)){
-			game.input.button_press(KEY_RIGHT);
-		}
-		if(Rl.isKeyPressed(Keys.UP)){
-			game.input.button_press(KEY_UP);
-		}
-		if(Rl.isKeyPressed(Keys.DOWN)){
-			game.input.button_press(KEY_DOWN);
-		}
-		if(Rl.isKeyReleased(Keys.LEFT)){
-			game.input.button_release(KEY_LEFT);
-		}
-		if(Rl.isKeyReleased(Keys.RIGHT)){
-			game.input.button_release(KEY_RIGHT);
-		}
-		if(Rl.isKeyReleased(Keys.UP)){
-			game.input.button_release(KEY_UP);
-		}
-		if(Rl.isKeyReleased(Keys.DOWN)){
-			game.input.button_release(KEY_DOWN);
-		}
 	}
 }

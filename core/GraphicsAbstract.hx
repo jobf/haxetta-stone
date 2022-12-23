@@ -4,12 +4,16 @@ using Vector;
 
 abstract class AbstractLine {
 	public var point_from:Vector;
+	public var point_to:Vector;
+	public var color:RGBA;
 
-	public function new(point_from:Vector) {
+	public function new(point_from:Vector, point_to:Vector, color:RGBA) {
 		this.point_from = point_from;
+		this.point_to = point_to;
+		this.color = color;
 	}
-	
-	abstract public function draw(point_to:Vector, color:RGBA):Void;
+
+	abstract public function draw():Void;
 }
 
 @:structInit
@@ -29,14 +33,12 @@ class Polygon {
 
 		for (n => line in lines) {
 			line.point_from = model[n].vector_transform(scale, x, y, rotation_sin, rotation_cos);
-		}
-
-		for (a in 0...lines.length) {
-			lines[a % lines.length].draw(lines[(a + 1) % lines.length].point_from, color);
+			line.point_to = model[(n + 1) % lines.length].vector_transform(scale, x, y, rotation_sin, rotation_cos);
+			line.draw();
 		}
 	}
 
-	public function points():Array<Vector>{
+	public function points():Array<Vector> {
 		return lines.map(line -> line.point_from);
 	}
 }
@@ -66,7 +68,7 @@ abstract class AbstractParticle {
 			// calculate new position
 			motion.compute_motion(elapsed_seconds);
 
-			// enough enough time has passed, expire the particle so it can be recycled
+			// if enough time has passed, expire the particle so it can be recycled
 			lifetime_seconds_remaining -= elapsed_seconds;
 			if (lifetime_seconds_remaining <= 0) {
 				// change expired state so update logic is no longer run
@@ -83,12 +85,10 @@ abstract class AbstractParticle {
 		motion.acceleration.y = y_acceleration;
 	}
 
-	public function set_color(color:RGBA){
-		if(!is_expired){
-
+	public function set_color(color:RGBA) {
+		if (!is_expired) {
 			this.color = color;
-		}
-		else{
+		} else {
 			this.color.a = 0;
 		}
 	}
@@ -116,7 +116,7 @@ abstract class AbstractParticle {
 	}
 }
 
-abstract class GraphicsAbstract{
+abstract class GraphicsAbstract {
 	public var viewport_bounds:RectangleGeometry;
 
 	public function new(viewport_bounds:RectangleGeometry) {
@@ -124,34 +124,64 @@ abstract class GraphicsAbstract{
 	}
 
 	abstract public function draw():Void;
-	abstract public function make_line(from_x:Float, from_y:Float, color:RGBA):AbstractLine;
+
+	abstract public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine;
+
 	abstract public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle;
 
-	public function make_polygon(model:Array<Vector>, color:RGBA):Polygon{
+	public function make_polygon(model:Array<Vector>, color:RGBA):Polygon {
+		var lines:Array<AbstractLine> = [];
+		for (a in 0...model.length) {
+			var from = model[a % model.length];
+			var to = model[(a + 1) % model.length];
+			lines.push(make_line(from.x, from.y, to.x, to.y, color));
+		}
 		return {
 			model: model,
 			color: color,
-			lines: [ for (i => point in model) make_line(point.x, point.y, color)]
+			lines: lines
 		}
 	}
 }
 
-abstract RGBA(Int) from Int to Int from UInt to UInt
-{
-	inline function new(rgba:Int) this = rgba;
-	
-	public var r(get,set):Int;
-	public var g(get,set):Int;
-	public var b(get,set):Int;
+abstract RGBA(Int) from Int to Int from UInt to UInt {
+	inline function new(rgba:Int)
+		this = rgba;
+
+	public var r(get, set):Int;
+	public var g(get, set):Int;
+	public var b(get, set):Int;
 	public var a(get, set):Int;
-	
-	inline function get_r() return (this >> 24) & 0xff;
-	inline function get_g() return (this >> 16) & 0xff;
-	inline function get_b() return (this >>  8) & 0xff;
-	inline function get_a() return  this & 0xff;
-	
-	inline function set_r(r:Int) { this = (this & 0x00ffffff) | (r<<24); return r; }
-	inline function set_g(g:Int) { this = (this & 0xff00ffff) | (g<<16); return g; }
-	inline function set_b(b:Int) { this = (this & 0xffff00ff) | (b<<8 ); return b; }
-	inline function set_a(a:Int) { this = (this & 0xffffff00) | a; return a; }
+
+	inline function get_r()
+		return (this >> 24) & 0xff;
+
+	inline function get_g()
+		return (this >> 16) & 0xff;
+
+	inline function get_b()
+		return (this >> 8) & 0xff;
+
+	inline function get_a()
+		return this & 0xff;
+
+	inline function set_r(r:Int) {
+		this = (this & 0x00ffffff) | (r << 24);
+		return r;
+	}
+
+	inline function set_g(g:Int) {
+		this = (this & 0xff00ffff) | (g << 16);
+		return g;
+	}
+
+	inline function set_b(b:Int) {
+		this = (this & 0xffff00ff) | (b << 8);
+		return b;
+	}
+
+	inline function set_a(a:Int) {
+		this = (this & 0xffffff00) | a;
+		return a;
+	}
 }
