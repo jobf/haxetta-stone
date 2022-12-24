@@ -54,9 +54,15 @@ class Line extends AbstractLine {
 	}
 
 	public function draw():Void {
-		// flixel will call draw on objects which extend FlxSprite
-		// so do nothing
-		return;
+		// flixel line need to sync with abstract line
+		element.point_from = point_from;
+		element.point_to = point_to;
+
+		// update color
+		element.color_abstract = color;
+
+		// element.draw will be called from flixel draw loop 
+		// ? - todo rename abstract 'draw' to 'sync' to not confuse with element.draw??
 	}
 }
 
@@ -107,9 +113,9 @@ function set_element_color(element:FlxSprite, color:RGBA) {
 
 
 class FlxLine extends FlxSprite {
-	var point_from:Vector;
-	var point_to:Vector;
-	var color_abstract:RGBA;
+	public var point_from:Vector;
+	public var point_to:Vector;
+	public var color_abstract:RGBA;
 	var a:Float;
 	var b:Float;
 

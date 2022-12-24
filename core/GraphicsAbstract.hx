@@ -21,17 +21,17 @@ class Polygon {
 	var lines:Array<AbstractLine>;
 
 	public var model(default, null):Array<Vector>;
+	public var color:RGBA;
 
 	var rotation_sin:Float = 0;
 	var rotation_cos:Float = 0;
-
-	public var color:RGBA;
 
 	public function draw(x:Float, y:Float, rotation:Float, scale:Float) {
 		rotation_sin = Math.sin(rotation);
 		rotation_cos = Math.cos(rotation);
 
 		for (n => line in lines) {
+			line.color = color;
 			line.point_from = model[n].vector_transform(scale, x, y, rotation_sin, rotation_cos);
 			line.point_to = model[(n + 1) % lines.length].vector_transform(scale, x, y, rotation_sin, rotation_cos);
 			line.draw();
