@@ -5,7 +5,7 @@ import lime.ui.Window;
 import peote.view.*;
 
 class Graphics extends GraphicsAbstract {
-	var lines:Array<Line> = [];
+	var lines:Array<PeoteLine> = [];
 
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
@@ -18,15 +18,15 @@ class Graphics extends GraphicsAbstract {
 		var rectangleProgram = new Program(rectangleBuffer);
 		display.addProgram(rectangleProgram);
 
-		lineBuffer = new Buffer<Rectangle>(256, 256, true);
+		lineBuffer = new Buffer<Line>(256, 256, true);
 		var lineProgram = new Program(lineBuffer);
 		display.addProgram(lineProgram);
 	}
 
 	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
-		var element = new Rectangle(from_x, from_y, 1, 1, 0, cast color);
+		var element = new Line(from_x, from_y, 1, 1, 0, cast color);
 		lineBuffer.addElement(element);
-		lines.push(new Line({
+		lines.push(new PeoteLine({
 			x: from_x,
 			y: from_y
 		}, {
@@ -58,7 +58,7 @@ class Graphics extends GraphicsAbstract {
 
 	var peoteview:PeoteView;
 	var display:Display;
-	var lineBuffer:Buffer<Rectangle>;
+	var lineBuffer:Buffer<Line>;
 	var rectangleBuffer:Buffer<Rectangle>;
 
 	public function translate_mouse(x:Float, y:Float):Vector {
@@ -70,6 +70,8 @@ class Graphics extends GraphicsAbstract {
 }
 
 class Rectangle implements Element {
+	@pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float;
+	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float;
 	@rotation public var rotation:Float = 0.0;
 	@sizeX @varying public var w:Float;
 	@sizeY @varying public var h:Float;
@@ -89,12 +91,34 @@ class Rectangle implements Element {
 	}
 }
 
-class Line extends AbstractLine {
+
+class Line implements Element {
+	@rotation public var rotation:Float = 0.0;
+	@sizeX @varying public var w:Float;
+	@sizeY @varying public var h:Float;
+	@color public var color:Color;
+	@posX public var x:Float;
+	@posY public var y:Float;
+
+	var OPTIONS = {alpha: true};
+
+	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
+		this.x = positionX;
+		this.y = positionY;
+		this.w = width;
+		this.h = height;
+		this.color = color;
+		this.rotation = rotation;
+	}
+}
+
+
+class PeoteLine extends AbstractLine {
 	var a:Float = 0;
 	var b:Float = 0;
-	var element:Rectangle;
+	var element:Line;
 
-	public function new(point_from:Vector, point_to:Vector, element:Rectangle) {
+	public function new(point_from:Vector, point_to:Vector, element:Line) {
 		super(point_from, point_to, cast element.color);
 		this.element = element;
 		draw();
