@@ -10,17 +10,17 @@ Multiple frameworks will provide alternate implementations for the systems, curr
 
 See directories for framework implementations
 
-### peoteview/
+### [/peoteview/readme.md](peoteview)/
 
-Low level macro driven OpenGL abstractions over Lime Application Framework - https://github.com/maitag/peote-view
+OpenGL abstraction layer for fast 2d-rendering on lime - https://github.com/openfl/lime/
 
-### raylibhx/
+### [/raylibhx/readme.md](raylibhx)/
 
-C based OpenGL via raylib hxcpp bindings - https://github.com/foreignsasquatch/raylib-hx
+raylib externs (small OpenGL drawing toolkit in c) - https://github.com/raysan5/raylib
 
-### flixel/
+### [/flixel/readme.md](flixel)/
 
-High level 2D game framework over OpenFL (also Lime Application Framework) - https://github.com/HaxeFlixel/flixel
+OpenFL based game engine (also lime) - https://github.com/HaxeFlixel/flixel
 
 ## The Game
 
