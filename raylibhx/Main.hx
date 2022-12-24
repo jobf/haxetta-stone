@@ -24,8 +24,8 @@ class Main {
 
 		var black = 0x000000ff;
 		
-		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		// var init_scene = game -> new DesignerScene(game, bounds_scene, black);
 		
 		var implementation_graphics = new Graphics(bounds_viewport);
 		var implementation_input = new Input();
