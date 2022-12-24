@@ -89,6 +89,8 @@ class Particle extends AbstractParticle {
 		// update size
 		element.scale.x = size;
 		element.scale.y = size;
+
+		element.centerOrigin();
 	}
 }
 
