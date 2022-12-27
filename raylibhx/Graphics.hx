@@ -3,14 +3,19 @@ import GraphicsAbstract;
 
 class Graphics extends GraphicsAbstract {
 	var lines:Array<AbstractLine> = [];
+	var fills:Array<AbstractFillRectangle> = [];
 
 	public function draw() {
 		for (line in lines) {
 			line.draw();
 		}
+		for (fill in fills) {
+			fill.draw();
+		}
 	}
 
 	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
+		trace('make_line $from_x $from_y $to_x $to_y');
 		lines.push(new Line({
 			x: from_x,
 			y: from_y
@@ -18,11 +23,16 @@ class Graphics extends GraphicsAbstract {
 			x: to_x,
 			y: to_y
 		}, color));
-		return lines[lines.length -1];
+		return lines[lines.length - 1];
 	}
 
 	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
 		return new Particle(Std.int(x), Std.int(y), size, color, lifetime_seconds);
+	}
+
+	public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle {
+		fills.push(new Fill(x, y, width, height, color));
+		return fills[fills.length -1];
 	}
 }
 
@@ -32,14 +42,6 @@ class Line extends AbstractLine {
 	}
 
 	public function draw():Void {
-		// if (point_to != null) {
-		// 	this.point_to.x = point_to.x;
-		// 	this.point_to.y = point_to.y;
-		// }
-		// if (color != null) {
-		// 	this.color = color;
-		// }
-		
 		var from_x = Std.int(this.point_from.x);
 		var from_y = Std.int(this.point_from.y);
 		var to_x = Std.int(this.point_to.x);
@@ -49,6 +51,19 @@ class Line extends AbstractLine {
 	}
 
 	var color_raylib:Color;
+}
+
+class Fill extends AbstractFillRectangle {
+	var color_raylib:Color;
+
+	public function draw() {
+		var x = Std.int(x - (width * 0.5));
+		var y = Std.int(y - (height * 0.5));
+		var w = Std.int(width);
+		var h = Std.int(height);
+		color_raylib = to_raylib_color(color);
+		Rl.drawRectangle(x, y, w, h, color_raylib);
+	}
 }
 
 class Particle extends AbstractParticle {

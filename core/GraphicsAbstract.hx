@@ -16,6 +16,24 @@ abstract class AbstractLine {
 	abstract public function draw():Void;
 }
 
+abstract class AbstractFillRectangle {
+	public var x:Float;
+	public var y:Float;
+	public var width:Float;
+	public var height:Float;
+	public var color:RGBA;
+
+	public function new(x:Float, y:Float, width:Float, height:Float, color:RGBA) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.color = color;
+	}
+
+	abstract public function draw():Void;
+}
+
 @:structInit
 class Polygon {
 	var lines:Array<AbstractLine>;
@@ -126,6 +144,8 @@ abstract class GraphicsAbstract {
 	abstract public function draw():Void;
 
 	abstract public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine;
+
+	abstract public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle;
 
 	abstract public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle;
 

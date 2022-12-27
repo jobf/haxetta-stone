@@ -20,6 +20,7 @@ class Main extends Application {
 	}
 
 	public function init(window:Window) {
+
 		var bounds_viewport:RectangleGeometry = {
 			y: 0,
 			x: 0,
@@ -35,10 +36,11 @@ class Main extends Application {
 		}
 
 		var black = 0x000000ff;
-		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-		// var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
 
 		implementation_graphics = new Graphics(window, bounds_viewport);
+		final mouse_quantize = 20;
 		implementation_input = new Input(window);
 
 		game = new Game(init_scene, implementation_graphics, implementation_input);

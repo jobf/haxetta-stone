@@ -6,6 +6,7 @@ import peote.view.*;
 
 class Graphics extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
+	var fills:Array<PeoteFill> = [];
 
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
@@ -36,6 +37,12 @@ class Graphics extends GraphicsAbstract {
 		return lines[lines.length - 1];
 	}
 
+	public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle {
+		var element = make_rectangle(x, y, width, height, color);
+		fills.push(new PeoteFill(element));
+		return fills[fills.length - 1];
+	}
+
 	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:RGBA):Rectangle {
 		final rotation = 0;
 		var element = new Rectangle(x, y, width, height, rotation, cast color);
@@ -51,6 +58,9 @@ class Graphics extends GraphicsAbstract {
 	public function draw() {
 		for (line in lines) {
 			line.draw();
+		}
+		for(fill in fills){
+			fill.draw();
 		}
 		rectangleBuffer.update();
 		lineBuffer.update();
@@ -91,7 +101,6 @@ class Rectangle implements Element {
 	}
 }
 
-
 class Line implements Element {
 	@rotation public var rotation:Float = 0.0;
 	@sizeX @varying public var w:Float;
@@ -112,6 +121,21 @@ class Line implements Element {
 	}
 }
 
+class PeoteFill extends AbstractFillRectangle {
+	var element:Rectangle;
+
+	public function new(element:Rectangle) {
+		super(element.x, element.y, element.w, element.h, cast element.color);
+		this.element = element;
+	}
+
+	public function draw() {
+		element.x = x;
+		element.y = y;
+		element.w = width;
+		element.h = height;
+	}
+}
 
 class PeoteLine extends AbstractLine {
 	var a:Float = 0;

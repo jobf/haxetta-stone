@@ -14,7 +14,6 @@ class Main {
 		Rl.initWindow(bounds_viewport.width, bounds_viewport.height, "particles");
 		Rl.setWindowState(Rl.ConfigFlags.VSYNC_HINT);
 
-		
 		var bounds_scene:RectangleGeometry = {
 			y: 0,
 			x: 0,
@@ -24,8 +23,8 @@ class Main {
 
 		var black = 0x000000ff;
 		
-		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-		// var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
+		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
 		
 		var implementation_graphics = new Graphics(bounds_viewport);
 		var implementation_input = new Input();
@@ -33,7 +32,7 @@ class Main {
 		game = new Game(init_scene, implementation_graphics, implementation_input);
 
 		while (!Rl.windowShouldClose()) {
-			Rl.clearBackground(Colors.BLACK); // todo
+			Rl.clearBackground(Colors.BLACK);
 			game.update(Rl.getFrameTime());
 			Rl.beginDrawing();
 			game.draw();

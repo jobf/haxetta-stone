@@ -1,3 +1,5 @@
+import openfl.net.FileFilter;
+import flixel.input.FlxInput;
 import Engine;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
@@ -9,18 +11,22 @@ using flixel.util.FlxSpriteUtil;
 class Graphics extends GraphicsAbstract {
 	var elements:FlxGroup;
 	var lines:FlxTypedGroup<FlxLine>;
+	var fills:Array<Fill>;
 
 	public function new(elements:FlxGroup, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.elements = elements;
 		lines = new FlxTypedGroup<FlxLine>();
 		elements.add(lines);
+		fills = [];
 	}
 
 	public function draw() {
-		// ?
 		for (line in lines) {
 			line.draw();
+		}
+		for (fill in fills) {
+			fill.draw();
 		}
 	}
 
@@ -43,6 +49,13 @@ class Graphics extends GraphicsAbstract {
 		elements.add(particle.element);
 		return particle;
 	}
+
+	public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle {
+		var fill = new Fill(x, y, width, height, color);
+		fills.push(fill);
+		elements.add(fill.element);
+		return fill;
+	}
 }
 
 class Line extends AbstractLine {
@@ -61,8 +74,25 @@ class Line extends AbstractLine {
 		// update color
 		element.color_abstract = color;
 
-		// element.draw will be called from flixel draw loop 
+		// element.draw will be called from flixel draw loop
 		// ? - todo rename abstract 'draw' to 'sync' to not confuse with element.draw??
+	}
+}
+
+class Fill extends AbstractFillRectangle {
+	public var element(default, null):FlxFill;
+
+	public function new(x:Int, y:Int, width:Int, height:Int, color:RGBA) {
+		super(x, y, width, height, color);
+		element = new FlxFill(x, y, width, height, color);
+	}
+
+	public function draw():Void {
+		element.x = x;
+		element.y  = y;
+		element.scale.x = width;
+		element.scale.y = height;
+		element.color = cast_color(color);
 	}
 }
 
@@ -113,11 +143,22 @@ function set_element_color(element:FlxSprite, color:RGBA) {
 	element.alpha = color_flixel.alphaFloat;
 }
 
+class FlxFill extends FlxSprite {
+	var color_abstract:RGBA;
+
+	public function new(x:Int, y:Int, width:Int, height:Int, color:RGBA) {
+		super(x, y);
+		makeGraphic(1, 1, FlxColor.WHITE);
+		color_abstract = color;
+		this.color = cast_color(color_abstract);
+	}
+}
 
 class FlxLine extends FlxSprite {
 	public var point_from:Vector;
 	public var point_to:Vector;
 	public var color_abstract:RGBA;
+
 	var a:Float;
 	var b:Float;
 
