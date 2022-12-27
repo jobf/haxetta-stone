@@ -1,10 +1,9 @@
-import lime.ui.MouseButton;
-import InputAbstract.Button;
-import lime.ui.KeyCode;
-import lime.ui.Window;
+import InputAbstract;
+import lime.ui.*;
 
 class Input extends InputAbstract {
 	public function new(window:Window) {
+		this.window = window;
 		window.onKeyDown.add((code, modifier) -> keyboard_down.push(to_keyboard_button(code)));
 
 		window.onKeyUp.add((code, modifier) -> keyboard_up.push(to_keyboard_button(code)));
@@ -31,7 +30,6 @@ class Input extends InputAbstract {
 			on_released(button);
 		}
 		mouse_up = [];
-
 	}
 
 	public function raise_keyboard_button_events() {
@@ -58,6 +56,16 @@ class Input extends InputAbstract {
 	var mouse_y:Float;
 	var mouse_down:Array<Button> = [];
 	var mouse_up:Array<Button> = [];
+
+	var window:Window;
+
+	public function mouse_cursor_hide() {
+		window.cursor = null;
+	}
+
+	public function mouse_cursor_show() {
+		window.cursor = ARROW;
+	}
 }
 
 function to_mouse_button(button:MouseButton):Button {

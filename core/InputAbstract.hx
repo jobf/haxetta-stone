@@ -33,6 +33,10 @@ abstract class InputAbstract {
 
 	abstract public function update_mouse_position():Void;
 
+	abstract public function mouse_cursor_hide():Void;
+	
+	abstract public function mouse_cursor_show():Void;
+
 	public var on_pressed:(button:Button) -> Void = b -> trace(b);
 	public var on_released:(button:Button) -> Void = b -> trace(b);
 }

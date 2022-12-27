@@ -61,4 +61,12 @@ class Input extends InputAbstract {
 		mouse_position.x = mouse_flx_point.x;
 		mouse_position.y = mouse_flx_point.y;
 	}
+
+	public function mouse_cursor_hide() {
+		FlxG.mouse.visible = false;
+	}
+
+	public function mouse_cursor_show() {
+		FlxG.mouse.visible = true;
+	}
 }

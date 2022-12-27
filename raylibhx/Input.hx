@@ -61,4 +61,12 @@ class Input extends InputAbstract {
 		mouse_position.x = rl_mouse_position.x;
 		mouse_position.y = rl_mouse_position.y;
 	}
+
+	public function mouse_cursor_hide() {
+		Rl.hideCursor();
+	}
+
+	public function mouse_cursor_show() {
+		Rl.showCursor();
+	}
 }
