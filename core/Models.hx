@@ -1,5 +1,10 @@
 import Vector;
 
+@:structInit
+class Model{
+	public var points:Array<Vector>;
+}
+
 class IsoscelesModel {
 	public var a_point:Vector;
 	public var b_point:Vector;

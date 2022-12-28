@@ -19,21 +19,26 @@ class Graphics extends GraphicsAbstract {
 		var rectangleProgram = new Program(rectangleBuffer);
 		display.addProgram(rectangleProgram);
 
-		lineBuffer = new Buffer<Line>(256, 256, true);
-		var lineProgram = new Program(lineBuffer);
+		buffer_lines = new Buffer<Line>(256, 256, true);
+		var lineProgram = new Program(buffer_lines);
 		display.addProgram(lineProgram);
 	}
 
 	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
 		var element = new Line(from_x, from_y, 1, 1, 0, cast color);
-		lineBuffer.addElement(element);
+		buffer_lines.addElement(element);
 		lines.push(new PeoteLine({
 			x: from_x,
 			y: from_y
 		}, {
 			x: to_x,
 			y: to_y
-		}, element));
+		}, 
+		element, 
+		line -> {
+			buffer_lines.removeElement(line.element);
+			lines.remove(line);
+		}));
 		return lines[lines.length - 1];
 	}
 
@@ -59,16 +64,16 @@ class Graphics extends GraphicsAbstract {
 		for (line in lines) {
 			line.draw();
 		}
-		for(fill in fills){
+		for (fill in fills) {
 			fill.draw();
 		}
 		rectangleBuffer.update();
-		lineBuffer.update();
+		buffer_lines.update();
 	}
 
 	var peoteview:PeoteView;
 	var display:Display;
-	var lineBuffer:Buffer<Line>;
+	var buffer_lines:Buffer<Line>;
 	var rectangleBuffer:Buffer<Rectangle>;
 
 	public function translate_mouse(x:Float, y:Float):Vector {
@@ -140,11 +145,14 @@ class PeoteFill extends AbstractFillRectangle {
 class PeoteLine extends AbstractLine {
 	var a:Float = 0;
 	var b:Float = 0;
-	var element:Line;
+	var remove_from_buffer:PeoteLine->Void;
 
-	public function new(point_from:Vector, point_to:Vector, element:Line) {
+	public var element(default, null):Line;
+
+	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void) {
 		super(point_from, point_to, cast element.color);
 		this.element = element;
+		this.remove_from_buffer = remove_from_buffer;
 		draw();
 	}
 
@@ -163,6 +171,10 @@ class PeoteLine extends AbstractLine {
 
 		// line length
 		element.h = Math.sqrt(a * a + b * b);
+	}
+
+	public function erase():Void {
+		remove_from_buffer(this);
 	}
 }
 
