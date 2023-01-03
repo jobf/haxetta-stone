@@ -1,4 +1,3 @@
-import haxe.display.Display.Package;
 import GraphicsAbstract;
 import Models;
 import Disk;
@@ -80,7 +79,7 @@ class Designer {
 		figure_init();
 	}
 
-	function map_figure(model:Model):Figure {
+	function map_figure(model:FigureModel):Figure {
 		
 		var convert_line:LineModel->LineModel = line -> {
 			from: translation.model_to_view_point(line.from),
@@ -211,11 +210,11 @@ class Designer {
 				to: translation.view_to_model_point(line.to)
 			}
 
-			var convert_model:Model->Model = model -> {
+			var convert_model:FigureModel->FigureModel = model -> {
 				lines: model.lines.map(line -> convert_line(line))
 			}
 
-			var models:Array<Model> = file.models.map(model -> convert_model(model));
+			var models:Array<FigureModel> = file.models.map(model -> convert_model(model));
 
 			Disk.file_write_models(models, 'converted_' + state_file_path);
 		} else {

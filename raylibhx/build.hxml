@@ -1,4 +1,5 @@
 -lib raylib-hx
+-lib json2object
 -cp ../core
 -cp ../asteroids
 -cp src

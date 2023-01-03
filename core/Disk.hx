@@ -7,11 +7,11 @@ import Models;
 
 @:structInit
 class FileModel {
-	public var models:Array<Model>;
+	public var models:Array<FigureModel>;
 }
 
 class Disk {
-	public static function file_write_models(models:Array<Model>, file_path:String):Void {
+	public static function file_write_models(models:Array<FigureModel>, file_path:String):Void {
 		var file:FileModel = {
 			models: models
 		}

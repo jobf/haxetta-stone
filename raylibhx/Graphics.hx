@@ -22,8 +22,14 @@ class Graphics extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		}, color));
+		},
+		color,
+		line -> line_erase(line)));
 		return lines[lines.length - 1];
+	}
+
+	function line_erase(line:Line) {
+		lines.remove(line);
 	}
 
 	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
@@ -37,8 +43,10 @@ class Graphics extends GraphicsAbstract {
 }
 
 class Line extends AbstractLine {
-	public function new(point_from:Vector, point_to:Vector, color:RGBA) {
+	var remove_from_buffer:Line->Void;
+	public function new(point_from:Vector, point_to:Vector, color:RGBA, remove_from_buffer:Line->Void) {
 		super(point_from, point_to, color);
+		this.remove_from_buffer = remove_from_buffer;
 	}
 
 	public function draw():Void {
@@ -51,6 +59,10 @@ class Line extends AbstractLine {
 	}
 
 	var color_raylib:Color;
+
+	public function erase() {
+		remove_from_buffer(this);
+	}
 }
 
 class Fill extends AbstractFillRectangle {

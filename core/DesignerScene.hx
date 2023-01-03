@@ -1,4 +1,4 @@
-import Editor.Designer;
+import Editor;
 import Models;
 import GraphicsAbstract;
 import Controller;

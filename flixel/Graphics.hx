@@ -37,10 +37,17 @@ class Graphics extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		}, color);
+		},
+		color,
+		line -> line_erase(line));
 
 		elements.add(line.element);
 		return line;
+	}
+
+	function line_erase(line:Line) {
+		line.element.destroy();
+		elements.remove(line.element);
 	}
 
 	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
@@ -60,10 +67,12 @@ class Graphics extends GraphicsAbstract {
 
 class Line extends AbstractLine {
 	public var element(default, null):FlxLine;
+	var remove_from_buffer:Line->Void;
 
-	public function new(point_from:Vector, point_to:Vector, color:RGBA) {
+	public function new(point_from:Vector, point_to:Vector, color:RGBA, remove_from_buffer:Line->Void) {
 		super(point_from, point_to, color);
 		element = new FlxLine(point_from, point_to, color);
+		this.remove_from_buffer = remove_from_buffer;
 	}
 
 	public function draw():Void {
@@ -77,6 +86,10 @@ class Line extends AbstractLine {
 		// element.draw will be called from flixel draw loop
 		// ? - todo rename abstract 'draw' to 'sync' to not confuse with element.draw??
 	}
+
+	public function erase() {
+		remove_from_buffer(this);
+	}
 }
 
 class Fill extends AbstractFillRectangle {
@@ -89,7 +102,7 @@ class Fill extends AbstractFillRectangle {
 
 	public function draw():Void {
 		element.x = x;
-		element.y  = y;
+		element.y = y;
 		element.scale.x = width;
 		element.scale.y = height;
 		element.color = cast_color(color);

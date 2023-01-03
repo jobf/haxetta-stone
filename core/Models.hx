@@ -1,7 +1,7 @@
 import Vector;
 
 @:structInit
-class Model{
+class FigureModel{
 	public var lines:Array<LineModel>;
 }
 

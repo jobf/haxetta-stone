@@ -8,7 +8,7 @@ class Main {
 	static function main() {
 		var bounds_viewport:RectangleGeometry = {
 			width: 640,
-			height: 480
+			height: 640
 		}
 
 		Rl.initWindow(bounds_viewport.width, bounds_viewport.height, "particles");
@@ -25,6 +25,8 @@ class Main {
 		
 		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
 		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		// todo implement abstract asset loading before ModelTestScene can work 
+		// var init_scene = game -> new ModelTestScene(game, bounds_scene, black);
 		
 		var implementation_graphics = new Graphics(bounds_viewport);
 		var implementation_input = new Input();
