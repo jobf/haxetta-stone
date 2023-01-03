@@ -122,32 +122,32 @@ function to_keyboard_button(code:KeyCode):Button {
 		// case CARET:
 		// case UNDERSCORE:
 		// case GRAVE:
-		// case A:
-		// case B:
-		// case C:
-		// case D:
-		// case E:
-		// case F:
-		// case G:
-		// case H:
-		// case I:
-		// case J:
-		// case K:
-		// case L:
-		// case M:
-		// case N:
-		// case O:
-		// case P:
-		// case Q:
-		// case R:
-		// case S:
-		// case T:
-		// case U:
-		// case V:
-		// case W:
-		// case X:
-		// case Y:
-		// case Z:
+		case A: KEY_A;
+		case B: KEY_B;
+		case C: KEY_C;
+		case D: KEY_D;
+		case E: KEY_E;
+		case F: KEY_F;
+		case G: KEY_G;
+		case H: KEY_H;
+		case I: KEY_I;
+		case J: KEY_J;
+		case K: KEY_K;
+		case L: KEY_L;
+		case M: KEY_M;
+		case N: KEY_N;
+		case O: KEY_O;
+		case P: KEY_P;
+		case Q: KEY_Q;
+		case R: KEY_R;
+		case S: KEY_S;
+		case T: KEY_T;
+		case U: KEY_U;
+		case V: KEY_V;
+		case W: KEY_W;
+		case X: KEY_X;
+		case Y: KEY_Y;
+		case Z: KEY_Z;
 		// case DELETE:
 		// case CAPS_LOCK:
 		// case F1:

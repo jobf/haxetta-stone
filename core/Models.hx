@@ -2,7 +2,13 @@ import Vector;
 
 @:structInit
 class Model{
-	public var points:Array<Vector>;
+	public var lines:Array<LineModel>;
+}
+
+@:structInit
+class LineModel{
+	public var from:Vector;
+	public var to:Vector;
 }
 
 class IsoscelesModel {

@@ -29,9 +29,9 @@ class Game {
 abstract class Scene {
 	var game:Game;
 	var bounds:RectangleGeometry;
-	public var color(default, null):Int;
+	public var color(default, null):RGBA;
 
-	public function new(game:Game, bounds:RectangleGeometry, color:Int) {
+	public function new(game:Game, bounds:RectangleGeometry, color:RGBA) {
 		this.game = game;
 		this.bounds = bounds;
 		this.color = color;

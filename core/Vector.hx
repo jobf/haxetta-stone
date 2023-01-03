@@ -188,7 +188,7 @@ class VectorLogic {
 
 		// since floats are so minutely accurate, add
 		// a little buffer zone that will give collision
-		var buffer = 0.1; // higher # = less accurate
+		var buffer = 0.3; // higher # = less accurate
 
 		// if the two distances are equal to the line's
 		// length, the point is on the line!

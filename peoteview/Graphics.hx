@@ -33,12 +33,10 @@ class Graphics extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		}, 
-		element, 
-		line -> {
-			buffer_lines.removeElement(line.element);
-			lines.remove(line);
-		}));
+		},
+		element,
+		line -> line_erase(line)));
+
 		return lines[lines.length - 1];
 	}
 
@@ -58,6 +56,13 @@ class Graphics extends GraphicsAbstract {
 	public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle {
 		var element = make_rectangle(x, y, size, size, cast color);
 		return new Particle(Std.int(x), Std.int(y), size, cast color, lifetime_seconds, element);
+	}
+
+	public function line_erase(line:PeoteLine) {
+		buffer_lines.removeElement(line.element);
+		trace('removed line from buffer');
+		lines.remove(line);
+		trace('removed line from lines array');
 	}
 
 	public function draw() {
@@ -81,6 +86,10 @@ class Graphics extends GraphicsAbstract {
 			x: display.localX(x),
 			y: display.localY(y)
 		}
+	}
+
+	public function set_color(color:RGBA){
+		display.color = cast color;
 	}
 }
 

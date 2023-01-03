@@ -1,3 +1,4 @@
+import Models.LineModel;
 import Engine;
 
 using Vector;
@@ -145,13 +146,21 @@ abstract class GraphicsAbstract {
 	abstract public function draw():Void;
 
 	abstract public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine;
-	
 
 	abstract public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle;
 
 	abstract public function make_particle(x:Float, y:Float, size:Int, color:RGBA, lifetime_seconds:Float):AbstractParticle;
 
-	public function model_to_lines(model:Array<Vector>, color:RGBA):Array<AbstractLine>{
+	public function model_to_lines(model:Array<LineModel>, color:RGBA):Array<AbstractLine>{
+		var lines:Array<AbstractLine> = [];
+		for (model in model) {
+			lines.push(make_line(model.from.x, model.from.y, model.to.x, model.to.y, color));
+		}
+		return lines;
+	}
+
+
+	public function model_points_to_lines(model:Array<Vector>, color:RGBA):Array<AbstractLine>{
 		var lines:Array<AbstractLine> = [];
 		for (a in 0...model.length) {
 			var from = model[a % model.length];
@@ -165,7 +174,7 @@ abstract class GraphicsAbstract {
 		return {
 			model: model,
 			color: color,
-			lines: model_to_lines(model, color)
+			lines: model_points_to_lines(model, color)
 		}
 	}
 }

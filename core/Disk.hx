@@ -1,6 +1,6 @@
 import sys.FileSystem;
-import json2object.*;
 import sys.io.File;
+import json2object.*;
 import Models;
 
 @:structInit
@@ -31,7 +31,11 @@ class Disk {
 		}
 
 		return {
-			models: []
+			models: [
+				{
+					lines: []
+				}
+			]
 		}
 	}
 }
