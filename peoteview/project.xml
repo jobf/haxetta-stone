@@ -16,6 +16,8 @@
 	<source path="../core" />
 	<source path="../asteroids" />
 	<source path="." />
+
+	<assets path="assets" />
 	
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />

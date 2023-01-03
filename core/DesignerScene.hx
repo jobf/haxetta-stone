@@ -24,17 +24,17 @@ class DesignerScene extends Scene {
 		var size_segment = Std.int(game.graphics.viewport_bounds.width / 7);
 		for (x in 0...Std.int(bounds.width / size_segment)) {
 			var x_ = Std.int(x * size_segment);
-			game.graphics.make_line(x_, 0, x_, bounds.height, 0xD1D76240);
+			game.graphics.make_line(x_, 0, x_, bounds.height, 0xD1D76200);
 		}
 		for (y in 0...Std.int(bounds.height / size_segment)) {
 			var y_ = Std.int(y * size_segment);
-			game.graphics.make_line(0, y_, bounds.width, y_, 0xD1D76240);
+			game.graphics.make_line(0, y_, bounds.width, y_, 0xD1D76200);
 		}
 
-		var x_axis_line = game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB50);
-		var y_axis_line = game.graphics.make_line(x_center, 0, x_center, bounds.height, 0xFF85AB50);
+		var x_axis_line = game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB00);
+		var y_axis_line = game.graphics.make_line(x_center, 0, x_center, bounds.height, 0xFF85AB00);
 
-		designer = new Designer(size_segment, game.graphics);
+		designer = new Designer(size_segment, game.graphics, bounds);
 
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
@@ -45,7 +45,7 @@ class DesignerScene extends Scene {
 				on_pressed: () -> handle_mouse_press_right(),
 			},
 			MOUSE_MIDDLE => {
-				on_pressed: () -> designer.save_state(),
+				on_pressed: () -> designer.save_state(true),
 			},
 			KEY_LEFT => {
 				on_pressed: () -> designer.set_active_figure(-1)

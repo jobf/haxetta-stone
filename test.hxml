@@ -1,5 +1,6 @@
 -cp core
 -cp test
 -lib utest
+-lib json2object
 -main test.RunTests
 --interp

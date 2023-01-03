@@ -7,7 +7,12 @@ import lime.app.Application;
 import lime.ui.Window;
 
 class Main extends Application {
-	override function onWindowCreate():Void {
+	// override function onWindowCreate():Void {
+	// 	window 
+	// }
+
+	override function onPreloadComplete() {
+		super.onPreloadComplete();
 		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
 				try
@@ -38,7 +43,8 @@ class Main extends Application {
 		var black = 0x000000ff;
 		var slate = 0x151517ff;
 		// var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		// var init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		var init_scene = game -> new ModelTestScene(game, bounds_scene, black);
 
 		implementation_graphics = new Graphics(window, bounds_viewport);
 		implementation_input = new Input(window);
@@ -62,6 +68,11 @@ class Main extends Application {
 	
 	override function render(context:RenderContext) {
 		super.render(context);
+				
+		if (!isReady) {
+			return;
+		}
+
 		game.draw();
 	}
 

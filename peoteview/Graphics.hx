@@ -60,9 +60,9 @@ class Graphics extends GraphicsAbstract {
 
 	public function line_erase(line:PeoteLine) {
 		buffer_lines.removeElement(line.element);
-		trace('removed line from buffer');
+		// trace('removed line from buffer');
 		lines.remove(line);
-		trace('removed line from lines array');
+		// trace('removed line from lines array');
 	}
 
 	public function draw() {
