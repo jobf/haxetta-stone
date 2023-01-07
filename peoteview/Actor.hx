@@ -10,7 +10,7 @@ class Actor {
 	public var y_wobble:Float = 0.1;
 
 	var x:Float;
-	var y:Float;
+	public var y:Float;
 	var oscillate_y:Float;
 
 	public function new(graphic:Shape) {

@@ -32,12 +32,14 @@ class SpaceScene extends Scene {
 		model_translation = new EditorTranslation(bounds, 1, 1);
 
 		settings = new SettingsController(new DiskSys());
+
+		settings.disk_load();
 		var bot = new Shape(x_center, y_center, game.graphics, file.models[0], model_translation);
-		bot.entity.scale = 20;
-		bot.entity.rotation = -3.8;
+		bot.entity.scale = 83;
+		bot.entity.rotation = -3.78;
 		bot.entity.set_rotation_direction(0);
 		@:privateAccess
-		bot.entity.lines.origin.y = 0.7;
+		bot.entity.lines.origin.y = 13.4;
 		bot.entity.scale = 218;
 		actor = new Actor(bot);
 
@@ -118,17 +120,20 @@ class SpaceScene extends Scene {
 				encoders: [
 					VOLUME => {
 						value: fill.lines.origin.y,
-						on_change: f -> fill.lines.origin.y = f,
+						on_change: f -> {
+							fill.lines.origin.y = f;
+							actor.y = fill.lines.origin.y;
+						},
 						name: "y origin ",
 						increment: 0.1
 					},
-					PAN => {
-						value: fill.offset,
-						on_change: f -> fill.offset = f,
-						name: "offset",
-						increment: 1,
-						minimum: -1000
-					},
+					// PAN => {
+					// 	value: fill.rotation_speed,
+					// 	on_change: f -> fill.rotation_speed = f,
+					// 	name: "speed",
+					// 	increment: 0.01,
+					// 	minimum: -1000
+					// },
 					FILTER => {
 						value: fill.scale,
 						on_change: f -> fill.scale = Std.int(f),
@@ -149,7 +154,9 @@ class SpaceScene extends Scene {
 		var g:Graphics = cast game.graphics;
 		@:privateAccess
 		var display = g.display;
-
+		display.zoom = 0.44;
+		display.xOffset = 349;
+		display.yOffset = 1000;
 		settings.pad_add({
 			name: "camera",
 			index_palette: 4,
@@ -190,6 +197,42 @@ class SpaceScene extends Scene {
 		bind_geo_pad(bot.entity, "bot", 0);
 		// @:privateAccess
 		// bind_geo_pad(cheese.entity, "cheese", 1);
+
+		settings.pad_add({
+			name: "cheese",
+			index_palette: 4,
+			// index: index,
+			encoders: [
+				VOLUME => {
+					value: cheeseWheel.y_origin,
+					on_change: f -> cheeseWheel.y_origin = f,
+					name: "y origin",
+					minimum: -1000,
+					increment: 0.1
+				},
+				PAN => {
+					value: cheeseWheel.scale,
+					on_change: f -> cheeseWheel.scale = Std.int(f),
+					name: "scale",
+					minimum: 0.1,
+					increment: 1
+				},
+				FILTER => {
+					value: cheeseWheel.rotation_speed,
+					on_change: f -> cheeseWheel.rotation_speed = f,
+					name: "speed",
+					increment: 0.01,
+					minimum: -1000
+				},
+				// RESONANCE => {
+				// 	value: display.zoom,
+				// 	on_change: f -> display.zoom = f,
+				// 	name: "zoom",
+				// 	minimum: 0.1,
+				// 	increment: 0.1
+				// }
+			]
+		}, page.index);
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -214,6 +257,10 @@ class SpaceScene extends Scene {
 class CheeseWheel {
 	var cheeses:Array<Shape>;
 	var model_translation:EditorTranslation;
+	public var rotation_speed:Float = 0.014;
+
+	public var y_origin:Float = 18.5;
+	public var scale:Int = 92;
 
 	public function new() {
 		cheeses = [];
@@ -223,9 +270,10 @@ class CheeseWheel {
 		this.model_translation = model_translation;
 		var cheese = new Shape(x, y, graphics, model, model_translation);
 		@:privateAccess
-		cheese.entity.lines.origin.y = 2.6;
-		cheese.entity.scale = 76;
+		cheese.entity.lines.origin.y = y_origin;
+		cheese.entity.scale = scale;
 		cheese.entity.set_rotation_direction(-1);
+		cheese.entity.rotation_speed = rotation_speed;
 		cheeses.push(cheese);
 		return cheese;
 	}

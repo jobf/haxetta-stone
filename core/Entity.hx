@@ -15,7 +15,7 @@ class Entity {
 	public var scale = 1;
 
 	var rotation_direction:Int = 0;
-	var rotation_speed:Float;
+	public var rotation_speed:Float;
 	var model_points:Array<Vector>;
 	var lines_points:Array<Vector>;
 

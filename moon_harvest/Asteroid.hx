@@ -57,7 +57,7 @@ class Shape {
 
 		var model:Array<Vector> = figureModel.lines.map(model -> translation.model_to_view_point(map(model)));
 		var white:Int = 0xFF00FFff;
-		entity = new Entity(model, x, y, 0.005, graphics);
+		entity = new Entity(model, x, y, 0.05, graphics);
 		center = graphics.make_fill(x, y, 30, 30, 0xFF4444ff);
 
 		// entity.set_rotation_direction(Math.random() > 0.5 ? -1 : 1);
