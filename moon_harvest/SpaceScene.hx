@@ -1,3 +1,4 @@
+import GraphicsAbstract.AbstractLine;
 import Asteroid;
 import lime.utils.Assets;
 import Disk;
@@ -35,12 +36,11 @@ class SpaceScene extends Scene {
 
 		settings.disk_load();
 		var bot = new Shape(x_center, y_center, game.graphics, file.models[0], model_translation);
-		bot.entity.scale = 83;
-		bot.entity.rotation = -3.78;
+		bot.entity.scale = 66;
+		bot.entity.rotation = -3.73;
 		bot.entity.set_rotation_direction(0);
 		@:privateAccess
-		bot.entity.lines.origin.y = 13.4;
-		bot.entity.scale = 218;
+		bot.entity.lines.origin.y = 24.4;
 		actor = new Actor(bot);
 
 		var actions:Map<Button, Action> = [
@@ -154,9 +154,9 @@ class SpaceScene extends Scene {
 		var g:Graphics = cast game.graphics;
 		@:privateAccess
 		var display = g.display;
-		display.zoom = 0.44;
-		display.xOffset = 349;
-		display.yOffset = 1000;
+		display.zoom = 1.16;
+		display.xOffset = 859;
+		display.yOffset = 1670;
 		settings.pad_add({
 			name: "camera",
 			index_palette: 4,
@@ -166,14 +166,16 @@ class SpaceScene extends Scene {
 					value: display.xOffset,
 					on_change: f -> display.xOffset = f,
 					name: "x offset",
-					minimum: -1000,
+					minimum: -100000,
+					maximum: 100000,
 					increment: 10
 				},
 				PAN => {
 					value: display.yOffset,
 					on_change: f -> display.yOffset = f,
 					name: "y offset",
-					minimum: -1000,
+					minimum: -100000,
+					maximum: 100000,
 					increment: 10
 				},
 				// FILTER => {
@@ -188,7 +190,7 @@ class SpaceScene extends Scene {
 					on_change: f -> display.zoom = f,
 					name: "zoom",
 					minimum: 0.1,
-					increment: 0.1
+					increment: 0.01
 				}
 			]
 		}, page.index);
@@ -222,15 +224,15 @@ class SpaceScene extends Scene {
 					on_change: f -> cheeseWheel.rotation_speed = f,
 					name: "speed",
 					increment: 0.01,
-					minimum: -1000
+					minimum: -100000,
 				},
-				// RESONANCE => {
-				// 	value: display.zoom,
-				// 	on_change: f -> display.zoom = f,
-				// 	name: "zoom",
-				// 	minimum: 0.1,
-				// 	increment: 0.1
-				// }
+				RESONANCE => {
+					value: cheeseWheel.overlap,
+					on_change: f -> cheeseWheel.overlap = f,
+					name: "overlap",
+					minimum: 0.1,
+					increment: 0.1
+				}
 			]
 		}, page.index);
 	}
@@ -239,7 +241,8 @@ class SpaceScene extends Scene {
 		cheeseWheel.update(elapsed_seconds);
 		actor.update(elapsed_seconds);
 
-		var overlaps = cheeseWheel.overlaps(actor.graphic.entity.collision_center(model_translation));
+		// var overlaps = cheeseWheel.overlaps(actor.graphic.entity.collision_center(model_translation));
+		var overlaps = cheeseWheel.overlaps_a_line(actor.graphic.entity.lines.lines);
 		for (cheese in overlaps) {
 			cheeseWheel.remove(cheese);
 			// final red:Int = 0xFF0000ff;
@@ -261,6 +264,7 @@ class CheeseWheel {
 
 	public var y_origin:Float = 18.5;
 	public var scale:Int = 92;
+	public var overlap:Float = 5.787;
 
 	public function new() {
 		cheeses = [];
@@ -279,9 +283,32 @@ class CheeseWheel {
 	}
 
 	public function overlaps(target:Vector):Array<Shape> {
-		var matching = cheeses.filter(shape -> target.point_overlaps_circle(shape.entity.collision_center(model_translation), 20));
+		var matching = cheeses.filter(shape -> target.point_overlaps_circle(shape.entity.collision_center(model_translation), overlap));
 		return matching;
 	}
+
+	public function overlaps_a_line(target_lines:Array<AbstractLine>):Array<Shape> {
+		var collides:(target:AbstractLine, lines:Array<AbstractLine>) -> Bool = (target:AbstractLine, lines:Array<AbstractLine>) -> {
+			var collide = false;
+			for(l in lines){
+				if(VectorLogic.line_overlaps_line(target.point_from, target.point_to, l.point_from, l.point_to)){
+					collide = true;
+					break;
+				}
+			}
+			return collide;
+		}
+
+		for (line in target_lines) {
+			var matching = cheeses.filter(shape -> collides(line, shape.entity.lines.lines));
+			if(matching.length > 0){
+				return matching;
+			}
+		}
+
+		return [];
+	}
+
 
 	public function remove(cheese:Shape) {
 		if (cheeses.contains(cheese)) {

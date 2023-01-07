@@ -205,6 +205,35 @@ class VectorLogic {
 		return collision;
 	}
 
+	public static function line_overlaps_line(line_from_a:Vector, line_to_a:Vector, line_from_b:Vector, line_to_b:Vector):Bool {
+		var collision = false;
+		  // calculate the distance to intersection point
+		var uA = ((line_to_b.x-line_from_b.x)*(line_from_a.y-line_from_b.y) - (line_to_b.y-line_from_b.y)*(line_from_a.x-line_from_b.x)) / ((line_to_b.y-line_from_b.y)*(line_to_a.x-line_from_a.x) - (line_to_b.x-line_from_b.x)*(line_to_a.y-line_from_a.y));
+		var uB = ((line_to_a.x-line_from_a.x)*(line_from_a.y-line_from_b.y) - (line_to_a.y-line_from_a.y)*(line_from_a.x-line_from_b.x)) / ((line_to_b.y-line_from_b.y)*(line_to_a.x-line_from_a.x) - (line_to_b.x-line_from_b.x)*(line_to_a.y-line_from_a.y));
+		if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+			collision = true;
+		}
+		// get distance from the point to the two ends of the line
+		// // var d1 = VectorLogic.distance_to(target, line_from);
+		// // var d2 = VectorLogic.distance_to(target, line_to);
+
+		// // // get the length of the line
+		// // var lineLen = VectorLogic.distance_to(line_from, line_to);
+
+		// // since floats are so minutely accurate, add
+		// // a little buffer zone that will give collision
+		// var buffer = 0.3; // higher # = less accurate
+
+		// // if the two distances are equal to the line's
+		// // length, the point is on the line!
+		// // note we use the buffer here to give a range,
+		// // rather than one #
+		// if (d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer) {
+		// 	collision = true;
+		// }
+		return collision;
+	}
+
 	public static function vector_transform(vector:Vector, origin:Vector, scale:Float, x:Float, y:Float, ?rotation_sin:Float, ?rotation_cos:Float, ?rotation:Float):Vector {
 		// rotate
 		var rotation_sin = rotation_sin == null ? Math.sin(rotation) : rotation_sin;

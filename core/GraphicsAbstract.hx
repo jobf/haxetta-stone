@@ -43,7 +43,7 @@ class Polygon {
 		x: 0,
 		y: 0
 	};
-	var lines:Array<AbstractLine>;
+	public var lines:Array<AbstractLine>;
 
 	public var model(default, null):Array<Vector>;
 	public var color:RGBA;

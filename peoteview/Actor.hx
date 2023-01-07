@@ -6,7 +6,7 @@ class Actor {
 	public var envelope:Envelope;
 	public var lfo:LFO;
 	public var graphic:Shape;
-	public var jump_height:Float = -0.3;
+	public var jump_height:Float = -1.5;
 	public var y_wobble:Float = 0.1;
 
 	var x:Float;
