@@ -12,9 +12,7 @@ import Models;
 using Vector;
 
 class SpaceScene extends Scene {
-	var bot:Shape;
-	// var cheese:Shape;
-
+	var actor:Actor;
 	var x_center:Int;
 	var y_center:Int;
 
@@ -34,17 +32,14 @@ class SpaceScene extends Scene {
 		model_translation = new EditorTranslation(bounds, 1, 1);
 
 		settings = new SettingsController(new DiskSys());
-		bot = new Shape(x_center, y_center, game.graphics, file.models[0], model_translation);
+		var bot = new Shape(x_center, y_center, game.graphics, file.models[0], model_translation);
 		bot.entity.scale = 20;
 		bot.entity.rotation = -3.8;
 		bot.entity.set_rotation_direction(0);
-		// bot.set_rotation_direction(1);
-
 		@:privateAccess
 		bot.entity.lines.origin.y = 0.7;
 		bot.entity.scale = 218;
-
-		// cheese_spawn();
+		actor = new Actor(bot);
 
 		var actions:Map<Button, Action> = [
 			// KEY_LEFT => {
@@ -61,34 +56,28 @@ class SpaceScene extends Scene {
 			// },
 			MOUSE_LEFT => {
 				on_pressed: () -> {
-					// var center_cheese = cheese.entity.collision_center(model_translation);
-					// var overlaps = bot.entity.collision_center(model_translation).point_overlaps_circle(center_cheese, 5);
-					// trace(game.input.mouse_position.x
-					// 	+ ', '
-					// 	+ game.input.mouse_position.y
-					// 	+ ' '
-					// 	+ overlaps
-					// 	+ center_cheese.x
-					// 	+ ', '
-					// 	+ center_cheese.y);
+					actor.press();
+				},
+				on_released: () -> {
+					actor.release();
 				}
 			},
 			KEY_T => {
-				on_pressed: () -> {
-					trace('bot');
-					for (vector in bot.entity.collision_points()) {
-						trace(vector.x + ', ' + vector.y);
-					}
-					// trace('cheese');
-					// for (vector in cheese.entity.collision_points()) {
-					// 	trace(vector.x + ', ' + vector.y);
-					// }
-				}
+				// on_pressed: () -> {
+				// 	trace('bot');
+				// 	for (vector in bot.entity.collision_points()) {
+				// 		trace(vector.x + ', ' + vector.y);
+				// 	}
+				// trace('cheese');
+				// for (vector in cheese.entity.collision_points()) {
+				// 	trace(vector.x + ', ' + vector.y);
+				// }
+				// }
 			},
 			KEY_C => {
 				on_pressed: () -> {
 					trace('cheese spawn');
-					cheeseWheel.create(x_center, y_center, file.models[0],  model_translation, game.graphics);
+					cheeseWheel.create(x_center, y_center, file.models[0], model_translation, game.graphics);
 				}
 			}
 		];
@@ -205,31 +194,20 @@ class SpaceScene extends Scene {
 
 	public function update(elapsed_seconds:Float) {
 		cheeseWheel.update(elapsed_seconds);
-		bot.update(elapsed_seconds);
+		actor.update(elapsed_seconds);
 
-		final red:Int = 0xFF0000ff;
-		final white:Int = 0xFFFFFFff;
-		// var overlaps = bot.entity.collision_center(model_translation).point_overlaps_circle(cheese.entity.collision_center(model_translation), 20);
-		// if (overlaps && cheese.is_active) {
-		// 	cheese_collect(cheese);
-		// }
-		var overlaps = cheeseWheel.overlaps(bot.entity.collision_center(model_translation));
-		for(cheese in overlaps){
+		var overlaps = cheeseWheel.overlaps(actor.graphic.entity.collision_center(model_translation));
+		for (cheese in overlaps) {
 			cheeseWheel.remove(cheese);
+			// final red:Int = 0xFF0000ff;
+			// final white:Int = 0xFFFFFFff;
 			// bot.entity.set_color(overlaps ? red : white);
-
 		}
 	}
 
 	public function draw() {
 		cheeseWheel.draw();
-		bot.draw();
-	}
-
-	function cheese_collect(cheese:Shape) {
-		// cheese.is_active = false;
-
-		// cheese = null;
+		actor.draw();
 	}
 }
 
@@ -240,7 +218,7 @@ class CheeseWheel {
 	public function new() {
 		cheeses = [];
 	}
-	
+
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract):Shape {
 		this.model_translation = model_translation;
 		var cheese = new Shape(x, y, graphics, model, model_translation);
@@ -252,10 +230,9 @@ class CheeseWheel {
 		return cheese;
 	}
 
-	public function overlaps(target:Vector):Array<Shape>{
+	public function overlaps(target:Vector):Array<Shape> {
 		var matching = cheeses.filter(shape -> target.point_overlaps_circle(shape.entity.collision_center(model_translation), 20));
 		return matching;
-		// bot.entity.collision_center(model_translation).point_overlaps_circle(cheese.entity.collision_center(model_translation), 20);
 	}
 
 	public function remove(cheese:Shape) {

@@ -35,7 +35,7 @@ class Asteroid {
 
 
 class Shape {
-	public var motion(default, null):MotionComponent;
+	// public var motion(default, null):MotionComponent;
 	public var entity:Entity;
 	public var center:AbstractFillRectangle;
 	var weight:Float = 250;
