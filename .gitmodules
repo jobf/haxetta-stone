@@ -4,3 +4,6 @@
 [submodule "modules/dial-it-in"]
 	path = modules/dial-it-in
 	url = https://github.com/jobf/dial-it-in.git
+[submodule "modules/grig.midi"]
+	path = modules/grig.midi
+	url = https://github.com/osakared/grig.midi.git

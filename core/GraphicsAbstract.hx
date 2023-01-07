@@ -48,8 +48,8 @@ class Polygon {
 	public var model(default, null):Array<Vector>;
 	public var color:RGBA;
 
-	var rotation_sin:Float = 0;
-	var rotation_cos:Float = 0;
+	public var rotation_sin:Float = 0;
+	public var rotation_cos:Float = 0;
 
 	public function draw(x:Float, y:Float, rotation:Float, scale:Float) {
 		rotation_sin = Math.sin(rotation);
@@ -65,6 +65,12 @@ class Polygon {
 
 	public function points():Array<Vector> {
 		return lines.map(line -> line.point_from);
+	}
+
+	public function erase(){
+		for (line in lines) {
+			line.erase();
+		}
 	}
 }
 

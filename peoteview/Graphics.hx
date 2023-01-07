@@ -122,6 +122,11 @@ class Line implements Element {
 	@color public var color:Color;
 	@posX public var x:Float;
 	@posY public var y:Float;
+	// pivot x (rotation offset)
+	@pivotX public var px:Int = 0;
+
+	// pivot y (rotation offset)
+	@pivotY public var py:Int = 0;
 
 	var OPTIONS = {alpha: true};
 

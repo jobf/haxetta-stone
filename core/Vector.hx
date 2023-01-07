@@ -156,6 +156,11 @@ class MotionComponentLogic {
 }
 
 class VectorLogic {
+	public static function point_overlaps_circle(point:Vector, target:Vector, radius:Float){
+		var distance = distance_to(point, target);
+		return distance <= radius;
+	}
+
 	public static function polygon_overlaps_point(polygon_model:Array<Vector>, target:Vector):Bool {
 		var collision = false;
 		for (a in 0...polygon_model.length) {
@@ -222,8 +227,8 @@ class VectorLogic {
 		transformed.x = transformed.x + x;
 		transformed.y = transformed.y + y;
 
-		transformed.x = transformed.x + x_origin;
-		transformed.y = transformed.y + y_origin;
+		transformed.x = transformed.x - x_origin;
+		transformed.y = transformed.y - y_origin;
 
 		return transformed;
 	}

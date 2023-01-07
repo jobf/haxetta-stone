@@ -6,13 +6,13 @@ import Engine;
 using Vector;
 
 class EditorTranslation {
-	var bounds_view:RectangleGeometry;
+	public var bounds_view:RectangleGeometry;
 	var x_center:Int;
 	var y_center:Int;
 	var points_in_translation_x = 10;
 	var points_in_translation_y = 10;
-	var bounds_width_half:Float;
-	var bounds_height_half:Float;
+	public var bounds_width_half:Float;
+	public var bounds_height_half:Float;
 
 	public function new(bounds_view:RectangleGeometry, points_in_translation_x:Int = 3, points_in_translation_y:Int = 3) {
 		this.bounds_view = bounds_view;
@@ -216,7 +216,7 @@ class Designer {
 
 			var models:Array<FigureModel> = file.models.map(model -> convert_model(model));
 
-			Disk.file_write_models(models, 'converted_' + state_file_path);
+			Disk.file_write_models(models, state_file_path);
 		} else {
 			Disk.file_write_models(file.models, state_file_path);
 		}

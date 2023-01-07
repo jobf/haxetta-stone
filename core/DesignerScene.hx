@@ -55,6 +55,9 @@ class DesignerScene extends Scene {
 			},
 			KEY_N => {
 				on_pressed: () -> designer.add_new_figure()
+			},
+			KEY_S => {
+				on_pressed: ()->designer.save_state(true),
 			}
 		];
 
