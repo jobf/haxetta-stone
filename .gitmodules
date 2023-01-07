@@ -1,0 +1,6 @@
+[submodule "modules/akai-fire-hx"]
+	path = modules/akai-fire-hx
+	url = https://github.com/owlbee/akai-fire-hx.git
+[submodule "modules/dial-it-in"]
+	path = modules/dial-it-in
+	url = https://github.com/jobf/dial-it-in.git
