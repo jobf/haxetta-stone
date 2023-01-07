@@ -7,7 +7,7 @@ class Actor {
 	public var lfo:LFO;
 	public var graphic:Shape;
 	public var jump_height:Float = -1.5;
-	public var y_wobble:Float = 0.1;
+	public var y_wobble:Float = 0.01;
 
 	var x:Float;
 	public var y:Float;
@@ -32,9 +32,9 @@ class Actor {
 
 	public function update(elapsed:Float) {
 		var amp_jump = envelope.nextAmplitude();
-		// var amp_wobble = lfo.next();
+		var amp_wobble = lfo.next();
 		var jump = -(jump_height * amp_jump);
-		var wobble = 0;//amp_wobble * y_wobble;
+		var wobble = amp_wobble * y_wobble;
 		graphic.entity.lines.origin.y = y + jump + wobble;
 	}
 
