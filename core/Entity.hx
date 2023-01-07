@@ -6,7 +6,7 @@ using Vector;
 class Entity {
 	public var motion(default, null):MotionComponent;
 
-	var lines:Polygon;
+	public var lines:Polygon;
 
 	public var weight:Float = 250;
 	public var rotation:Float = 0;
@@ -18,6 +18,7 @@ class Entity {
 	var lines_points:Array<Vector>;
 
 	public function new(model:Array<Vector>, x:Int, y:Int, rotation_speed:Float, graphics:GraphicsAbstract) {
+		
 		// set up motion
 		motion = new MotionComponent(x, y);
 		this.rotation_speed = rotation_speed;

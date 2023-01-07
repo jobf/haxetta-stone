@@ -38,6 +38,11 @@ abstract class AbstractFillRectangle {
 
 @:structInit
 class Polygon {
+
+	public var origin:Vector = {
+		x: 0,
+		y: 0
+	};
 	var lines:Array<AbstractLine>;
 
 	public var model(default, null):Array<Vector>;
@@ -52,8 +57,8 @@ class Polygon {
 
 		for (n => line in lines) {
 			line.color = color;
-			line.point_from = model[n].vector_transform(scale, x, y, rotation_sin, rotation_cos);
-			line.point_to = model[(n + 1) % lines.length].vector_transform(scale, x, y, rotation_sin, rotation_cos);
+			line.point_from = model[n].vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
+			line.point_to = model[(n + 1) % lines.length].vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
 			line.draw();
 		}
 	}

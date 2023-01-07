@@ -200,14 +200,17 @@ class VectorLogic {
 		return collision;
 	}
 
-	public static function vector_transform(vector:Vector, scale:Float, x:Float, y:Float, ?rotation_sin:Float, ?rotation_cos:Float, ?rotation:Float):Vector {
+	public static function vector_transform(vector:Vector, origin:Vector, scale:Float, x:Float, y:Float, ?rotation_sin:Float, ?rotation_cos:Float, ?rotation:Float):Vector {
 		// rotate
 		var rotation_sin = rotation_sin == null ? Math.sin(rotation) : rotation_sin;
 		var rotation_cos = rotation_cos == null ? Math.cos(rotation) : rotation_cos;
 
+		var x_origin = vector.x + origin.x;
+		var y_origin = vector.y + origin.y;
+
 		var transformed:Vector = {
-			x: vector.x * rotation_cos - vector.y * rotation_sin,
-			y: vector.x * rotation_sin + vector.y * rotation_cos
+			x: x_origin * rotation_cos - y_origin * rotation_sin,
+			y: x_origin * rotation_sin + y_origin * rotation_cos
 		};
 
 		// scale
@@ -215,8 +218,12 @@ class VectorLogic {
 		transformed.y = transformed.y * scale;
 
 		// transform
+
 		transformed.x = transformed.x + x;
 		transformed.y = transformed.y + y;
+
+		transformed.x = transformed.x + x_origin;
+		transformed.y = transformed.y + y_origin;
 
 		return transformed;
 	}
