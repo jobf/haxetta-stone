@@ -23,15 +23,20 @@ class Controller {
 		this.input = input;
 	}
 
-	public function handle_button(state:ButtonState, button:Button){
-
+	public function handle_button(state:ButtonState, button:Button) {
 		switch state {
-			case PRESSED: {
-				actions[button].on_pressed();
-			}
-			case RELEASED: {
-				actions[button].on_released();
-			};
+			case PRESSED:
+				{
+					if (actions.exists(button)) {
+						actions[button].on_pressed();
+					}
+				}
+			case RELEASED:
+				{
+					if (actions.exists(button)) {
+						actions[button].on_released();
+					}
+				};
 			case NONE:
 		}
 	}
