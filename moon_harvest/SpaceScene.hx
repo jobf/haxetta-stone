@@ -1,3 +1,5 @@
+import Random.randomInt;
+import peote.view.PeoteView;
 import GraphicsAbstract.AbstractLine;
 import Asteroid;
 import lime.utils.Assets;
@@ -23,7 +25,6 @@ class SpaceScene extends Scene {
 	var model_translation:EditorTranslation;
 	var cheeseWheel:CheeseWheel;
 
-
 	var countdown_cheese_release:CountDown;
 	var countdown_phase_cheese_release:CountDown;
 
@@ -33,18 +34,34 @@ class SpaceScene extends Scene {
 		var models_json = Assets.getText('assets/alphabet-01.json');
 
 		file = Disk.parse_file_contents(models_json);
+		// @:privateAccess
+		// var graphics:Graphics = cast game.graphics;
 
-		model_translation = new EditorTranslation(bounds, 1, 1);
+		// var hud_bounds:RectangleGeometry = {
+		// 	y: 0,
+		// 	x: 0,
+		// 	width: graphics.viewport_bounds.width,
+		// 	height: Std.int(graphics.viewport_bounds.height * 0.3)
+		// }
+
+		var model_bounds:RectangleGeometry = {
+			y: 0,
+			x: 0,
+			width: 42,
+			height: 42
+		}
+		model_translation = new EditorTranslation(model_bounds, 1, 1);
 
 		settings = new SettingsController(new DiskSys());
+		// settings.disk_load();
 
-		settings.disk_load();
 		var bot = new Shape(x_center, y_center, game.graphics, file.models[0], model_translation);
-		bot.entity.scale = 66;
-		bot.entity.rotation = -3.73;
-		bot.entity.set_rotation_direction(0);
-		@:privateAccess
-		bot.entity.lines.origin.y = 24.4;
+		// bot.entity.scale = 66;
+		// bot.entity.rotation = -3.73;
+		// bot.entity.set_rotation_direction(0);
+		// // @:privateAccess
+		bot.entity.lines.origin.y = 18;
+		bot.entity.scale = 0.5;
 		actor = new Actor(bot);
 
 		var actions:Map<Button, Action> = [
@@ -83,11 +100,11 @@ class SpaceScene extends Scene {
 			KEY_C => {
 				on_pressed: () -> {
 					trace('cheese spawn');
+					// var index = randomInt(2, 7);
 					cheeseWheel.create(x_center, y_center, file.models[0], model_translation, game.graphics);
 				}
 			}
 		];
-
 
 		controller = new Controller(actions, game.input);
 		game.input.on_pressed = button -> controller.handle_button(PRESSED, button);
@@ -117,38 +134,38 @@ class SpaceScene extends Scene {
 		}
 		settings.page_add(page);
 
-		var bind_geo_pad:(fill:Entity, name:String, index_palette:Int) -> Void = (fill:Entity, name:String, index_palette:Int) -> {
+		var bind_geo_pad:(entity:Entity, name:String, index_palette:Int) -> Void = (entity:Entity, name:String, index_palette:Int) -> {
 			settings.pad_add({
 				name: name,
 				index_palette: index_palette,
 				// index: index,
 				encoders: [
 					VOLUME => {
-						value: fill.lines.origin.y,
+						value: entity.lines.origin.y,
 						on_change: f -> {
-							fill.lines.origin.y = f;
-							actor.y = fill.lines.origin.y;
+							entity.lines.origin.y = f;
+							actor.y = entity.lines.origin.y;
 						},
 						name: "y origin ",
 						increment: 0.1
 					},
 					// PAN => {
-					// 	value: fill.rotation_speed,
-					// 	on_change: f -> fill.rotation_speed = f,
+					// 	value: entity.rotation_speed,
+					// 	on_change: f -> entity.rotation_speed = f,
 					// 	name: "speed",
 					// 	increment: 0.01,
 					// 	minimum: -1000
 					// },
 					FILTER => {
-						value: fill.scale,
-						on_change: f -> fill.scale = Std.int(f),
+						value: entity.scale,
+						on_change: f -> entity.scale = f,
 						name: "scale",
 						// increment: 0.1,
-						minimum: 0.001
+						minimum: 0.00001
 					},
 					RESONANCE => {
-						value: fill.rotation,
-						on_change: f -> fill.rotation = f,
+						value: entity.rotation,
+						on_change: f -> entity.rotation = f,
 						name: "angle",
 						increment: 0.1,
 						minimum: -360
@@ -160,8 +177,8 @@ class SpaceScene extends Scene {
 		@:privateAccess
 		var display = g.display;
 		display.zoom = 1.16;
-		display.xOffset = 859;
-		display.yOffset = 1670;
+		display.xOffset = 0;
+		display.yOffset = 0;
 		settings.pad_add({
 			name: "camera",
 			index_palette: 4,
@@ -184,8 +201,8 @@ class SpaceScene extends Scene {
 					increment: 10
 				},
 				// FILTER => {
-				// 	value: fill.scale,
-				// 	on_change: f -> fill.scale = Std.int(f),
+				// 	value: entity.scale,
+				// 	on_change: f -> entity.scale = Std.int(f),
 				// 	name: "scale",
 				// 	// increment: 0.1,
 				// 	minimum: 0.001
@@ -241,13 +258,33 @@ class SpaceScene extends Scene {
 			]
 		}, page.index);
 
+		countdown_cheese_release = new CountDown(0.9, () -> {
+			// var i = randomInt(2,20);
+			cheeseWheel.create(x_center, y_center, file.models[0], model_translation, game.graphics);
+		}, true);
+		countdown_phase_cheese_release = new CountDown(2.1, () -> {
+			// // if(countdown_cheese_release.restartWhenComplete ){
+			// 	// 	countdown_cheese_release.stop();
+			// 	// }
+			// @:privateAccess
+			// countdown_cheese_release.restartWhenComplete = !countdown_cheese_release.restartWhenComplete;
+			// countdown_cheese_release.reset();
+		});
 
-
-		countdown_cheese_release = new CountDown(0.9, () -> cheeseWheel.create(x_center, y_center, file.models[0], model_translation, game.graphics), true);
+		// var bounds_hud:RectangleGeometry = {
+		// 	y: 0,
+		// 	x: 0,
+		// 	width: graphics.viewport_bounds.width,
+		// 	height: Std.int(graphics.viewport_bounds.height * 0.4)
+		// }
+		// @:privateAccess
+		// // var hud_graphics = new Graphics(graphics.peoteview, hud_bounds);
+		// var hud = new Hud(graphics.peoteview, bounds_hud, file.models, model_translation);
 	}
 
 	public function update(elapsed_seconds:Float) {
 		countdown_cheese_release.update(elapsed_seconds);
+		countdown_phase_cheese_release.update(elapsed_seconds);
 		cheeseWheel.update(elapsed_seconds);
 		actor.update(elapsed_seconds);
 

@@ -56,6 +56,9 @@ class Shape {
 		
 
 		var model:Array<Vector> = figureModel.lines.map(model -> translation.model_to_view_point(map(model)));
+		for (_line_point_from in model) {
+			trace('translated line ${_line_point_from.x},${_line_point_from.y}');
+		}
 		var white:Int = 0xFF00FFff;
 		entity = new Entity(model, x, y, 0.05, graphics);
 		center = graphics.make_fill(x, y, 30, 30, 0xFF4444ff);

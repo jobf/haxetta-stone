@@ -181,7 +181,7 @@ class PeoteLine extends AbstractLine {
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
 
 		// line thickness
-		element.w = 2;
+		element.w = 3;
 
 		// line length
 		element.h = Math.sqrt(a * a + b * b);

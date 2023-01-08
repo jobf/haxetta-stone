@@ -2,19 +2,18 @@ import lime.app.Application;
 import Graphics;
 import peote.view.PeoteView;
 import peote.view.Display;
-import automation.Oscillator;
-import automation.Envelope;
 import dials.Disk;
 import dials.SettingsController;
 import lime.utils.AssetType;
 import lime.utils.Assets;
 import Editor;
-import Models;
-import GraphicsAbstract;
 import Controller;
 import InputAbstract;
 import Engine;
 import Disk;
+import Drawing;
+import Performer;
+import Wheel;
 
 using Vector;
 
@@ -29,8 +28,10 @@ class LunarScene extends Scene {
 
 	var drawing:Drawing;
 	var wheel_cheese:Wheel;
+	var wheel_obstacle:Wheel;
 
 	var countdown_cheese_release:CountDown;
+	var countdown_obstacle_release:CountDown;
 	var performer:Performer;
 	var controller:Controller;
 	var display:Display;
@@ -72,12 +73,17 @@ class LunarScene extends Scene {
 		draw_bot();
 		performer = new Performer(drawing);
 
-		wheel_cheese = new Wheel();
-		countdown_cheese_release = new CountDown(0.9, () -> {
-			// var i = randomInt(2,20);
-			wheel_cheese.create(x, y, file.models[0], model_translation, game.graphics);
+		wheel_cheese = new Wheel(0xc2b97aFF);
+		countdown_cheese_release = new CountDown(1.2, () -> {
+			var i = Random.randomInt(38,42);
+			// trace('model $i out of ${file.models.length}');
+			wheel_cheese.create(x, y, file.models[i], model_translation, game.graphics);
 		}, true);
 
+		wheel_obstacle = new Wheel(0xd68181FF);
+		countdown_obstacle_release = new CountDown(2.3, ()->{
+			wheel_obstacle.create(x, y, file.models[0], model_translation, game.graphics);
+		}, true);
 
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
@@ -129,6 +135,8 @@ class LunarScene extends Scene {
 		countdown_cheese_release.update(elapsed_seconds);
 		performer.update(elapsed_seconds);
 		wheel_cheese.update(elapsed_seconds);
+		countdown_obstacle_release.update(elapsed_seconds);
+		wheel_obstacle.update(elapsed_seconds);
 		// drawing.draw
 		var overlaps = wheel_cheese.overlaps_a_line(drawing.lines);
 		for (cheese in overlaps) {
@@ -269,6 +277,43 @@ class LunarScene extends Scene {
 							// minimum: -360
 						}
 					]
+				},
+				{
+					name: "wheel_obstacle",
+					index_palette: 3,
+					index: 3,
+					encoders: [
+						VOLUME => {
+							value: wheel_obstacle.y_origin,
+							on_change: f -> wheel_obstacle.y_origin = f,
+							name: "y origin ",
+							increment: 0.01,
+							minimum: -10000,
+							maximum: 10000
+						},
+						PAN => {
+							value: wheel_obstacle.rotation_speed,
+							on_change: f -> wheel_obstacle.rotation_speed = f,
+							name: "speed",
+							increment: 0.01,
+							minimum: -10,
+							maximum: 10
+						},
+						FILTER => {
+							value: wheel_obstacle.scale,
+							on_change: f -> wheel_obstacle.scale = f,
+							name: "scale",
+							increment: 0.1,
+							minimum: 0.00001
+						},
+						RESONANCE => {
+							value: 0,
+							on_change: f -> return,
+							name: "0",
+							// increment: 0.1,
+							// minimum: -360
+						}
+					]
 				}
 			]
 		}
@@ -286,220 +331,4 @@ class LunarScene extends Scene {
 		// settings.disk_load();
 	}
 
-}
-
-@:structInit
-class Prototype{
-	public var figure:FigureModel;
-}
-
-class Drawing{
-	var model:Prototype;
-	var model_translation:EditorTranslation;
-	public var origin:Vector = {
-		x:-0.5,
-		y:-0.5
-	};
-	public var x:Float = 0;
-	public var y:Float = 0;
-	public var scale:Float = 1;
-	public var rotation:Float = 0;
-	public var rotation_speed:Float = -0.01;
-	public var rotation_direction:Int = 0;
-
-
-	public var lines:Array<AbstractLine> = [];
-	public function new(model:Prototype, x:Float, y:Float, make_line:MakeLine, model_translation:EditorTranslation) {
-		this.x = x;
-		this.y = y;
-		this.model = model;
-		this.model_translation = model_translation;
-		for (proto in model.figure.lines) {
-			var line =  make_line(0,0,1,1, 0x2C8D49ff);
-			lines.push(line);
-		}
-	}
-
-	function translate(line_proto:LineModel, line_drawing:AbstractLine, rotation_sin:Float, rotation_cos:Float){
-		var from_:Vector ={
-			x: line_proto.from.x + origin.x,
-			y: line_proto.from.y + origin.y
-		}
-		var to_:Vector = {
-			x: line_proto.to.x + origin.x,
-			y: line_proto.to.y + origin.y
-		}
-		var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-		var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-		line_drawing.point_from.x = from.x - (origin.y * scale);
-		line_drawing.point_from.y = from.y - (origin.y * scale);
-		line_drawing.point_to.x = to.x - (origin.x * scale);
-		line_drawing.point_to.y = to.y - (origin.y * scale);
-	}
-
-	public function draw(){
-		rotation = rotation + (rotation_speed * rotation_direction);
-
-		var rotation_sin = Math.sin(rotation);
-		var rotation_cos = Math.cos(rotation);
-		for (n => proto in model.figure.lines) {
-			translate(proto, lines[n], rotation_sin, rotation_cos);
-		}
-	}
-}
-
-
-class Wheel {
-	var drawings:Array<Drawing>;
-	var model_translation:EditorTranslation;
-	public var rotation_speed:Float = 0.018;
-	public var rotation_init:Float = 180;
-	// public var rotation_direction:Int = -1;
-	public var y_origin:Float = -2;
-	public var scale:Float = 1;
-	public var overlap:Float = 5;
-	var x:Float;
-	var y:Float;
-
-
-
-
-	public function new() {
-		drawings = [];
-	}
-
-	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract):Drawing {
-		// trace('new drawin');
-		this.x = x;
-		this.y = y;
-		this.model_translation = model_translation;
-		var drawing = new Drawing({
-			figure: model,
-		}, x, y, graphics.make_line, model_translation);
-		// drawing.rotation
-		@:privateAccess
-		drawing.origin.y = y_origin;
-		drawing.scale = scale;
-		drawing.rotation = rotation_init;
-		drawing.rotation_speed = rotation_speed;
-		drawing.rotation_direction = -1;
-		drawings.push(drawing);
-		return drawing;
-	}
-
-	public function overlaps(target:Vector):Array<Drawing> {
-		var matching = drawings.filter(shape -> target.point_overlaps_circle({
-			y: shape.y,
-			x: shape.x
-		}, overlap));
-		return matching;
-	}
-
-	public function overlaps_a_line(target_lines:Array<AbstractLine>):Array<Drawing> {
-		var collides:(target:AbstractLine, lines:Array<AbstractLine>) -> Bool = (target:AbstractLine, lines:Array<AbstractLine>) -> {
-			var collide = false;
-			for(l in lines){
-				if(VectorLogic.line_overlaps_line(target.point_from, target.point_to, l.point_from, l.point_to)){
-					collide = true;
-					break;
-				}
-			}
-			return collide;
-		}
-
-		for (line in target_lines) {
-			var matching = drawings.filter(shape -> collides(line, shape.lines));
-			if(matching.length > 0){
-				return matching;
-			}
-		}
-
-		return [];
-	}
-
-
-	public function remove(drawing:Drawing) {
-		if (drawings.contains(drawing)) {
-			for (line in drawing.lines) {
-				line.erase();
-			}
-			drawings.remove(drawing);
-		}
-	}
-
-	public function update(elapsed_seconds:Float) {
-
-		// rotation = rotation + (rotation_speed * rotation_direction);
-		for (drawing in drawings) {
-			// drawing.x = x;
-			// drawing.y = y;
-			drawing.origin.y = y_origin;
-			// drawing.rotation = rotation;
-			// drawing.rotation_speed = rotation_speed;
-			drawing.scale = scale;
-			drawing.draw();
-		}
-	}
-
-	public function draw() {
-		// for (drawing in drawings) {
-		// 	drawing.draw();
-		// }
-	}
-}
-
-
-class Performer {
-	public var envelope:Envelope;
-	public var lfo:LFO;
-	public var graphic:Drawing;
-	public var jump_height:Float = 1.5;
-	public var y_wobble:Float = 0.01;
-
-	var x:Float;
-	public var y:Float;
-	var oscillate_y:Float;
-	public var rotation:Float = 0;
-	public var scale:Float = 1;
-
-
-
-	public function new(graphic:Drawing) {
-		this.graphic = graphic;
-		this.x = graphic.x;
-		this.y = graphic.origin.y;
-		var framesPerSecond = 60;
-		envelope = new Envelope(framesPerSecond);
-		var wavetable = new WaveTable(framesPerSecond);
-		envelope.releaseTime = 0.3;
-		lfo = {
-			shape: SINE,
-			sampleRate: framesPerSecond,
-			frequency: 1,
-			oscillator: wavetable
-		};
-		lfo.shape = SINE;
-	}
-
-	public function update(elapsed:Float) {
-		var amp_jump = envelope.nextAmplitude();
-		var amp_wobble = lfo.next();
-		var jump = -(jump_height * amp_jump);
-		var wobble = amp_wobble * y_wobble;
-		graphic.scale = scale;
-		graphic.rotation = rotation;
-		graphic.origin.y = y + jump + wobble;
-	}
-
-	public function draw() {
-		// graphic.draw();
-	}
-
-	public function press() {
-		envelope.open();
-	}
-
-	public function release() {
-		envelope.close();
-	}
 }

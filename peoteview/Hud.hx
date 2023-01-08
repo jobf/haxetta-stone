@@ -1,4 +1,4 @@
-import LunarScene.Drawing;
+import Drawing;
 import Editor.EditorTranslation;
 import Graphics;
 import Models;
@@ -96,6 +96,6 @@ class Hud {
 	function draw_model(model:FigureModel, x:Float, y:Float):Drawing {
 		return new Drawing({
 			figure: model
-		}, x, y, graphics.make_line, model_translation);
+		}, x, y, graphics.make_line, model_translation, 0xff750bFF);
 	}
 }

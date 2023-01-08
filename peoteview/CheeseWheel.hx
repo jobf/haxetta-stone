@@ -10,7 +10,7 @@ class CheeseWheel {
 	public var rotation_speed:Float = 0.014;
 
 	public var y_origin:Float = 18.5;
-	public var scale:Int = 92;
+	public var scale:Float = 0.5;
 	public var overlap:Float = 5.787;
 	public function new() {
 		cheeses = [];

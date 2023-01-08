@@ -47,6 +47,9 @@ class Main extends Application {
 		#if model_test
 		init_scene = game -> new ModelTestScene(game, bounds_scene, black);
 		#end
+		#if model_design
+		init_scene = game -> new DesignerScene(game, bounds_scene, black);
+		#end
 
 		implementation_graphics = new Graphics(window, bounds_viewport);
 		implementation_input = new Input(window);

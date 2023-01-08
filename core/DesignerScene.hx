@@ -45,7 +45,7 @@ class DesignerScene extends Scene {
 				on_pressed: () -> handle_mouse_press_right(),
 			},
 			MOUSE_MIDDLE => {
-				on_pressed: () -> designer.save_state(true),
+				on_pressed: () -> designer.save_state(false),
 			},
 			KEY_LEFT => {
 				on_pressed: () -> designer.set_active_figure(-1)
@@ -57,7 +57,7 @@ class DesignerScene extends Scene {
 				on_pressed: () -> designer.add_new_figure()
 			},
 			KEY_S => {
-				on_pressed: ()->designer.save_state(true),
+				on_pressed: ()->designer.save_state(false),
 			}
 		];
 

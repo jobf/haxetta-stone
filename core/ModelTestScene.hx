@@ -176,7 +176,7 @@ class ModelTestScene extends Scene {
 			lines.remove(lines[i]);
 		}
 		var char = file.models[model_index];
-
+		trace('draw index $model_index');
 		var rotation_sin = Math.sin(rotation);
 		var rotation_cos = Math.cos(rotation);
 		for (line in char.lines) {
@@ -191,7 +191,7 @@ class ModelTestScene extends Scene {
 			var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
 			var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
 			var _line = game.graphics.make_line(from.x, from.y, to.x, to.y, 0x2C8D49ff);
-			trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
+			// trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
 			lines.push(_line);
 		}
 	}
