@@ -239,8 +239,8 @@ class VectorLogic {
 		var rotation_sin = rotation_sin == null ? Math.sin(rotation) : rotation_sin;
 		var rotation_cos = rotation_cos == null ? Math.cos(rotation) : rotation_cos;
 
-		var x_origin = vector.x + origin.x;
-		var y_origin = vector.y + origin.y;
+		var x_origin = vector.x;// + origin.x;
+		var y_origin = vector.y;// + origin.y;
 
 		var transformed:Vector = {
 			x: x_origin * rotation_cos - y_origin * rotation_sin,
@@ -256,8 +256,8 @@ class VectorLogic {
 		transformed.x = transformed.x + x;
 		transformed.y = transformed.y + y;
 
-		transformed.x = transformed.x - x_origin;
-		transformed.y = transformed.y - y_origin;
+		// transformed.x = transformed.x - x_origin;
+		// transformed.y = transformed.y - y_origin;
 
 		return transformed;
 	}

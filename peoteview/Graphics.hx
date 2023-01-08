@@ -7,10 +7,10 @@ import peote.view.*;
 class Graphics extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
-
+	var window:Window;
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
-
+		this.window = window;
 		peoteview = new PeoteView(window);
 		display = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display);
@@ -36,7 +36,7 @@ class Graphics extends GraphicsAbstract {
 		},
 		element,
 		line -> line_erase(line)));
-
+		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
 
@@ -181,7 +181,7 @@ class PeoteLine extends AbstractLine {
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
 
 		// line thickness
-		element.w = 1;
+		element.w = 2;
 
 		// line length
 		element.h = Math.sqrt(a * a + b * b);
