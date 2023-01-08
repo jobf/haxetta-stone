@@ -328,7 +328,7 @@ class LunarScene extends Scene {
 		// settings.pad_add(, page.index);
 		// settings.pad_add(, page.index);
 
-		// settings.disk_load();
+		settings.disk_load();
 	}
 
 }

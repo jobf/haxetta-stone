@@ -1,0 +1,84 @@
+{
+    "pages": [
+        {
+            "index": 0,
+            "name": "yoo",
+            "pads": [
+                {
+                    "index": 0,
+                    "index_palette": 0,
+                    "name": "camera",
+                    "encoders": [
+                        {
+                            "encoder": 16,
+                            "value": 315
+                        }, {
+                            "encoder": 19,
+                            "value": 0.85
+                        }, {
+                            "encoder": 17,
+                            "value": 310
+                        }
+                    ]
+                }, {
+                    "index": 1,
+                    "index_palette": 1,
+                    "name": "bot",
+                    "encoders": [
+                        {
+                            "encoder": 18,
+                            "value": 1
+                        }, {
+                            "encoder": 16,
+                            "value": -8.88999999999999
+                        }, {
+                            "encoder": 19,
+                            "value": 1.5
+                        }, {
+                            "encoder": 17,
+                            "value": -1.65
+                        }
+                    ]
+                }, {
+                    "index": 2,
+                    "index_palette": 2,
+                    "name": "wheel_cheese",
+                    "encoders": [
+                        {
+                            "encoder": 18,
+                            "value": 1
+                        }, {
+                            "encoder": 16,
+                            "value": -10.7699999999998
+                        }, {
+                            "encoder": 19,
+                            "value": 0
+                        }, {
+                            "encoder": 17,
+                            "value": 0.018
+                        }
+                    ]
+                }, {
+                    "index": 3,
+                    "index_palette": 3,
+                    "name": "wheel_obstacle",
+                    "encoders": [
+                        {
+                            "encoder": 18,
+                            "value": 1.00001
+                        }, {
+                            "encoder": 16,
+                            "value": -8.39999999999998
+                        }, {
+                            "encoder": 19,
+                            "value": 0
+                        }, {
+                            "encoder": 17,
+                            "value": 0.018
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
