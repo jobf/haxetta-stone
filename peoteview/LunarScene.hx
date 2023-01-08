@@ -32,7 +32,10 @@ class LunarScene extends Scene {
 
 	var countdown_cheese_release:CountDown;
 	var countdown_obstacle_release:CountDown;
+	var countdown_cheese_toggle:CountDown;
+	var countdown_obstacle_toggle:CountDown;
 	var countdown_invincible:CountDown;
+
 	var performer:Performer;
 	var controller:Controller;
 	var display:Display;
@@ -77,15 +80,22 @@ class LunarScene extends Scene {
 		performer = new Performer(drawing);
 
 		wheel_cheese = new Wheel(0xc2b97aFF, 100);
-		countdown_cheese_release = new CountDown(1.2, () -> {
+		countdown_cheese_release = new CountDown(0.2, () -> {
 			var i = Random.randomInt(38,42);
-			// trace('model $i out of ${file.models.length}');
+			trace('model $i out of ${file.models.length}');
 			wheel_cheese.create(x, y, file.models[i], model_translation, game.graphics);
+
+		}, true);
+		countdown_cheese_toggle = new CountDown(1.0, () ->{
+			countdown_cheese_release.enabled = !countdown_cheese_release.enabled;
 		}, true);
 
 		wheel_obstacle = new Wheel(0xd68181FF, 30);
-		countdown_obstacle_release = new CountDown(2.3, ()->{
+		countdown_obstacle_release = new CountDown(0.3, ()->{
 			wheel_obstacle.create(x, y, file.models[0], model_translation, game.graphics);
+		}, true);
+		countdown_obstacle_toggle = new CountDown(1.0, () ->{
+			countdown_obstacle_release.enabled = !countdown_obstacle_release.enabled;
 		}, true);
 
 		var actions:Map<Button, Action> = [
@@ -99,7 +109,9 @@ class LunarScene extends Scene {
 			},
 			KEY_C => {
 				on_pressed: () -> {
-					wheel_cheese.create(x, y, file.models[0], model_translation, game.graphics);
+					// wheel_cheese.create(x, y, file.models[0], model_translation, game.graphics);
+					wheel_cheese.remove_all();
+					wheel_obstacle.remove_all();
 				}
 			},
 			KEY_Q => {
@@ -115,13 +127,15 @@ class LunarScene extends Scene {
 		game.input.on_released = button -> controller.handle_button(RELEASED, button);
 
 
-		settings_bind();
-
+		
 		performer.rotation_speed = 0.0003;
-
-
+		
+		
 		countdown_invincible = new CountDown(2, () -> is_invincible = false);
 		hud.lives_change(lives);
+
+
+		settings_bind();
 	}
 
 	function quit(){
@@ -141,6 +155,8 @@ class LunarScene extends Scene {
 	}
 
 	public function update(elapsed_seconds:Float) {
+		countdown_obstacle_toggle.update(elapsed_seconds);
+		countdown_cheese_toggle.update(elapsed_seconds);
 		countdown_invincible.update(elapsed_seconds);
 		countdown_cheese_release.update(elapsed_seconds);
 		performer.update(elapsed_seconds);
@@ -343,7 +359,89 @@ class LunarScene extends Scene {
 							// minimum: -360
 						}
 					]
-				}
+				},
+				{
+					name: "timing",
+					index_palette: 4,
+					index: 4,
+					encoders: [
+						VOLUME => {
+							value: countdown_cheese_release.duration,
+							on_change: f -> {
+								countdown_cheese_release.duration = f;
+								countdown_cheese_release.countDown = f;
+							},
+							name: "cheese",
+							increment: 0.01,
+							minimum: -10,
+							maximum: 100
+						},
+						PAN => {
+							value: countdown_obstacle_release.duration,
+							on_change: f -> {
+								countdown_obstacle_release.duration = f;
+								countdown_obstacle_release.countDown = f;
+							},
+							name: "obstacle",
+							increment: 0.01,
+							minimum: -10,
+							maximum: 10
+						},
+						// FILTER => {
+						// 	value: performer.amp_fall_env.releaseTime,
+						// 	on_change: f -> performer.amp_fall_env.releaseTime = f,
+						// 	name: "bot fall",
+						// 	increment: 0.1,
+						// 	minimum: 0.00001
+						// },
+						// RESONANCE => {
+						// 	value: 0,
+						// 	on_change: f -> return,
+						// 	name: "0",
+						// 	// increment: 0.1,
+						// 	// minimum: -360
+						// }
+					]
+				},
+				{
+					name: "bot jump",
+					index_palette: 5,
+					index: 5,
+					encoders: [
+						VOLUME => {
+							value: performer.amp_jump_env.attackTime,
+							on_change: f -> performer.amp_jump_env.attackTime = f,
+							name: "rise",
+							increment: 0.01,
+							minimum: 0.0001,
+							maximum: 100
+						},
+						PAN => {
+							value: performer.amp_fall_env.releaseTime,
+							on_change: f -> performer.amp_fall_env.releaseTime = f,
+							name: "fall",
+							increment: 0.01,
+							minimum: 0.0001,
+							maximum: 100
+						},
+						FILTER => {
+							value: performer.amp_jump_env.releaseTime,
+							on_change: f -> performer.amp_jump_env.releaseTime = f,
+							name: "drop",
+							increment: 0.01,
+							minimum: 0.0001,
+							maximum: 100
+						},
+						RESONANCE => {
+							value: performer.jump_height,
+							on_change: f -> performer.jump_height = f,
+							name: "height",
+							increment: 0.1,
+							minimum: 0.0001,
+							maximum: 1000
+						}
+					]
+				},
 			]
 		}
 

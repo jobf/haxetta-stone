@@ -23,11 +23,13 @@ class Wheel {
 	public function new(color:Int, maximum_items:Int) {
 		drawings = [];
 		this.color = color;
+		this.maximum_items = maximum_items;
 	}
 
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
 		if(maximum_items < drawings.length){
+			trace('no draw');
 			return;
 		}
 		this.x = x;
@@ -77,6 +79,15 @@ class Wheel {
 		return [];
 	}
 
+	public function remove_all(){
+		var n = drawings.length;
+		while(n-- > 0){
+			for (line in drawings[n].lines) {
+				line.erase();
+			}
+			drawings.remove(drawings[n]);
+		}
+	}
 
 	public function remove(drawing:Drawing) {
 		if (drawings.contains(drawing)) {
