@@ -66,7 +66,7 @@ class LunarScene extends Scene {
 			width: bounds.width,
 			height: Std.int(bounds.height * 0.25)
 		}, file.models, model_translation);
-		hud.write_message("ABCDE VWXYZ");
+		// hud.write_message("HELLO 0001");
 
 		draw_bot();
 		performer = new Performer(drawing);
@@ -119,6 +119,7 @@ class LunarScene extends Scene {
 		var overlaps = wheel.overlaps_a_line(drawing.lines);
 		for (cheese in overlaps) {
 			wheel.remove(cheese);
+			hud.score_change(10);
 			// final red:Int = 0xFF0000ff;
 			// final white:Int = 0xFFFFFFff;
 			// bot.entity.set_color(overlaps ? red : white);

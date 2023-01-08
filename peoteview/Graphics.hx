@@ -265,6 +265,7 @@ class GraphicsToo extends GraphicsAbstract {
 	}
 
 	public function line_erase(line:PeoteLine) {
+		// trace('remove line too');
 		buffer_lines.removeElement(line.element);
 		// trace('removed line from buffer');
 		lines.remove(line);
