@@ -113,6 +113,8 @@ class LunarScene extends Scene {
 
 
 		settings_bind();
+
+		performer.rotation_speed = 0.0003;
 	}
 
 	function quit(){

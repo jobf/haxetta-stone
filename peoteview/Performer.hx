@@ -17,6 +17,7 @@ class Performer {
 	public var y:Float;
 	var oscillate_y:Float;
 	public var rotation:Float = 0;
+	public var rotation_speed:Float = 1;
 	public var scale:Float = 1;
 
 
@@ -39,6 +40,7 @@ class Performer {
 	}
 
 	public function update(elapsed:Float) {
+		rotation += 1 * rotation_speed;
 		var amp_jump = envelope.nextAmplitude();
 		var amp_wobble = lfo.next();
 		var jump = -(jump_height * amp_jump);
