@@ -32,12 +32,15 @@ class LunarScene extends Scene {
 
 	var countdown_cheese_release:CountDown;
 	var countdown_obstacle_release:CountDown;
+	var countdown_invincible:CountDown;
 	var performer:Performer;
 	var controller:Controller;
 	var display:Display;
 	var peoteview:PeoteView;
 	var hud:Hud;
 	var settings:SettingsController;
+
+	var is_invincible:Bool = false;
 
 	public function init() {
 		var g:Graphics = cast game.graphics;
@@ -52,8 +55,8 @@ class LunarScene extends Scene {
 		model_translation = new EditorTranslation({
 			y: 0,
 			x: 0,
-			width: 64,
-			height: 64
+			width: 60,
+			height: 60
 		}, 1, 1);
 		for (s in Assets.list(AssetType.TEXT)) {
 			trace(s);
@@ -73,14 +76,14 @@ class LunarScene extends Scene {
 		draw_bot();
 		performer = new Performer(drawing);
 
-		wheel_cheese = new Wheel(0xc2b97aFF);
+		wheel_cheese = new Wheel(0xc2b97aFF, 100);
 		countdown_cheese_release = new CountDown(1.2, () -> {
 			var i = Random.randomInt(38,42);
 			// trace('model $i out of ${file.models.length}');
 			wheel_cheese.create(x, y, file.models[i], model_translation, game.graphics);
 		}, true);
 
-		wheel_obstacle = new Wheel(0xd68181FF);
+		wheel_obstacle = new Wheel(0xd68181FF, 30);
 		countdown_obstacle_release = new CountDown(2.3, ()->{
 			wheel_obstacle.create(x, y, file.models[0], model_translation, game.graphics);
 		}, true);
@@ -115,6 +118,10 @@ class LunarScene extends Scene {
 		settings_bind();
 
 		performer.rotation_speed = 0.0003;
+
+
+		countdown_invincible = new CountDown(2, () -> is_invincible = false);
+		hud.lives_change(lives);
 	}
 
 	function quit(){
@@ -134,6 +141,7 @@ class LunarScene extends Scene {
 	}
 
 	public function update(elapsed_seconds:Float) {
+		countdown_invincible.update(elapsed_seconds);
 		countdown_cheese_release.update(elapsed_seconds);
 		performer.update(elapsed_seconds);
 		wheel_cheese.update(elapsed_seconds);
@@ -148,6 +156,25 @@ class LunarScene extends Scene {
 			// final white:Int = 0xFFFFFFff;
 			// bot.entity.set_color(overlaps ? red : white);
 		}
+
+		var overlaps = wheel_obstacle.overlaps_a_line(drawing.lines);
+		for(obstacle in overlaps){
+			if(!is_invincible){
+				reduce_lives();
+			}
+			break;
+		}
+	}
+
+	var lives = 3;
+	function reduce_lives() {
+		if(lives > 0){
+			lives--;
+			is_invincible = true;
+			countdown_invincible.reset();
+			hud.lives_change(lives);
+		}
+		trace('hit $lives left');
 	}
 	
 	public function draw() {

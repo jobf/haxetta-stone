@@ -179,18 +179,18 @@ class PeoteLine extends AbstractLine {
 
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
+		
+		// line thickness
+		element.w = 1;
+
+		// line length
+		element.h = Math.sqrt(a * a + b * b);
 
 		element.x = point_from.x;
 		element.y = point_from.y;
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
 		cap.x = point_from.x;
 		cap.y = point_from.y;
-
-		// line thickness
-		element.w = 3;
-
-		// line length
-		element.h = Math.sqrt(a * a + b * b);
 	}
 
 	public function erase():Void {
@@ -273,6 +273,7 @@ class GraphicsToo extends GraphicsAbstract {
 
 	public function line_erase(line:PeoteLine) {
 		// trace('remove line too');
+		buffer_fills.removeElement(line.cap);
 		buffer_lines.removeElement(line.element);
 		// trace('removed line from buffer');
 		lines.remove(line);

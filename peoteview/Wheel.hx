@@ -17,16 +17,19 @@ class Wheel {
 	var x:Float;
 	var y:Float;
 	var color:Int;
+	public var maximum_items(default, null):Int;
 
 
-
-	public function new(color:Int) {
+	public function new(color:Int, maximum_items:Int) {
 		drawings = [];
 		this.color = color;
 	}
 
-	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract):Drawing {
+	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
+		if(maximum_items < drawings.length){
+			return;
+		}
 		this.x = x;
 		this.y = y;
 		this.model_translation = model_translation;
@@ -41,7 +44,7 @@ class Wheel {
 		drawing.rotation_speed = rotation_speed;
 		drawing.rotation_direction = -1;
 		drawings.push(drawing);
-		return drawing;
+		// return drawing;
 	}
 
 	public function overlaps(target:Vector):Array<Drawing> {

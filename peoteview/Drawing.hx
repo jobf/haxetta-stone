@@ -39,12 +39,12 @@ class Drawing{
 
 	function translate(line_proto:LineModel, line_drawing:AbstractLine, rotation_sin:Float, rotation_cos:Float){
 		var from_:Vector ={
-			x: line_proto.from.x + origin.x,
-			y: line_proto.from.y + origin.y
+			x: (line_proto.from.x + origin.x) * scale,
+			y: (line_proto.from.y + origin.y) * scale
 		}
 		var to_:Vector = {
-			x: line_proto.to.x + origin.x,
-			y: line_proto.to.y + origin.y
+			x: (line_proto.to.x + origin.x) * scale,
+			y: (line_proto.to.y + origin.y) * scale
 		}
 		var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
 		var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);

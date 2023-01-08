@@ -31,12 +31,20 @@ class Hud {
 		for (drawing in drawings_score) {
 			drawing.draw();
 		}
+		
+		for (drawing in drawings_lives) {
+			drawing.draw();
+		}
+		
+
+
 		graphics.draw();
 	}
 
 	final char_size = 56;
 	var score:Int = 0;
 	var drawings_score:Array<Drawing> = [];
+	var drawings_lives:Array<Drawing> = [];
 
 	public function score_change(difference:Int) {
 		score += difference;
@@ -56,12 +64,34 @@ class Hud {
 		}
 	}
 
+	public function lives_change(set:Int){
+		if (drawings_lives.length > 0) {
+			var s = drawings_lives.length;
+			while (s-- > 0) {
+				remove(drawings_lives, drawings_lives[s]);
+			}
+		}
+		for(i in 0...set){
+			var x_char = 200 + (i * char_size);
+			drawings_lives.push(draw_model(models[43], x_char, 100));
+		}
+	}
+
 	public function message_remove(drawing:Drawing) {
 		if (message.contains(drawing)) {
 			for (line in drawing.lines) {
 				line.erase();
 			}
 			message.remove(drawing);
+		}
+	}
+
+	public function remove(drawings:Array<Drawing>, drawing:Drawing) {
+		if (drawings.contains(drawing)) {
+			for (line in drawing.lines) {
+				line.erase();
+			}
+			drawings.remove(drawing);
 		}
 	}
 
