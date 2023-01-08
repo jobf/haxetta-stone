@@ -28,7 +28,7 @@ class LunarScene extends Scene {
 	var y:Float = 0;
 
 	var drawing:Drawing;
-	var wheel:Wheel;
+	var wheel_cheese:Wheel;
 
 	var countdown_cheese_release:CountDown;
 	var performer:Performer;
@@ -72,10 +72,10 @@ class LunarScene extends Scene {
 		draw_bot();
 		performer = new Performer(drawing);
 
-		wheel = new Wheel();
+		wheel_cheese = new Wheel();
 		countdown_cheese_release = new CountDown(0.9, () -> {
 			// var i = randomInt(2,20);
-			wheel.create(x, y, file.models[0], model_translation, game.graphics);
+			wheel_cheese.create(x, y, file.models[0], model_translation, game.graphics);
 		}, true);
 
 
@@ -90,7 +90,7 @@ class LunarScene extends Scene {
 			},
 			KEY_C => {
 				on_pressed: () -> {
-					wheel.create(x, y, file.models[0], model_translation, game.graphics);
+					wheel_cheese.create(x, y, file.models[0], model_translation, game.graphics);
 				}
 			},
 			KEY_Q => {
@@ -128,11 +128,11 @@ class LunarScene extends Scene {
 	public function update(elapsed_seconds:Float) {
 		countdown_cheese_release.update(elapsed_seconds);
 		performer.update(elapsed_seconds);
-		wheel.update(elapsed_seconds);
+		wheel_cheese.update(elapsed_seconds);
 		// drawing.draw
-		var overlaps = wheel.overlaps_a_line(drawing.lines);
+		var overlaps = wheel_cheese.overlaps_a_line(drawing.lines);
 		for (cheese in overlaps) {
-			wheel.remove(cheese);
+			wheel_cheese.remove(cheese);
 			hud.score_change(10);
 			// final red:Int = 0xFF0000ff;
 			// final white:Int = 0xFFFFFFff;
@@ -234,29 +234,29 @@ class LunarScene extends Scene {
 					]
 				},
 				{
-					name: "wheel",
+					name: "wheel_cheese",
 					index_palette: 2,
 					index: 2,
 					encoders: [
 						VOLUME => {
-							value: wheel.y_origin,
-							on_change: f -> wheel.y_origin = f,
+							value: wheel_cheese.y_origin,
+							on_change: f -> wheel_cheese.y_origin = f,
 							name: "y origin ",
 							increment: 0.01,
 							minimum: -10000,
 							maximum: 10000
 						},
 						PAN => {
-							value: wheel.rotation_speed,
-							on_change: f -> wheel.rotation_speed = f,
+							value: wheel_cheese.rotation_speed,
+							on_change: f -> wheel_cheese.rotation_speed = f,
 							name: "speed",
 							increment: 0.01,
 							minimum: -10,
 							maximum: 10
 						},
 						FILTER => {
-							value: wheel.scale,
-							on_change: f -> wheel.scale = f,
+							value: wheel_cheese.scale,
+							on_change: f -> wheel_cheese.scale = f,
 							name: "scale",
 							increment: 0.1,
 							minimum: 0.00001
@@ -353,7 +353,7 @@ class Wheel {
 	var drawings:Array<Drawing>;
 	var model_translation:EditorTranslation;
 	public var rotation_speed:Float = 0.018;
-	public var rotation_init:Float = 0;
+	public var rotation_init:Float = 180;
 	// public var rotation_direction:Int = -1;
 	public var y_origin:Float = -2;
 	public var scale:Float = 1;
