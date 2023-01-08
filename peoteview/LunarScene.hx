@@ -453,7 +453,7 @@ class Performer {
 	public var envelope:Envelope;
 	public var lfo:LFO;
 	public var graphic:Drawing;
-	public var jump_height:Float = -1.5;
+	public var jump_height:Float = 1.5;
 	public var y_wobble:Float = 0.01;
 
 	var x:Float;
