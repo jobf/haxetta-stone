@@ -18,16 +18,11 @@ class LunarScene extends Scene {
 	var model_translation:EditorTranslation;
 	var model_index:Int = 0;
 	var file:FileModel;
-	var lines:Array<AbstractLine> = [];
-	var origin:Vector = {
-		x:-0.5,
-		y:-0.5
-	};
 	var x:Float = 0;
 	var y:Float = 0;
-	var scale:Float = 2;
 
-	var rotation:Float = 0;
+	var drawing:Drawing;
+
 	public function init() {
 		x = bounds.width * 0.5;
 		y = bounds.height * 0.5;
@@ -77,7 +72,12 @@ class LunarScene extends Scene {
 		draw_model();
 
 	
+		settings_bind();
 
+	}
+
+
+	function settings_bind(){
 		var page:Page = {
 			pads: [],
 			name: "one",
@@ -86,13 +86,14 @@ class LunarScene extends Scene {
 		var settings = new SettingsController(new DiskSys());
 		settings.page_add(page);
 		
-
 		var g:Graphics = cast game.graphics;
 		@:privateAccess
 		var display = g.display;
-		display.zoom = 1.16;
+		display.zoom = 1.0;
 		display.xOffset = 0;
 		display.yOffset = 0;
+
+
 		settings.pad_add({
 			name: "camera",
 			index_palette: 1,
@@ -137,16 +138,16 @@ class LunarScene extends Scene {
 			// index: index,
 			encoders: [
 				VOLUME => {
-					value: origin.y,
-					on_change: f -> origin.y = f,
+					value: drawing.origin.y,
+					on_change: f -> drawing.origin.y = f,
 					name: "y origin ",
 					increment: 0.01,
 					minimum: -10000,
 					maximum: 10000
 				},
 				PAN => {
-					value: rotation,
-					on_change: f -> rotation = f,
+					value: drawing.rotation,
+					on_change: f -> drawing.rotation = f,
 					name: "rotation",
 					increment: 0.01,
 					minimum: -360,
@@ -168,73 +169,21 @@ class LunarScene extends Scene {
 				// }
 			]
 		}, page.index);
-
 	}
 
 	function draw_model(){
-		var i = lines.length;
-		while (i-- > 0) {
-			lines[i].erase();
-			lines.remove(lines[i]);
-		}
-		var char = file.models[model_index];
-
-		var rotation_sin = Math.sin(rotation);
-		var rotation_cos = Math.cos(rotation);
-		for (line in char.lines) {
-			var from_:Vector ={
-				x: line.from.x + origin.x,
-				y: line.from.y + origin.y
-			}
-			var to_:Vector = {
-				x: line.to.x + origin.x,
-				y: line.to.y + origin.y
-			}
-			var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			var _line = game.graphics.make_line(from.x, from.y, to.x, to.y, 0x2C8D49ff);
-			trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
-			lines.push(_line);
-		}
+		drawing = new Drawing({
+			figure: file.models[model_index]
+		},
+		x,
+		y,
+		game.graphics,
+		model_translation);
 	}
 
 	public function update(elapsed_seconds:Float) {
-		// var figure = file.models[model_index];
-		// // for (line in lines) {
-		// // 	line.
-		// // }		
-		// var rotation_sin = Math.sin(rotation);
-		// var rotation_cos = Math.cos(rotation);
-		// for (n => line in lines) {
-		// 	var line_model = figure.lines[n];
-		// 	line.color = color;
-		// 	line.point_from = line_model.from.vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-		// 	line.point_to = line_model.to.vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-		// 	// line.draw();
-		// }
-
-		var char = file.models[model_index];
-
-		var rotation_sin = Math.sin(rotation);
-		var rotation_cos = Math.cos(rotation);
-		for (n => line in char.lines) {
-			var from_:Vector ={
-				x: line.from.x + origin.x,
-				y: line.from.y + origin.y
-			}
-			var to_:Vector = {
-				x: line.to.x + origin.x,
-				y: line.to.y + origin.y
-			}
-			var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			lines[n].point_from.x = from.x - (origin.y * scale);
-			lines[n].point_from.y = from.y - (origin.y * scale);
-			lines[n].point_to.x = to.x - (origin.x * scale);
-			lines[n].point_to.y = to.y - (origin.y * scale);
-			// trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
-			// lines.push(_line);
-		}
+	
+		drawing.draw();
 	}
 
 	public function draw() {
@@ -242,6 +191,7 @@ class LunarScene extends Scene {
 
 }
 
+@:structInit
 class Prototype{
 	public var figure:FigureModel;
 }
@@ -249,21 +199,23 @@ class Prototype{
 class Drawing{
 	var model:Prototype;
 	var model_translation:EditorTranslation;
-	var origin:Vector = {
+	public var origin:Vector = {
 		x:-0.5,
 		y:-0.5
 	};
-	var x:Float = 0;
-	var y:Float = 0;
-	var scale:Float = 2;
-	var rotation:Float = 0;
+	public var x:Float = 0;
+	public var y:Float = 0;
+	public var scale:Float = 1;
+	public var rotation:Float = 0;
 
 	var lines:Array<AbstractLine> = [];
-	public function new(model:Prototype, graphics:GraphicsAbstract) {
+	public function new(model:Prototype, x:Float, y:Float, graphics:GraphicsAbstract, model_translation:EditorTranslation) {
+		this.x = x;
+		this.y = y;
 		this.model = model;
+		this.model_translation = model_translation;
 		for (proto in model.figure.lines) {
-			var line =  graphics.make_line(0,0,0,0, 0x2C8D49ff);
-			translate(proto, line, 0, 0);
+			var line =  graphics.make_line(0,0,1,1, 0x2C8D49ff);
 			lines.push(line);
 		}
 	}
@@ -283,8 +235,6 @@ class Drawing{
 		line_drawing.point_from.y = from.y - (origin.y * scale);
 		line_drawing.point_to.x = to.x - (origin.x * scale);
 		line_drawing.point_to.y = to.y - (origin.y * scale);
-		// trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
-		// lines.push(_line);
 	}
 
 	public function draw(){
@@ -292,22 +242,6 @@ class Drawing{
 		var rotation_cos = Math.cos(rotation);
 		for (n => proto in model.figure.lines) {
 			translate(proto, lines[n], rotation_sin, rotation_cos);
-			// var from_:Vector ={
-			// 	x: line.from.x + origin.x,
-			// 	y: line.from.y + origin.y
-			// }
-			// var to_:Vector = {
-			// 	x: line.to.x + origin.x,
-			// 	y: line.to.y + origin.y
-			// }
-			// var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			// var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
-			// lines[n].point_from.x = from.x - (origin.y * scale);
-			// lines[n].point_from.y = from.y - (origin.y * scale);
-			// lines[n].point_to.x = to.x - (origin.x * scale);
-			// lines[n].point_to.y = to.y - (origin.y * scale);
-			// trace('translated line ${_line.point_from.x},${_line.point_from.y} -> ${_line.point_to.x},${_line.point_to.y}');
-			// lines.push(_line);
 		}
 	}
 }
