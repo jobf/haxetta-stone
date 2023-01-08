@@ -66,7 +66,7 @@ class LunarScene extends Scene {
 			width: bounds.width,
 			height: Std.int(bounds.height * 0.25)
 		}, file.models, model_translation);
-		hud.write_message("0123456789");
+		hud.write_message("ABCDE VWXYZ");
 
 		draw_bot();
 		performer = new Performer(drawing);

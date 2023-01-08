@@ -42,6 +42,11 @@ class Hud {
 			if (is_number) {
 				index_char_model += 27;
 			}
+			else{
+				if(char_code == 32){
+					index_char_model = 27;
+				}
+			}
 			trace('${String.fromCharCode(char_code)} code $char_code model_index $index_char_model');
 			message.push(draw_model(models[index_char_model], 16 + (i * char_size), 35));
 		}
