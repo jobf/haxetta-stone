@@ -12,7 +12,7 @@ class Entity {
 	public var weight:Float = 250;
 	public var rotation:Float = 0;
 
-	public var scale = 1;
+	public var scale:Float = 1;
 
 	var rotation_direction:Int = 0;
 	public var rotation_speed:Float;

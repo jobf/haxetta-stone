@@ -42,9 +42,11 @@ class Main extends Application {
 
 		var black = 0x000000ff;
 		var slate = 0x151517ff;
-		var init_scene = game -> new DesignerScene(game, bounds_scene, black);
-		var init_scene = game -> new SpaceScene(game, bounds_scene, black);
-		var init_scene = game -> new LunarScene(game, bounds_scene, black);
+		// var init_scene:Game->Scene = game -> new DesignerScene(game, bounds_scene, black);
+		var init_scene:Game->Scene = game -> new LunarScene(game, bounds_scene, black);
+		#if model_test
+		init_scene = game -> new ModelTestScene(game, bounds_scene, black);
+		#end
 
 		implementation_graphics = new Graphics(window, bounds_viewport);
 		implementation_input = new Input(window);

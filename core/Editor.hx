@@ -14,7 +14,7 @@ class EditorTranslation {
 	public var bounds_width_half:Float;
 	public var bounds_height_half:Float;
 
-	public function new(bounds_view:RectangleGeometry, points_in_translation_x:Int = 3, points_in_translation_y:Int = 3) {
+	public function new(bounds_view:RectangleGeometry, points_in_translation_x:Int = 1, points_in_translation_y:Int = 1) {
 		this.bounds_view = bounds_view;
 		this.points_in_translation_x = points_in_translation_x;
 		this.points_in_translation_y = points_in_translation_y;

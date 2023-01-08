@@ -1,3 +1,6 @@
+import Graphics;
+import peote.view.PeoteView;
+import peote.view.Display;
 import automation.Oscillator;
 import automation.Envelope;
 import dials.Disk;
@@ -29,11 +32,18 @@ class LunarScene extends Scene {
 	var countdown_cheese_release:CountDown;
 	var performer:Performer;
 	var controller:Controller;
-
-
+	var display:Display;
+	var peoteview:PeoteView;
+	var hud:Hud;
 
 
 	public function init() {
+		var g:Graphics = cast game.graphics;
+		@:privateAccess
+		display = g.display;
+		@:privateAccess
+		peoteview = g.peoteview;
+
 		x = bounds.width * 0.5;
 		y = bounds.height * 0.5;
 		// game.input.mouse_cursor_hide();
@@ -50,6 +60,13 @@ class LunarScene extends Scene {
 
 		file = Disk.parse_file_contents(models_json);
 
+		hud = new Hud(peoteview, {
+			y: 0,
+			x: 0,
+			width: bounds.width,
+			height: Std.int(bounds.height * 0.25)
+		}, file.models, model_translation);
+		hud.write_message("0123456789");
 
 		draw_bot();
 		performer = new Performer(drawing);
@@ -90,7 +107,7 @@ class LunarScene extends Scene {
 		},
 		x,
 		y,
-		game.graphics,
+		game.graphics.make_line,
 		model_translation);
 	}
 
@@ -110,6 +127,7 @@ class LunarScene extends Scene {
 	
 	public function draw() {
 		drawing.draw();
+		hud.draw();
 	}
 
 
@@ -123,9 +141,7 @@ class LunarScene extends Scene {
 		// settings.disk_load();
 		settings.page_add(page);
 		
-		var g:Graphics = cast game.graphics;
-		@:privateAccess
-		var display = g.display;
+
 		display.zoom = 1.0;
 		display.xOffset = 0;
 		display.yOffset = 0;
@@ -269,13 +285,13 @@ class Drawing{
 
 
 	public var lines:Array<AbstractLine> = [];
-	public function new(model:Prototype, x:Float, y:Float, graphics:GraphicsAbstract, model_translation:EditorTranslation) {
+	public function new(model:Prototype, x:Float, y:Float, make_line:MakeLine, model_translation:EditorTranslation) {
 		this.x = x;
 		this.y = y;
 		this.model = model;
 		this.model_translation = model_translation;
 		for (proto in model.figure.lines) {
-			var line =  graphics.make_line(0,0,1,1, 0x2C8D49ff);
+			var line =  make_line(0,0,1,1, 0x2C8D49ff);
 			lines.push(line);
 		}
 	}
@@ -335,7 +351,7 @@ class Wheel {
 		this.model_translation = model_translation;
 		var drawing = new Drawing({
 			figure: model,
-		}, x, y, graphics, model_translation);
+		}, x, y, graphics.make_line, model_translation);
 		// drawing.rotation
 		@:privateAccess
 		drawing.origin.y = y_origin;
