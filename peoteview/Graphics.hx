@@ -15,8 +15,8 @@ class Graphics extends GraphicsAbstract {
 		display = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display);
 
-		rectangleBuffer = new Buffer<Rectangle>(256, 256, true);
-		var rectangleProgram = new Program(rectangleBuffer);
+		buffer_fills = new Buffer<Rectangle>(256, 256, true);
+		var rectangleProgram = new Program(buffer_fills);
 		display.addProgram(rectangleProgram);
 
 		buffer_lines = new Buffer<Line>(256, 256, true);
@@ -35,7 +35,8 @@ class Graphics extends GraphicsAbstract {
 			y: to_y
 		},
 		element,
-		line -> line_erase(line)));
+		line -> line_erase(line),
+		make_rectangle(Std.int(from_x), Std.int(from_y), 8,8, color)));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
@@ -49,7 +50,7 @@ class Graphics extends GraphicsAbstract {
 	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:RGBA):Rectangle {
 		final rotation = 0;
 		var element = new Rectangle(x, y, width, height, rotation, cast color);
-		rectangleBuffer.addElement(element);
+		buffer_fills.addElement(element);
 		return element;
 	}
 
@@ -59,6 +60,7 @@ class Graphics extends GraphicsAbstract {
 	}
 
 	public function line_erase(line:PeoteLine) {
+		buffer_fills.removeElement(line.cap);
 		buffer_lines.removeElement(line.element);
 		// trace('removed line from buffer');
 		lines.remove(line);
@@ -72,14 +74,14 @@ class Graphics extends GraphicsAbstract {
 		for (fill in fills) {
 			fill.draw();
 		}
-		rectangleBuffer.update();
+		buffer_fills.update();
 		buffer_lines.update();
 	}
 
 	var peoteview:PeoteView;
 	var display:Display;
 	var buffer_lines:Buffer<Line>;
-	var rectangleBuffer:Buffer<Rectangle>;
+	var buffer_fills:Buffer<Rectangle>;
 
 	public function translate_mouse(x:Float, y:Float):Vector {
 		return {
@@ -159,14 +161,16 @@ class PeoteFill extends AbstractFillRectangle {
 class PeoteLine extends AbstractLine {
 	var a:Float = 0;
 	var b:Float = 0;
+	public var cap:Rectangle;
 	var remove_from_buffer:PeoteLine->Void;
 
 	public var element(default, null):Line;
 
-	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void) {
+	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, cap:Rectangle) {
 		super(point_from, point_to, cast element.color);
 		this.element = element;
 		this.remove_from_buffer = remove_from_buffer;
+		this.cap = cap;
 		draw();
 	}
 
@@ -179,6 +183,8 @@ class PeoteLine extends AbstractLine {
 		element.x = point_from.x;
 		element.y = point_from.y;
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
+		cap.x = point_from.x;
+		cap.y = point_from.y;
 
 		// line thickness
 		element.w = 3;
@@ -221,8 +227,8 @@ class GraphicsToo extends GraphicsAbstract {
 		display = new Display(0, 0, viewport_bounds.width, viewport_bounds.height);
 		peoteview.addDisplay(display);
 
-		rectangleBuffer = new Buffer<Rectangle>(256, 256, true);
-		var rectangleProgram = new Program(rectangleBuffer);
+		buffer_fills = new Buffer<Rectangle>(256, 256, true);
+		var rectangleProgram = new Program(buffer_fills);
 		display.addProgram(rectangleProgram);
 
 		buffer_lines = new Buffer<Line>(256, 256, true);
@@ -241,7 +247,8 @@ class GraphicsToo extends GraphicsAbstract {
 			y: to_y
 		},
 		element,
-		line -> line_erase(line)));
+		line -> line_erase(line),
+		make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color)));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
@@ -255,7 +262,7 @@ class GraphicsToo extends GraphicsAbstract {
 	function make_rectangle(x:Float, y:Float, width:Float, height:Float, color:RGBA):Rectangle {
 		final rotation = 0;
 		var element = new Rectangle(x, y, width, height, rotation, cast color);
-		rectangleBuffer.addElement(element);
+		buffer_fills.addElement(element);
 		return element;
 	}
 
@@ -279,14 +286,14 @@ class GraphicsToo extends GraphicsAbstract {
 		for (fill in fills) {
 			fill.draw();
 		}
-		rectangleBuffer.update();
+		buffer_fills.update();
 		buffer_lines.update();
 	}
 
 	var peoteview:PeoteView;
 	var display:Display;
 	var buffer_lines:Buffer<Line>;
-	var rectangleBuffer:Buffer<Rectangle>;
+	var buffer_fills:Buffer<Rectangle>;
 
 	public function translate_mouse(x:Float, y:Float):Vector {
 		return {
