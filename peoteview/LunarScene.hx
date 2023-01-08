@@ -1,3 +1,4 @@
+import lime.app.Application;
 import Graphics;
 import peote.view.PeoteView;
 import peote.view.Display;
@@ -35,7 +36,7 @@ class LunarScene extends Scene {
 	var display:Display;
 	var peoteview:PeoteView;
 	var hud:Hud;
-
+	var settings:SettingsController;
 
 	public function init() {
 		var g:Graphics = cast game.graphics;
@@ -77,7 +78,6 @@ class LunarScene extends Scene {
 			wheel.create(x, y, file.models[0], model_translation, game.graphics);
 		}, true);
 
-		settings_bind();
 
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
@@ -93,12 +93,26 @@ class LunarScene extends Scene {
 					wheel.create(x, y, file.models[0], model_translation, game.graphics);
 				}
 			},
+			KEY_Q => {
+				on_pressed: ()-> {
+					quit();
+				}
+			}
 		];
 
 
 		controller = new Controller(actions, game.input);
 		game.input.on_pressed = button -> controller.handle_button(PRESSED, button);
 		game.input.on_released = button -> controller.handle_button(RELEASED, button);
+
+
+		settings_bind();
+	}
+
+	function quit(){
+		@:privateAccess
+		settings.fire.shutDown();
+		Application.current.window.close();
 	}
 
 	function draw_bot(){
@@ -133,134 +147,143 @@ class LunarScene extends Scene {
 
 
 	function settings_bind(){
-		var page:Page = {
-			pads: [],
-			name: "one",
-		}
-
-		var settings = new SettingsController(new DiskSys());
-		// settings.disk_load();
-		settings.page_add(page);
-		
 
 		display.zoom = 1.0;
 		display.xOffset = 0;
 		display.yOffset = 0;
 
 
-		settings.pad_add({
-			name: "camera",
-			index_palette: 0,
-			// index: index,
-			encoders: [
-				VOLUME => {
-					value: display.xOffset,
-					on_change: f -> display.xOffset = f,
-					name: "x offset",
-					minimum: -100000,
-					maximum: 100000,
-					increment: 10
+
+		var page:Page = {
+			name: "yoo",
+			pads: [
+				{
+					name: "camera",
+					index_palette: 0,
+					index: 0,
+					encoders: [
+						VOLUME => {
+							value: display.xOffset,
+							on_change: f -> display.xOffset = f,
+							name: "x offset",
+							minimum: -1000,
+							maximum: 1000,
+							increment: 5
+						},
+						PAN => {
+							value: display.yOffset,
+							on_change: f -> display.yOffset = f,
+							name: "y offset",
+							minimum: -1000,
+							maximum: 1000,
+							increment: 5
+						},
+						// FILTER => {
+						// 	value: 0,
+						// 	on_change: f -> return,
+						// 	name: "0",
+						// 	// increment: 0.1,
+						// 	// minimum: 0.001
+						// },
+						RESONANCE => {
+							value: display.zoom,
+							on_change: f -> display.zoom = f,
+							name: "zoom",
+							minimum: 0.1,
+							maximum: 10,
+							increment: 0.01
+						}
+					]
 				},
-				PAN => {
-					value: display.yOffset,
-					on_change: f -> display.yOffset = f,
-					name: "y offset",
-					minimum: -100000,
-					maximum: 100000,
-					increment: 10
+				{
+					name: "bot",
+					index_palette: 1,
+					index: 1,
+					encoders: [
+						VOLUME => {
+							value: performer.y,
+							on_change: f -> performer.y = f,
+							name: "y",
+							increment: 0.01,
+							minimum: -10000,
+							maximum: 10000
+						},
+						PAN => {
+							value: performer.rotation,
+							on_change: f -> performer.rotation = f,
+							name: "angle",
+							increment: 0.01,
+							minimum: -360,
+							maximum: 360
+						},
+						FILTER => {
+							value: performer.scale,
+							on_change: f -> performer.scale = f,
+							name: "scale",
+							increment: 0.01,
+							minimum: 0.00001
+						},
+						RESONANCE => {
+							value: performer.jump_height,
+							on_change: f -> performer.jump_height = f,
+							name: "jump",
+							increment: 0.1,
+							minimum: -10000,
+							maximum: 10000
+						}
+					]
 				},
-				// FILTER => {
-				// 	value: entity.scale,
-				// 	on_change: f -> entity.scale = Std.int(f),
-				// 	name: "scale",
-				// 	// increment: 0.1,
-				// 	minimum: 0.001
-				// },
-				RESONANCE => {
-					value: display.zoom,
-					on_change: f -> display.zoom = f,
-					name: "zoom",
-					minimum: 0.1,
-					increment: 0.01
+				{
+					name: "wheel",
+					index_palette: 2,
+					index: 2,
+					encoders: [
+						VOLUME => {
+							value: wheel.y_origin,
+							on_change: f -> wheel.y_origin = f,
+							name: "y origin ",
+							increment: 0.01,
+							minimum: -10000,
+							maximum: 10000
+						},
+						PAN => {
+							value: wheel.rotation_speed,
+							on_change: f -> wheel.rotation_speed = f,
+							name: "speed",
+							increment: 0.01,
+							minimum: -10,
+							maximum: 10
+						},
+						FILTER => {
+							value: wheel.scale,
+							on_change: f -> wheel.scale = f,
+							name: "scale",
+							increment: 0.1,
+							minimum: 0.00001
+						},
+						RESONANCE => {
+							value: 0,
+							on_change: f -> return,
+							name: "0",
+							// increment: 0.1,
+							// minimum: -360
+						}
+					]
 				}
 			]
-		}, page.index);
+		}
 
-		settings.pad_add({
-			name: "figure",
-			index_palette: 1,
-			// index: index,
-			encoders: [
-				VOLUME => {
-					value: drawing.origin.y,
-					on_change: f -> drawing.origin.y = f,
-					name: "y origin ",
-					increment: 0.01,
-					minimum: -10000,
-					maximum: 10000
-				},
-				PAN => {
-					value: drawing.rotation,
-					on_change: f -> drawing.rotation = f,
-					name: "rotation",
-					increment: 0.01,
-					minimum: -360,
-					maximum: 360
-				},
-				FILTER => {
-					value: drawing.scale,
-					on_change: f -> drawing.scale = f,
-					name: "scale",
-					increment: 0.01,
-					minimum: 0.00001
-				},
-				// RESONANCE => {
-				// 	value: entity.rotation,
-				// 	on_change: f -> entity.rotation = f,
-				// 	name: "angle",
-				// 	increment: 0.1,
-				// 	minimum: -360
-				// }
-			]
-		}, page.index);
+		settings = new SettingsController(new DiskSys());
+		settings.page_add(page);
+		
 
-		settings.pad_add({
-			name: "wheel",
-			index_palette: 2,
-			// index: index,
-			encoders: [
-				VOLUME => {
-					value: wheel.y_origin,
-					on_change: f -> wheel.y_origin = f,
-					name: "w y origin ",
-					increment: 0.01,
-					minimum: -10000,
-					maximum: 10000
-				},
-				// PAN => {
-				// 	value: wheel.rotation_speed,
-				// 	on_change: f -> wheel.rotation_speed = f,
-				// 	name: "speed",
-				// 	increment: 0.01,
-				// 	minimum: -10,
-				// 	// maximum: 1
-				// },
-				FILTER => {
-					value: wheel.scale,
-					on_change: f -> wheel.scale = f,
-					name: "w scale",
-					increment: 0.1,
-					minimum: 0.00001
-				},
-				// RESONANCE => {
-				// 	value: entity.rotation,
-				// 	on_change: f -> entity.rotation = f,
-				// 	name: "angle",
-				// 	increment: 0.1,
-				// 	minimum: -360
-				// }
-			]
-		}, page.index);
+
+
+		// settings.pad_add(, page.index);
+		// settings.pad_add(, page.index);
+		// settings.pad_add(, page.index);
+
+		// settings.disk_load();
 	}
 
 }
@@ -436,6 +459,10 @@ class Performer {
 	var x:Float;
 	public var y:Float;
 	var oscillate_y:Float;
+	public var rotation:Float = 0;
+	public var scale:Float = 1;
+
+
 
 	public function new(graphic:Drawing) {
 		this.graphic = graphic;
@@ -459,6 +486,8 @@ class Performer {
 		var amp_wobble = lfo.next();
 		var jump = -(jump_height * amp_jump);
 		var wobble = amp_wobble * y_wobble;
+		graphic.scale = scale;
+		graphic.rotation = rotation;
 		graphic.origin.y = y + jump + wobble;
 	}
 
