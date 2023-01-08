@@ -7,7 +7,8 @@ import automation.Envelope;
 
 using Vector;
 class Performer {
-	public var envelope:Envelope;
+	public var amp_jump_env:Envelope;
+	public var amp_fall_env:Envelope;
 	public var lfo:LFO;
 	public var graphic:Drawing;
 	public var jump_height:Float = 1.5;
@@ -27,9 +28,13 @@ class Performer {
 		this.x = graphic.x;
 		this.y = graphic.origin.y;
 		var framesPerSecond = 60;
-		envelope = new Envelope(framesPerSecond);
+		amp_jump_env = new Envelope(framesPerSecond);
+		amp_fall_env = new Envelope(framesPerSecond);
 		var wavetable = new WaveTable(framesPerSecond);
-		envelope.releaseTime = 0.3;
+		amp_jump_env.releaseTime = 0.3;
+		amp_fall_env.releaseTime = 2.0;
+		amp_fall_env.has_sustain = false;
+
 		lfo = {
 			shape: SINE,
 			sampleRate: framesPerSecond,
@@ -41,7 +46,7 @@ class Performer {
 
 	public function update(elapsed:Float) {
 		rotation += 1 * rotation_speed;
-		var amp_jump = envelope.nextAmplitude();
+		var amp_jump = amp_jump_env.nextAmplitude() * amp_fall_env.nextAmplitude();
 		var amp_wobble = lfo.next();
 		var jump = -(jump_height * amp_jump);
 		var wobble = amp_wobble * y_wobble;
@@ -55,10 +60,12 @@ class Performer {
 	}
 
 	public function press() {
-		envelope.open();
+		amp_jump_env.open();
+		amp_fall_env.open();
 	}
 
 	public function release() {
-		envelope.close();
+		amp_jump_env.close();
+		amp_fall_env.close();
 	}
 }
