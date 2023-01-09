@@ -8,6 +8,7 @@ class Graphics extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
 	var window:Window;
+
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.window = window;
@@ -21,11 +22,16 @@ class Graphics extends GraphicsAbstract {
 
 		buffer_lines = new Buffer<Line>(256, 256, true);
 		var lineProgram = new Program(buffer_lines);
+		// lineProgram.setColorFormula( "vec4(base.r, base.g, base.b, base.a * alpha )" );
 		display.addProgram(lineProgram);
+
+		peoteview.start();
 	}
 
 	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
 		var element = new Line(from_x, from_y, 1, 1, 0, cast color);
+		element.timeAStart = 0.0;
+		element.timeADuration = 3.0;
 		buffer_lines.addElement(element);
 		lines.push(new PeoteLine({
 			x: from_x,
@@ -33,10 +39,8 @@ class Graphics extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		},
-		element,
-		line -> line_erase(line),
-		make_rectangle(Std.int(from_x), Std.int(from_y), 8,8, color)));
+		}, element, line -> line_erase(line),
+			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color), cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
@@ -90,7 +94,7 @@ class Graphics extends GraphicsAbstract {
 		}
 	}
 
-	public function set_color(color:RGBA){
+	public function set_color(color:RGBA) {
 		display.color = cast color;
 	}
 }
@@ -121,7 +125,7 @@ class Line implements Element {
 	@rotation public var rotation:Float = 0.0;
 	@sizeX @varying public var w:Float;
 	@sizeY @varying public var h:Float;
-	@color public var color:Color;
+	@color @anim("ColorFade") public var color:Color;
 	@posX public var x:Float;
 	@posY public var y:Float;
 	// pivot x (rotation offset)
@@ -132,6 +136,10 @@ class Line implements Element {
 
 	var OPTIONS = {alpha: true};
 
+	// params for blinking alpha
+	// @custom("alpha") @varying @anim("A", "pingpong") public var alpha:Float;
+	@custom("alpha") @varying @constEnd(1.0) @anim("A", "pingpong") public var alpha:Float;
+
 	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
 		this.x = positionX;
 		this.y = positionY;
@@ -139,6 +147,18 @@ class Line implements Element {
 		this.h = height;
 		this.color = color;
 		this.rotation = rotation;
+	}
+
+	public function setFlashing(isFlashing:Bool) {
+		// todo - adhere to previously set alpha
+		if (isFlashing) {
+			alphaStart = 0.0;
+			// animate Color from red to yellow
+			animColorFade(Color.RED, Color.GREEN);
+			timeColorFade(0.0, 1.0); // from start-time (0.0) and during 1 seconds
+		} else {
+			alphaStart = 1.0;
+		}
 	}
 }
 
@@ -161,13 +181,15 @@ class PeoteFill extends AbstractFillRectangle {
 class PeoteLine extends AbstractLine {
 	var a:Float = 0;
 	var b:Float = 0;
+
 	public var cap:Rectangle;
+
 	var remove_from_buffer:PeoteLine->Void;
 
 	public var element(default, null):Line;
 
-	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, cap:Rectangle) {
-		super(point_from, point_to, cast element.color);
+	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, cap:Rectangle, color:Color) {
+		super(point_from, point_to, cast color);
 		this.element = element;
 		this.remove_from_buffer = remove_from_buffer;
 		this.cap = cap;
@@ -179,7 +201,7 @@ class PeoteLine extends AbstractLine {
 
 		a = point_to.x - point_from.x;
 		b = point_to.y - point_from.y;
-		
+
 		// line thickness
 		element.w = 1;
 
@@ -215,7 +237,7 @@ class Particle extends AbstractParticle {
 	}
 }
 
-typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA)->AbstractLine;
+typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA) -> AbstractLine;
 
 class GraphicsToo extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
@@ -245,10 +267,8 @@ class GraphicsToo extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		},
-		element,
-		line -> line_erase(line),
-		make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color)));
+		}, element, line -> line_erase(line),
+			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color),cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
@@ -303,7 +323,7 @@ class GraphicsToo extends GraphicsAbstract {
 		}
 	}
 
-	public function set_color(color:RGBA){
+	public function set_color(color:RGBA) {
 		display.color = cast color;
 	}
 }

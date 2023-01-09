@@ -1,5 +1,8 @@
 
 
+import GraphicsAbstract;
+import Graphics.PeoteLine;
+import Graphics.Line;
 import Drawing;
 import automation.Oscillator;
 import automation.Envelope;
@@ -53,6 +56,16 @@ class Performer {
 		graphic.scale = scale;
 		graphic.rotation = rotation;
 		graphic.origin.y = y + jump + wobble;
+	}
+
+	public function set_flashing(is_flashing:Bool){
+		var color:RGBA = is_flashing ? 0xBCE19F90 : 0x8A8585FF;
+		for (line in graphic.lines) {
+			line.color = color;
+			var l:PeoteLine = cast line;
+			l.cap.color = cast color;
+			// l.element.setFlashing(is_flashing);
+		}
 	}
 
 	public function draw() {

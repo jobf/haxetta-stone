@@ -131,7 +131,10 @@ class LunarScene extends Scene {
 		performer.rotation_speed = 0.0003;
 		
 		
-		countdown_invincible = new CountDown(2, () -> is_invincible = false);
+		countdown_invincible = new CountDown(2, () -> {
+			is_invincible = false;
+			performer.set_flashing(false);
+		});
 		hud.lives_change(lives);
 
 
@@ -187,10 +190,21 @@ class LunarScene extends Scene {
 		if(lives > 0){
 			lives--;
 			is_invincible = true;
+			performer.set_flashing(true);
 			countdown_invincible.reset();
 			hud.lives_change(lives);
+			trace('hit $lives left');
 		}
-		trace('hit $lives left');
+		else{
+			trace('no lives, end');
+			performer.rotation = -1.62;
+			wheel_cheese.remove_all();
+			wheel_obstacle.remove_all();
+			hud.score_reset();
+			lives = 3;
+			hud.lives_change(lives);
+		}
+		
 	}
 	
 	public function draw() {

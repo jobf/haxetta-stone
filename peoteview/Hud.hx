@@ -104,6 +104,11 @@ class Hud {
 		}
 	}
 
+	public function score_reset() {
+		score = 0;
+		score_change(0);
+	}
+
 	public function write_message(text:String) {
 		final index_model_offset = 1;
 		for (i in 0...text.length) {
@@ -128,4 +133,5 @@ class Hud {
 			figure: model
 		}, x, y, graphics.make_line, model_translation, 0xff750bFF);
 	}
+
 }
