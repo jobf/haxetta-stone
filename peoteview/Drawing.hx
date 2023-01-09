@@ -86,7 +86,7 @@ class Drawing{
 		
 	// }
 
-
+	public var log = false;
 	public function draw(){
 		rotation = rotation + (rotation_speed * rotation_direction);
 
@@ -94,6 +94,9 @@ class Drawing{
 		var rotation_cos = Math.cos(rotation);
 		for (n => proto in model.figure.lines) {
 			translate(proto, lines[n], rotation_sin, rotation_cos);
+		}
+		if(log){
+			trace('special rot $rotation');
 		}
 	}
 }

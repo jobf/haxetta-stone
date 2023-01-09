@@ -108,6 +108,7 @@ life
 
 **/
 		wheel_obstacle = new Wheel(moon.c, 30);
+		wheel_obstacle.first_is_done = true;
 		countdown_obstacle_release = new CountDown(0.3, ()->{
 			var i = Random.randomInt(45,48);
 			wheel_obstacle.create(x, y, file.models[i], model_translation, game.graphics);

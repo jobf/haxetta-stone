@@ -11,6 +11,7 @@ class Wheel {
 
 	public var rotation_speed:Float = 0.018;
 	public var rotation_init:Float = 90;
+	public var remove_at:Float = 85;
 	// public var rotation_direction:Int = -1;
 	public var y_origin:Float = -2;
 	public var scale:Float = 1;
@@ -28,6 +29,7 @@ class Wheel {
 		this.maximum_items = maximum_items;
 	}
 
+	public var first_is_done = false;
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
 		if (maximum_items < drawings.length) {
@@ -36,10 +38,16 @@ class Wheel {
 		}
 		this.x = x;
 		this.y = y;
+		var color = first_is_done ? color : 0xeb1313FF;
 		this.model_translation = model_translation;
 		var drawing = new Drawing({
 			figure: model,
 		}, x, y, graphics.make_line, model_translation, color);
+		drawing.log = first_is_done ? false :true;
+
+		if(first_is_done == false){
+			first_is_done = true;
+		}
 		// drawing.rotation
 		@:privateAccess
 		drawing.origin.y = y_origin;
@@ -101,15 +109,29 @@ class Wheel {
 	}
 
 	public function update(elapsed_seconds:Float) {
-		// rotation = rotation + (rotation_speed * rotation_direction);
-		for (drawing in drawings) {
-			// drawing.x = x;
-			// drawing.y = y;
-			drawing.origin.y = y_origin;
-			// drawing.rotation = rotation;
-			// drawing.rotation_speed = rotation_speed;
-			drawing.scale = scale;
-			drawing.draw();
+		// // rotation = rotation + (rotation_speed * rotation_direction);
+		// for (drawing in drawings) {
+		// 	// drawing.x = x;
+		// 	// drawing.y = y;
+		// 	drawing.origin.y = y_origin;
+		// 	// drawing.rotation = rotation;
+		// 	// drawing.rotation_speed = rotation_speed;
+		// 	drawing.scale = scale;
+		// 	drawing.draw();
+		// }
+
+		var i = drawings.length;
+		while(i-- > 0){
+			var drawing = drawings[i];
+			if(drawing.rotation < remove_at){
+				remove(drawing);
+			}
+			else{
+				drawing.origin.y = y_origin;
+				drawing.scale = scale;
+				drawing.draw();
+				// trace(drawing.rotation);
+			}
 		}
 	}
 
