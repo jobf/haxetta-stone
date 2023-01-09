@@ -29,7 +29,10 @@ class Hud {
 
 		graphics = new GraphicsToo(peoteview, bounds);
 		bar_length = bounds.width - 10;
-		bar_thrust = graphics.make_fill(5+Std.int(bounds.width * 0.5), 5, bar_length, 5, 0x72ae24ff);
+		var bar_height_thrust = 25;
+		var bar_x = Std.int(bounds.width * 0.5);
+		var bar_y = bounds.height - 40;
+		bar_thrust = graphics.make_fill(bar_x, bar_y, bar_length, bar_height_thrust, 0xff860d6b);
 	}
 
 	var message:Array<Drawing> = [];
