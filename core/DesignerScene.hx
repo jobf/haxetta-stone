@@ -15,13 +15,13 @@ class DesignerScene extends Scene {
 	var designer:Designer;
 
 	public function init() {
-		game.input.mouse_cursor_hide();
+		// game.input.mouse_cursor_hide();/
 		
 		mouse_position = game.input.mouse_position;
 		x_center = Std.int(bounds.width * 0.5);
 		y_center = Std.int(bounds.height * 0.5);
 		
-		var size_segment = Std.int(game.graphics.viewport_bounds.width / 7);
+		var size_segment = Std.int(game.graphics.viewport_bounds.width / 15);
 		for (x in 0...Std.int(bounds.width / size_segment)) {
 			var x_ = Std.int(x * size_segment);
 			game.graphics.make_line(x_, 0, x_, bounds.height, 0xD1D76200);

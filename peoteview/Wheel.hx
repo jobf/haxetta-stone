@@ -9,7 +9,7 @@ class Wheel {
 	var drawings:Array<Drawing>;
 	var model_translation:EditorTranslation;
 	public var rotation_speed:Float = 0.018;
-	public var rotation_init:Float = 180;
+	public var rotation_init:Float = 0;
 	// public var rotation_direction:Int = -1;
 	public var y_origin:Float = -2;
 	public var scale:Float = 1;

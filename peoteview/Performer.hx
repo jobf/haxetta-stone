@@ -15,7 +15,7 @@ class Performer {
 	public var lfo:LFO;
 	public var graphic:Drawing;
 	public var jump_height:Float = 1.5;
-	public var y_wobble:Float = 0.01;
+	public var y_wobble:Float = 0.00002;
 
 	var x:Float;
 	public var y:Float;

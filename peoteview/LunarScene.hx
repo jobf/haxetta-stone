@@ -1,3 +1,4 @@
+import cpp.Random;
 import lime.app.Application;
 import Graphics;
 import peote.view.PeoteView;
@@ -58,8 +59,8 @@ class LunarScene extends Scene {
 		model_translation = new EditorTranslation({
 			y: 0,
 			x: 0,
-			width: 120,
-			height: 120
+			width: 64,
+			height: 64
 		}, 1, 1);
 		for (s in Assets.list(AssetType.TEXT)) {
 			trace(s);
@@ -89,10 +90,23 @@ class LunarScene extends Scene {
 		countdown_cheese_toggle = new CountDown(1.0, () ->{
 			countdown_cheese_release.enabled = !countdown_cheese_release.enabled;
 		}, true);
+/**
+obstacles
 
+45-48
+
+hi-score
+
+49-50
+
+life
+51
+
+**/
 		wheel_obstacle = new Wheel(0xd68181FF, 30);
 		countdown_obstacle_release = new CountDown(0.3, ()->{
-			wheel_obstacle.create(x, y, file.models[0], model_translation, game.graphics);
+			var i = Random.randomInt(45,48);
+			wheel_obstacle.create(x, y, file.models[i], model_translation, game.graphics);
 		}, true);
 		countdown_obstacle_toggle = new CountDown(1.0, () ->{
 			countdown_obstacle_release.enabled = !countdown_obstacle_release.enabled;
@@ -451,8 +465,8 @@ class LunarScene extends Scene {
 							on_change: f -> performer.jump_height = f,
 							name: "height",
 							increment: 0.1,
-							minimum: 0.0001,
-							maximum: 1000
+							minimum: -1,
+							maximum: 1
 						}
 					]
 				},

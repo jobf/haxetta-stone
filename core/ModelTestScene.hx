@@ -25,6 +25,7 @@ class ModelTestScene extends Scene {
 	var y:Float = 0;
 	var scale:Float = 2;
 
+	var  settings:SettingsController;
 	var rotation:Float = 0;
 	public function init() {
 		x = bounds.width * 0.5;
@@ -81,7 +82,7 @@ class ModelTestScene extends Scene {
 			name: "one",
 		}
 
-		var settings = new SettingsController(new DiskSys());
+		settings = new SettingsController(new DiskSys());
 		settings.page_add(page);
 		
 
@@ -150,13 +151,13 @@ class ModelTestScene extends Scene {
 					minimum: -360,
 					maximum: 360
 				},
-				// FILTER => {
-				// 	value: entity.scale,
-				// 	on_change: f -> entity.scale = f,
-				// 	name: "scale",
-				// 	// increment: 0.1,
-				// 	minimum: 0.00001
-				// },
+				FILTER => {
+					value: scale,
+					on_change: f -> scale = f,
+					name: "scale",
+					increment: 0.1,
+					minimum: 0.00001
+				},
 				// RESONANCE => {
 				// 	value: entity.rotation,
 				// 	on_change: f -> entity.rotation = f,
@@ -215,14 +216,21 @@ class ModelTestScene extends Scene {
 
 		var rotation_sin = Math.sin(rotation);
 		var rotation_cos = Math.cos(rotation);
+		var scale_origin:Vector = {
+			y: scale/origin.y,
+			x: scale/origin.x
+		}
+		var model_origin = model_translation.view_to_model_point(scale_origin);
+
+
 		for (n => line in char.lines) {
 			var from_:Vector ={
-				x: line.from.x + origin.x,
-				y: line.from.y + origin.y
+				x: line.from.x + model_origin.x,
+				y: line.from.y + model_origin.y
 			}
 			var to_:Vector = {
-				x: line.to.x + origin.x,
-				y: line.to.y + origin.y
+				x: line.to.x + model_origin.x,
+				y: line.to.y + model_origin.y
 			}
 			var from = model_translation.model_to_view_point(from_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);
 			var to = model_translation.model_to_view_point(to_).vector_transform(origin, scale, x, y, rotation_sin, rotation_cos);

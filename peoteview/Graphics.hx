@@ -8,7 +8,7 @@ class Graphics extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
 	var window:Window;
-
+	var size_cap:Int = 2;
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.window = window;
@@ -41,8 +41,8 @@ class Graphics extends GraphicsAbstract {
 			y: to_y
 		},
 			element, line -> line_erase(line),
-			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color),
-			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color), cast color));
+			make_rectangle(Std.int(from_x), Std.int(from_y), size_cap, size_cap, color),
+			make_rectangle(Std.int(from_x), Std.int(from_y), size_cap, size_cap, color), cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
