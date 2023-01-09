@@ -63,7 +63,8 @@ class Performer {
 		for (line in graphic.lines) {
 			line.color = color;
 			var l:PeoteLine = cast line;
-			l.cap.color = cast color;
+			l.head.color = cast color;
+			l.end.color = cast color;
 			// l.element.setFlashing(is_flashing);
 		}
 	}

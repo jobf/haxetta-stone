@@ -58,8 +58,8 @@ class LunarScene extends Scene {
 		model_translation = new EditorTranslation({
 			y: 0,
 			x: 0,
-			width: 60,
-			height: 60
+			width: 120,
+			height: 120
 		}, 1, 1);
 		for (s in Assets.list(AssetType.TEXT)) {
 			trace(s);

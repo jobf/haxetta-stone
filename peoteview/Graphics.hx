@@ -39,7 +39,9 @@ class Graphics extends GraphicsAbstract {
 		}, {
 			x: to_x,
 			y: to_y
-		}, element, line -> line_erase(line),
+		},
+			element, line -> line_erase(line),
+			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color),
 			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color), cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
@@ -64,7 +66,8 @@ class Graphics extends GraphicsAbstract {
 	}
 
 	public function line_erase(line:PeoteLine) {
-		buffer_fills.removeElement(line.cap);
+		buffer_fills.removeElement(line.head);
+		buffer_fills.removeElement(line.end);
 		buffer_lines.removeElement(line.element);
 		// trace('removed line from buffer');
 		lines.remove(line);
@@ -182,17 +185,19 @@ class PeoteLine extends AbstractLine {
 	var a:Float = 0;
 	var b:Float = 0;
 
-	public var cap:Rectangle;
+	public var head:Rectangle;
+	public var end:Rectangle;
 
 	var remove_from_buffer:PeoteLine->Void;
 
 	public var element(default, null):Line;
 
-	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, cap:Rectangle, color:Color) {
+	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, head:Rectangle, end:Rectangle, color:Color) {
 		super(point_from, point_to, cast color);
 		this.element = element;
 		this.remove_from_buffer = remove_from_buffer;
-		this.cap = cap;
+		this.head = head;
+		this.end = end;
 		draw();
 	}
 
@@ -203,7 +208,7 @@ class PeoteLine extends AbstractLine {
 		b = point_to.y - point_from.y;
 
 		// line thickness
-		element.w = 1;
+		element.w = 2;
 
 		// line length
 		element.h = Math.sqrt(a * a + b * b);
@@ -211,8 +216,10 @@ class PeoteLine extends AbstractLine {
 		element.x = point_from.x;
 		element.y = point_from.y;
 		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
-		cap.x = point_from.x;
-		cap.y = point_from.y;
+		head.x = point_from.x;
+		head.y = point_from.y;
+		end.x = point_to.x;
+		end.y = point_to.y;
 	}
 
 	public function erase():Void {
@@ -251,6 +258,7 @@ class GraphicsToo extends GraphicsAbstract {
 
 		buffer_fills = new Buffer<Rectangle>(256, 256, true);
 		var rectangleProgram = new Program(buffer_fills);
+		rectangleProgram.snapToPixel(1);
 		display.addProgram(rectangleProgram);
 
 		buffer_lines = new Buffer<Line>(256, 256, true);
@@ -268,7 +276,8 @@ class GraphicsToo extends GraphicsAbstract {
 			x: to_x,
 			y: to_y
 		}, element, line -> line_erase(line),
-			make_rectangle(Std.int(from_x), Std.int(from_y), 8, 8, color),cast color));
+		make_rectangle(Std.int(from_x), Std.int(from_y), 1,1, color),
+		make_rectangle(Std.int(from_x), Std.int(from_y), 1,1, color), cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
@@ -293,7 +302,8 @@ class GraphicsToo extends GraphicsAbstract {
 
 	public function line_erase(line:PeoteLine) {
 		// trace('remove line too');
-		buffer_fills.removeElement(line.cap);
+		buffer_fills.removeElement(line.head);
+		buffer_fills.removeElement(line.end);
 		buffer_lines.removeElement(line.element);
 		// trace('removed line from buffer');
 		lines.remove(line);
