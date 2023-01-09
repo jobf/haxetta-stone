@@ -1,3 +1,4 @@
+import automation.Envelope;
 import Drawing;
 import Editor.EditorTranslation;
 import Graphics;
@@ -13,6 +14,10 @@ class Hud {
 	var models:Array<FigureModel>;
 	var model_translation:EditorTranslation;
 	var graphics:GraphicsToo;
+	public var bar_thrust:AbstractFillRectangle;
+	var bar_length:Int;
+
+
 
 	public function new(peoteview:PeoteView, bounds:RectangleGeometry, models:Array<FigureModel>, model_translation:EditorTranslation) {
 		this.models = models;
@@ -20,6 +25,8 @@ class Hud {
 		this.model_translation = model_translation;
 
 		graphics = new GraphicsToo(peoteview, bounds);
+		bar_length = bounds.width - 10;
+		bar_thrust = graphics.make_fill(5+Std.int(bounds.width * 0.5), 5, bar_length, 5, 0x72ae24ff);
 	}
 
 	var message:Array<Drawing> = [];
@@ -72,8 +79,8 @@ class Hud {
 			}
 		}
 		for(i in 0...set){
-			var x_char = 200 + (i * char_size);
-			drawings_lives.push(draw_model(models[43], x_char, 100));
+			var x_char = 420 + (i * char_size);
+			drawings_lives.push(draw_model(models[43], x_char, 500));
 		}
 	}
 
@@ -134,4 +141,8 @@ class Hud {
 		}, x, y, graphics.make_line, model_translation, 0xff750bFF);
 	}
 
+
+	public function set_thrust_bar(fraction:Float) {
+		bar_thrust.width = bar_length * fraction;
+	}
 }

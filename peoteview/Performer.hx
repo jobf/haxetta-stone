@@ -49,7 +49,7 @@ class Performer {
 
 	public function update(elapsed:Float) {
 		rotation += 1 * rotation_speed;
-		var amp_jump = amp_jump_env.nextAmplitude() * amp_fall_env.nextAmplitude();
+		var amp_jump = amp_jump_env.nextAmplitude() *  amp_fall_env.nextAmplitude();
 		var amp_wobble = lfo.next();
 		var jump = -(jump_height * amp_jump);
 		var wobble = amp_wobble * y_wobble;

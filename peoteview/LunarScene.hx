@@ -45,6 +45,8 @@ class LunarScene extends Scene {
 	var settings:SettingsController;
 
 	var is_invincible:Bool = false;
+	var moon:Sprite;
+
 
 	public function init() {
 		var g:Graphics = cast game.graphics;
@@ -65,6 +67,9 @@ class LunarScene extends Scene {
 		for (s in Assets.list(AssetType.TEXT)) {
 			trace(s);
 		}
+
+		moon = g.add_moon(Assets.getImage('assets/placeholder_moon.png'));
+		moon.c = 0xebd0cfFF;
 		var models_json = Assets.getText('assets/alphabet-01.json');
 
 		file = Disk.parse_file_contents(models_json);
@@ -73,7 +78,7 @@ class LunarScene extends Scene {
 			y: 0,
 			x: 0,
 			width: bounds.width,
-			height: Std.int(bounds.height * 0.25)
+			height: bounds.height,
 		}, file.models, model_translation);
 		// hud.write_message("HELLO 0001");
 
@@ -83,7 +88,7 @@ class LunarScene extends Scene {
 		wheel_cheese = new Wheel(0xc2b97aFF, 100);
 		countdown_cheese_release = new CountDown(0.2, () -> {
 			var i = Random.randomInt(38,42);
-			trace('model $i out of ${file.models.length}');
+			// trace('model $i out of ${file.models.length}');
 			wheel_cheese.create(x, y, file.models[i], model_translation, game.graphics);
 
 		}, true);
@@ -103,7 +108,7 @@ life
 51
 
 **/
-		wheel_obstacle = new Wheel(0xd68181FF, 30);
+		wheel_obstacle = new Wheel(moon.c, 30);
 		countdown_obstacle_release = new CountDown(0.3, ()->{
 			var i = Random.randomInt(45,48);
 			wheel_obstacle.create(x, y, file.models[i], model_translation, game.graphics);
@@ -177,9 +182,12 @@ life
 		countdown_invincible.update(elapsed_seconds);
 		countdown_cheese_release.update(elapsed_seconds);
 		performer.update(elapsed_seconds);
+		hud.set_thrust_bar(performer.amp_jump_env.now() * performer.amp_fall_env.now());
 		wheel_cheese.update(elapsed_seconds);
 		countdown_obstacle_release.update(elapsed_seconds);
 		wheel_obstacle.update(elapsed_seconds);
+		// moon.rotation -= 0.1;//(wheel_obstacle.rotation_speed * 100) * -1;
+		moon.rotation = wheel_obstacle.speed_get() * 55;
 		// drawing.draw
 		var overlaps = wheel_cheese.overlaps_a_line(drawing.lines);
 		for (cheese in overlaps) {
