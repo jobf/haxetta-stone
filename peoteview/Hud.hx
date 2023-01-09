@@ -16,6 +16,8 @@ class Hud {
 	var graphics:GraphicsToo;
 	public var bar_thrust:AbstractFillRectangle;
 	var bar_length:Int;
+	var bounds:RectangleGeometry;
+
 
 
 
@@ -23,6 +25,7 @@ class Hud {
 		this.models = models;
 		this.peoteview = peoteview;
 		this.model_translation = model_translation;
+		this.bounds = bounds;
 
 		graphics = new GraphicsToo(peoteview, bounds);
 		bar_length = bounds.width - 10;
@@ -48,11 +51,11 @@ class Hud {
 		graphics.draw();
 	}
 
-	final char_size = 56;
+	final char_size = 64;
 	var score:Int = 0;
 	var drawings_score:Array<Drawing> = [];
 	var drawings_lives:Array<Drawing> = [];
-
+	var score_length = 10;
 	public function score_change(difference:Int) {
 		score += difference;
 		if (drawings_score.length > 0) {
@@ -61,11 +64,13 @@ class Hud {
 				score_remove(drawings_score[s]);
 			}
 		}
-		var score_text = StringTools.lpad('$score', "0", 9);
+		var score_text = StringTools.lpad('$score', "0", score_length);
+		var score_length_pixels = char_size * score_length;
+		var score_x = (bounds.width * 0.5) - ((score_length_pixels) * 0.5) + (char_size * 0.5);
 		for (i in 0...score_text.length) {
 			var char_code = score_text.charCodeAt(i);
 			var index_char_model = char_code - 48 + 28;
-			var x_char = 16 + (i * char_size);
+			var x_char = score_x + (i * char_size);
 			// trace('score $char_code $x_char');
 			drawings_score.push(draw_model(models[index_char_model], x_char, 35));
 		}
@@ -79,8 +84,10 @@ class Hud {
 			}
 		}
 		for(i in 0...set){
-			var x_char = 420 + (i * char_size);
-			drawings_lives.push(draw_model(models[43], x_char, 500));
+			var x_char = 420 + (i * (char_size * 1.2));
+			var heart = draw_model(models[43], x_char, 560, 0xf253f2FF);
+			heart.scale = 1.5;
+			drawings_lives.push(heart);
 		}
 	}
 
@@ -135,10 +142,10 @@ class Hud {
 		}
 	}
 
-	function draw_model(model:FigureModel, x:Float, y:Float):Drawing {
+	function draw_model(model:FigureModel, x:Float, y:Float, color:Int=0xf4f997FF):Drawing {
 		return new Drawing({
 			figure: model
-		}, x, y, graphics.make_line, model_translation, 0xff750bFF);
+		}, x, y, graphics.make_line, model_translation, color);
 	}
 
 

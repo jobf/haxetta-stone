@@ -272,7 +272,7 @@ typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RG
 class GraphicsToo extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
-
+	var size_cap:Int = 2;
 	public function new(peoteview:PeoteView, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.peoteview = peoteview;
@@ -299,8 +299,9 @@ class GraphicsToo extends GraphicsAbstract {
 			x: to_x,
 			y: to_y
 		}, element, line -> line_erase(line),
-		make_rectangle(Std.int(from_x), Std.int(from_y), 1,1, color),
-		make_rectangle(Std.int(from_x), Std.int(from_y), 1,1, color), cast color));
+		make_rectangle(Std.int(from_x), Std.int(from_y), size_cap,size_cap, color),
+		make_rectangle(Std.int(to_x), Std.int(to_y), size_cap,size_cap, color), 
+		cast color));
 		// trace('new line $from_x $from_y $to_x $to_y');
 		return lines[lines.length - 1];
 	}
