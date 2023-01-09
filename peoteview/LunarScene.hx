@@ -1,4 +1,3 @@
-import cpp.Random;
 import lime.app.Application;
 import Graphics;
 import peote.view.PeoteView;
@@ -481,7 +480,11 @@ life
 			]
 		}
 
+		#if web
+		settings = new SettingsController(new DiskAssets());
+		#else
 		settings = new SettingsController(new DiskSys());
+		#end
 		settings.page_add(page);
 		
 
