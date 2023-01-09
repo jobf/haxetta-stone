@@ -1,3 +1,4 @@
+import lime.graphics.Image;
 import Engine;
 import GraphicsAbstract;
 import Vector;
@@ -9,6 +10,12 @@ class Graphics extends GraphicsAbstract {
 	var fills:Array<PeoteFill> = [];
 	var window:Window;
 	var size_cap:Int = 2;
+	var moon_texture:Texture;
+	var moon_buffer:Buffer<Sprite>;
+	var moon_program:Program;
+
+
+
 	public function new(window:Window, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.window = window;
@@ -25,7 +32,22 @@ class Graphics extends GraphicsAbstract {
 		// lineProgram.setColorFormula( "vec4(base.r, base.g, base.b, base.a * alpha )" );
 		display.addProgram(lineProgram);
 
+
+
 		peoteview.start();
+	}
+	
+	public function add_moon(image:Image):Sprite{
+		moon_texture = new Texture(image.width, image.height);
+		moon_texture.setImage(image);
+		moon_buffer = new Buffer<Sprite>(1, 1, false);
+		moon_program = new Program(moon_buffer);
+		display.addProgram(moon_program);
+		moon_program.addTexture(moon_texture, "custom");					
+		moon_program.snapToPixel(1); // for smooth animation
+		var moon = new Sprite(320,320,1015,1015);
+		moon_buffer.addElement(moon);
+		return moon;
 	}
 
 	public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine {
@@ -83,6 +105,7 @@ class Graphics extends GraphicsAbstract {
 		}
 		buffer_fills.update();
 		buffer_lines.update();
+		moon_buffer.update();
 	}
 
 	var peoteview:PeoteView;
@@ -335,5 +358,30 @@ class GraphicsToo extends GraphicsAbstract {
 
 	public function set_color(color:RGBA) {
 		display.color = cast color;
+	}
+}
+
+class Sprite implements Element {
+	@pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float;
+	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float;
+	@rotation public var rotation:Float;
+
+	@posX public var x:Int=0;
+	@posY public var y:Int=0;
+
+	@sizeX public var w:Int;
+
+	@sizeY public var h:Int;
+
+	var OPTIONS = {alpha: true};
+
+	@color public var c:Color;
+
+	public function new(positionX:Int = 0, positionY:Int = 0, width:Int, height:Int, tile:Int = 0, tint:Int = 0xffffffFF, isVisible:Bool = true) {
+		this.x = positionX;
+		this.y = positionY;
+		this.w = width;
+		this.h = height;
+		c = tint;
 	}
 }

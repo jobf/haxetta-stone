@@ -8,17 +8,19 @@ using Vector;
 class Wheel {
 	var drawings:Array<Drawing>;
 	var model_translation:EditorTranslation;
+
 	public var rotation_speed:Float = 0.018;
-	public var rotation_init:Float = 0;
+	public var rotation_init:Float = 90;
 	// public var rotation_direction:Int = -1;
 	public var y_origin:Float = -2;
 	public var scale:Float = 1;
 	public var overlap:Float = 5;
+
 	var x:Float;
 	var y:Float;
 	var color:Int;
-	public var maximum_items(default, null):Int;
 
+	public var maximum_items(default, null):Int;
 
 	public function new(color:Int, maximum_items:Int) {
 		drawings = [];
@@ -28,7 +30,7 @@ class Wheel {
 
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
-		if(maximum_items < drawings.length){
+		if (maximum_items < drawings.length) {
 			trace('no draw');
 			return;
 		}
@@ -60,8 +62,8 @@ class Wheel {
 	public function overlaps_a_line(target_lines:Array<AbstractLine>):Array<Drawing> {
 		var collides:(target:AbstractLine, lines:Array<AbstractLine>) -> Bool = (target:AbstractLine, lines:Array<AbstractLine>) -> {
 			var collide = false;
-			for(l in lines){
-				if(VectorLogic.line_overlaps_line(target.point_from, target.point_to, l.point_from, l.point_to)){
+			for (l in lines) {
+				if (VectorLogic.line_overlaps_line(target.point_from, target.point_to, l.point_from, l.point_to)) {
 					collide = true;
 					break;
 				}
@@ -71,7 +73,7 @@ class Wheel {
 
 		for (line in target_lines) {
 			var matching = drawings.filter(shape -> collides(line, shape.lines));
-			if(matching.length > 0){
+			if (matching.length > 0) {
 				return matching;
 			}
 		}
@@ -79,9 +81,9 @@ class Wheel {
 		return [];
 	}
 
-	public function remove_all(){
+	public function remove_all() {
 		var n = drawings.length;
-		while(n-- > 0){
+		while (n-- > 0) {
 			for (line in drawings[n].lines) {
 				line.erase();
 			}
@@ -99,7 +101,6 @@ class Wheel {
 	}
 
 	public function update(elapsed_seconds:Float) {
-
 		// rotation = rotation + (rotation_speed * rotation_direction);
 		for (drawing in drawings) {
 			// drawing.x = x;
@@ -110,6 +111,13 @@ class Wheel {
 			drawing.scale = scale;
 			drawing.draw();
 		}
+	}
+
+	public function speed_get():Float {
+		if (drawings.length > 0) {
+			return drawings[0].rotation;
+		}
+		return 0;
 	}
 
 	public function draw() {
