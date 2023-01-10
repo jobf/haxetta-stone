@@ -1,3 +1,4 @@
+import GraphicsAbstract.RGBA;
 import graphics.Sprite;
 import lime.app.Application;
 import graphics.implementation.Graphics;
@@ -39,21 +40,28 @@ class LunarScene extends Scene {
 
 	var performer:Performer;
 	var controller:Controller;
-	var display:Display;
-	var peoteview:PeoteView;
+	var display_main:Display;
+	// var display_hud:Display;
+	var graphics_main:Graphics;
+	var graphics_hud:Graphics;
+	// var peoteview:PeoteView;
 	var hud:Hud;
 	var settings:SettingsController;
 
 	var is_invincible:Bool = false;
 	var moon:Sprite;
 
-
+	public function new(graphics_hud:Graphics, bounds:RectangleGeometry, game:Game, color:RGBA){
+		super(game, bounds, color);
+		this.graphics_hud = graphics_hud;
+	}
 	public function init() {
-		var g:Graphics = cast game.graphics;
+		this.graphics_main = cast game.graphics;
 		@:privateAccess
-		display = g.display;
-		@:privateAccess
-		peoteview = g.peoteview;
+		display_main = graphics_main.display;
+
+		// @:privateAccess
+		// peoteview = g.peoteview;
 
 		x = bounds.width * 0.5;
 		y = bounds.height * 0.5;
@@ -68,13 +76,13 @@ class LunarScene extends Scene {
 			trace(s);
 		}
 
-		moon = g.add_moon(Assets.getImage('assets/placeholder_moon.png'));
+		moon = graphics_main.add_moon(Assets.getImage('assets/placeholder_moon.png'));
 		moon.c = 0xebd0cfFF;
 		var models_json = Assets.getText('assets/alphabet-01.json');
 
 		file = Disk.parse_file_contents(models_json);
 
-		hud = new Hud(peoteview, {
+		hud = new Hud(graphics_hud, {
 			y: 0,
 			x: 0,
 			width: bounds.width,
@@ -237,9 +245,9 @@ life
 
 	function settings_bind(){
 
-		display.zoom = 1.0;
-		display.xOffset = 0;
-		display.yOffset = 0;
+		display_main.zoom = 1.0;
+		display_main.xOffset = 0;
+		display_main.yOffset = 0;
 
 
 
@@ -252,16 +260,16 @@ life
 					index: 0,
 					encoders: [
 						VOLUME => {
-							value: display.xOffset,
-							on_change: f -> display.xOffset = f,
+							value: display_main.xOffset,
+							on_change: f -> display_main.xOffset = f,
 							name: "x offset",
 							minimum: -1000,
 							maximum: 1000,
 							increment: 5
 						},
 						PAN => {
-							value: display.yOffset,
-							on_change: f -> display.yOffset = f,
+							value: display_main.yOffset,
+							on_change: f -> display_main.yOffset = f,
 							name: "y offset",
 							minimum: -1000,
 							maximum: 1000,
@@ -275,8 +283,8 @@ life
 						// 	// minimum: 0.001
 						// },
 						RESONANCE => {
-							value: display.zoom,
-							on_change: f -> display.zoom = f,
+							value: display_main.zoom,
+							on_change: f -> display_main.zoom = f,
 							name: "zoom",
 							minimum: 0.1,
 							maximum: 10,

@@ -10,24 +10,24 @@ import GraphicsAbstract;
 import Vector;
 
 class Hud {
-	var peoteview:PeoteView;
+	// var peoteview:PeoteView;
 	var models:Array<FigureModel>;
 	var model_translation:EditorTranslation;
-	var graphics:GraphicsToo;
+	var graphics:Graphics;
 	public var bar_thrust:AbstractFillRectangle;
 	var bar_length:Int;
 	var bounds:RectangleGeometry;
+	// var display:Display;
+// 
 
 
-
-
-	public function new(peoteview:PeoteView, bounds:RectangleGeometry, models:Array<FigureModel>, model_translation:EditorTranslation) {
+	public function new(graphics:Graphics, bounds:RectangleGeometry, models:Array<FigureModel>, model_translation:EditorTranslation) {
 		this.models = models;
-		this.peoteview = peoteview;
+		// this.peoteview = peoteview;
 		this.model_translation = model_translation;
 		this.bounds = bounds;
 
-		graphics = new GraphicsToo(peoteview, bounds);
+		this.graphics = graphics;
 		bar_length = bounds.width - 10;
 		var bar_height_thrust = 25;
 		var bar_x = Std.int(bounds.width * 0.5);

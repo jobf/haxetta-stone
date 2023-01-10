@@ -1,4 +1,6 @@
 
+import peote.view.Display;
+import peote.view.PeoteView;
 import graphics.implementation.Graphics;
 import Engine;
 import lime.graphics.RenderContext;
@@ -10,6 +12,18 @@ class Main extends Application {
 	// override function onWindowCreate():Void {
 	// 	window 
 	// }
+	var peoteview:PeoteView;
+	var display_main:Display;
+	var display_hud:Display;
+
+	var isReady:Bool;
+	var time:Float = 0;
+	var elapsed_seconds:Float = 0;
+	var game:Game;
+
+	var implementation_graphics:Graphics;
+	var implementation_input:Input;
+
 
 	override function onPreloadComplete() {
 		super.onPreloadComplete();
@@ -33,21 +47,26 @@ class Main extends Application {
 			height: window.height
 		}
 		
-		var bounds_scene:RectangleGeometry = {
-			y: 0,
-			x: 0,
-			width: window.width,
-			height: window.height
-		}
-
-		
 		var black = 0x000000ff;
 		var slate = 0x151517ff;
-		implementation_graphics = new Graphics(window, bounds_viewport);
+
+		// this.window = window;
+		peoteview = new PeoteView(window);
+		
+		display_main = new Display(0, 0, window.width, window.height);
+		peoteview.addDisplay(display_main);
+
+		display_hud = new Display(0, 0, window.width, window.height);
+		peoteview.addDisplay(display_hud);
+
+		implementation_graphics = new Graphics(display_main, bounds_viewport);
 		implementation_input = new Input(window);
 		implementation_graphics.set_color(slate);
 		// var init_scene:Game->Scene = game -> new DesignerScene(game, bounds_scene, black);
-		var init_scene:Game->Scene = game -> new LunarScene(game, bounds_scene, black);
+
+		var hud_graphics = new Graphics(display_hud, bounds_viewport);
+		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
+		
 		#if model_test
 		init_scene = game -> new ModelTestScene(game, bounds_scene, black);
 		#end
@@ -81,11 +100,4 @@ class Main extends Application {
 		game.draw();
 	}
 
-	var isReady:Bool;
-	var time:Float = 0;
-	var elapsed_seconds:Float = 0;
-	var game:Game;
-
-	var implementation_graphics:Graphics;
-	var implementation_input:Input;
 }
