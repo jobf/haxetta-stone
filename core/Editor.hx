@@ -62,15 +62,15 @@ class Designer {
 
 	var size_segment:Int;
 	var size_segment_half:Int;
-	var state_file_path:String = 'test-models.json';
 	var graphics:GraphicsAbstract;
-	var file:FileModel;
+	public var file(default, null):FileModel;
 	var translation:EditorTranslation;
 
 	public var isDrawingLine(default, null):Bool = false;
 	public var figure(default, null):Figure;
 
-	public function new(size_segment:Int, graphics:GraphicsAbstract, bounds:RectangleGeometry) {
+	public function new(size_segment:Int, graphics:GraphicsAbstract, bounds:RectangleGeometry, file:FileModel) {
+		this.file = file;
 		this.size_segment = Std.int(size_segment * 0.5);
 		this.size_segment_half = -Std.int(size_segment * 0.5);
 		this.graphics = graphics;
@@ -143,8 +143,6 @@ class Designer {
 	}
 
 	function figure_init() {
-		file = Disk.file_read(state_file_path);
-
 		if (file.models.length == 0) {
 			file.models = [
 				{
@@ -199,26 +197,6 @@ class Designer {
 		return {
 			from: translation.view_to_model_point(from),
 			to: translation.view_to_model_point(to)
-		}
-	}
-
-	public function save_state(convert_from_screen_positions:Bool = false) {
-		trace("save");
-		if (convert_from_screen_positions) {
-			var convert_line:LineModel->LineModel = line -> {
-				from: translation.view_to_model_point(line.from),
-				to: translation.view_to_model_point(line.to)
-			}
-
-			var convert_model:FigureModel->FigureModel = model -> {
-				lines: model.lines.map(line -> convert_line(line))
-			}
-
-			var models:Array<FigureModel> = file.models.map(model -> convert_model(model));
-
-			Disk.file_write_models(models, state_file_path);
-		} else {
-			Disk.file_write_models(file.models, state_file_path);
 		}
 	}
 

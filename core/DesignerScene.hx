@@ -1,4 +1,5 @@
-import Graphics.PeoteLine;
+import graphics.implementation.PeoteLine;
+import graphics.implementation.Graphics;
 import Editor;
 import Models;
 import GraphicsAbstract;
@@ -19,9 +20,9 @@ class DesignerScene extends Scene {
 	var x_axis_line:PeoteLine;
 	var y_axis_line:PeoteLine;
 	var settings:SettingsController;
-
+	var state_file_path:String;
 	public function init() {
-		// game.input.mouse_cursor_hide();/
+		game.input.mouse_cursor_hide();
 		
 		mouse_position = game.input.mouse_position;
 		x_center = Std.int(bounds.width * 0.5);
@@ -40,8 +41,51 @@ class DesignerScene extends Scene {
 		x_axis_line = cast game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB80);
 		y_axis_line = cast game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB80);
 		// y_axis_line = cast game.graphics.make_line(x_center, 0, x_center, bounds.height, 0xFF85AB80);
+		state_file_path = 'test-models.json';
+		var file = Disk.file_read(state_file_path);
 
-		designer = new Designer(size_segment, game.graphics, bounds);
+		designer = new Designer(size_segment, game.graphics, bounds, file);
+
+		settings_load();
+	}
+
+	public function update(elapsed_seconds:Float) {
+		mouse_position.x = game.input.mouse_position.x;
+		mouse_position.y = game.input.mouse_position.y;
+		designer.update_mouse_pointer(mouse_position);
+	}
+
+	public function draw() {
+		// ?
+	}
+
+	function handle_mouse_press_left() {
+		if (!designer.isDrawingLine) {
+			designer.start_drawing_line({
+				x: mouse_position.x,
+				y: mouse_position.y
+			});
+		}
+	}
+
+	function handle_mouse_release_left() {
+		if (designer.isDrawingLine) {
+			designer.stop_drawing_line({
+				x: mouse_position.x,
+				y: mouse_position.y
+			});
+			for (line in designer.figure.lines) {
+				var l:PeoteLine = cast line;
+				l.thick = 8;
+			}
+		}
+	}
+
+	function handle_mouse_press_right() {
+		designer.line_under_cursor_remove();
+	}
+
+	function settings_load(){
 
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
@@ -51,9 +95,9 @@ class DesignerScene extends Scene {
 			MOUSE_RIGHT => {
 				on_pressed: () -> handle_mouse_press_right(),
 			},
-			MOUSE_MIDDLE => {
-				on_pressed: () -> designer.save_state(false),
-			},
+			// MOUSE_MIDDLE => {
+			// 	on_pressed: () -> designer.save_state(false),
+			// },
 			KEY_LEFT => {
 				on_pressed: () -> designer.set_active_figure(-1)
 			},
@@ -64,7 +108,7 @@ class DesignerScene extends Scene {
 				on_pressed: () -> designer.add_new_figure()
 			},
 			KEY_S => {
-				on_pressed: ()->designer.save_state(false),
+				on_pressed: ()-> Disk.file_write_models(designer.file.models, state_file_path),
 			}
 		];
 
@@ -209,42 +253,5 @@ class DesignerScene extends Scene {
 				}
 			]
 		}, page.index);
-		
-	}
-
-	public function update(elapsed_seconds:Float) {
-		mouse_position.x = game.input.mouse_position.x;
-		mouse_position.y = game.input.mouse_position.y;
-		designer.update_mouse_pointer(mouse_position);
-	}
-
-	public function draw() {
-		// ?
-	}
-
-	function handle_mouse_press_left() {
-		if (!designer.isDrawingLine) {
-			designer.start_drawing_line({
-				x: mouse_position.x,
-				y: mouse_position.y
-			});
-		}
-	}
-
-	function handle_mouse_release_left() {
-		if (designer.isDrawingLine) {
-			designer.stop_drawing_line({
-				x: mouse_position.x,
-				y: mouse_position.y
-			});
-			for (line in designer.figure.lines) {
-				var l:PeoteLine = cast line;
-				l.thick = 8;
-			}
-		}
-	}
-
-	function handle_mouse_press_right() {
-		designer.line_under_cursor_remove();
 	}
 }

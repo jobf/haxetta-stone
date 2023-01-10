@@ -7,6 +7,9 @@ import lime.graphics.RenderContext;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
+import GraphicsAbstract;
+import Models;
+import Disk;
 
 class Main extends Application {
 	// override function onWindowCreate():Void {
@@ -68,11 +71,11 @@ class Main extends Application {
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
 		
 		#if model_test
-		init_scene = game -> new ModelTestScene(game, bounds_scene, black);
+		init_scene = game -> new ModelTestScene(game, bounds_viewport, black);
 		#end
 		#if model_design
-		init_scene = game -> new DesignerScene(game, bounds_scene, black);
 		#end
+		init_scene = game -> new DesignerScene(game, bounds_viewport, black);
 
 		game = new Game(init_scene, implementation_graphics, implementation_input);
 		isReady = true;
