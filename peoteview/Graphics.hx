@@ -9,7 +9,8 @@ class Graphics extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
 	var window:Window;
-	var size_cap:Int = 2;
+	var size_cap:Int = 1;
+	var angle_cap:Int = -45;
 	var moon_texture:Texture;
 	var moon_buffer:Buffer<Sprite>;
 	var moon_program:Program;
@@ -32,7 +33,9 @@ class Graphics extends GraphicsAbstract {
 		// lineProgram.setColorFormula( "vec4(base.r, base.g, base.b, base.a * alpha )" );
 		display.addProgram(lineProgram);
 
-
+		moon_buffer = new Buffer<Sprite>(1, 1, false);
+		moon_program = new Program(moon_buffer);
+		display.addProgram(moon_program);
 
 		peoteview.start();
 	}
@@ -40,9 +43,7 @@ class Graphics extends GraphicsAbstract {
 	public function add_moon(image:Image):Sprite{
 		moon_texture = new Texture(image.width, image.height);
 		moon_texture.setImage(image);
-		moon_buffer = new Buffer<Sprite>(1, 1, false);
-		moon_program = new Program(moon_buffer);
-		display.addProgram(moon_program);
+
 		moon_program.addTexture(moon_texture, "custom");					
 		moon_program.snapToPixel(1); // for smooth animation
 		var moon = new Sprite(320,320,1015,1015);
@@ -154,6 +155,10 @@ class Line implements Element {
 	@color @anim("ColorFade") public var color:Color;
 	@posX public var x:Float;
 	@posY public var y:Float;
+
+	// @pivotX @formula("w * 0.5") public var px_offset:Float;
+	// @pivotY @formula("w * 0.5") public var py_offset:Float;
+
 	// pivot x (rotation offset)
 	@pivotX public var px:Int = 0;
 
@@ -214,13 +219,17 @@ class PeoteLine extends AbstractLine {
 	var remove_from_buffer:PeoteLine->Void;
 
 	public var element(default, null):Line;
+	public var rotation_override:Null<Float>;
 
+	public var thick(get, set):Float;
+	
 	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, head:Rectangle, end:Rectangle, color:Color) {
 		super(point_from, point_to, cast color);
 		this.element = element;
 		this.remove_from_buffer = remove_from_buffer;
 		this.head = head;
 		this.end = end;
+		thick = 2;
 		draw();
 	}
 
@@ -231,14 +240,14 @@ class PeoteLine extends AbstractLine {
 		b = point_to.y - point_from.y;
 
 		// line thickness
-		element.w = 2;
+		element.w = thick;
 
 		// line length
-		element.h = Math.sqrt(a * a + b * b);
+		element.h = Math.sqrt(a * a + b * b) + element.w /2;
 
 		element.x = point_from.x;
 		element.y = point_from.y;
-		element.rotation = Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI);
+		element.rotation = rotation_override == null ? Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI) : rotation_override;
 		head.x = point_from.x;
 		head.y = point_from.y;
 		end.x = point_to.x;
@@ -247,6 +256,23 @@ class PeoteLine extends AbstractLine {
 
 	public function erase():Void {
 		remove_from_buffer(this);
+	}
+
+	function get_thick():Float {
+		return element.w;
+	}
+
+	var cap_offset:Float = 0.3;
+	function set_thick(value:Float):Float {
+		element.w = value;
+		element.px = Std.int(value / 2);
+		element.py = Std.int(value / 2);
+		var cap_size = thick + (thick * 0.5);
+		this.head.w = cap_size;
+		this.head.h = cap_size;
+		this.end.w = cap_size;
+		this.end.h = cap_size;
+		return element.w;
 	}
 }
 
@@ -272,7 +298,9 @@ typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RG
 class GraphicsToo extends GraphicsAbstract {
 	var lines:Array<PeoteLine> = [];
 	var fills:Array<PeoteFill> = [];
-	var size_cap:Int = 2;
+	
+	var size_cap:Int = 1;
+	var angle_cap:Int = -45;
 	public function new(peoteview:PeoteView, viewport_bounds:RectangleGeometry) {
 		super(viewport_bounds);
 		this.peoteview = peoteview;
