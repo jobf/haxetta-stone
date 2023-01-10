@@ -1,4 +1,9 @@
+package graphics.implementation;
+
+
 import lime.graphics.Image;
+import graphics.Fill;
+import graphics.LineCPU;
 import Engine;
 import GraphicsAbstract;
 import Vector;
@@ -126,183 +131,6 @@ class Graphics extends GraphicsAbstract {
 	}
 }
 
-class Rectangle implements Element {
-	@pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float;
-	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float;
-	@rotation public var rotation:Float = 0.0;
-	@sizeX @varying public var w:Float;
-	@sizeY @varying public var h:Float;
-	@color public var color:Color;
-	@posX public var x:Float;
-	@posY public var y:Float;
-
-	var OPTIONS = {alpha: true};
-
-	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
-		this.x = positionX;
-		this.y = positionY;
-		this.w = width;
-		this.h = height;
-		this.color = color;
-		this.rotation = rotation;
-	}
-}
-
-class Line implements Element {
-	@rotation public var rotation:Float = 0.0;
-	@sizeX @varying public var w:Int;
-	@sizeY @varying public var h:Int;
-	@color @anim("ColorFade") public var color:Color;
-	@posX public var x:Int;
-	@posY public var y:Int;
-
-	// @pivotX @formula("w * 0.5") public var px_offset:Float;
-	// @pivotY @formula("w * 0.5") public var py_offset:Float;
-
-	// pivot x (rotation offset)
-	@pivotX public var px:Int = 0;
-
-	// pivot y (rotation offset)
-	@pivotY public var py:Int = 0;
-
-	var OPTIONS = {alpha: true};
-
-	// params for blinking alpha
-	// @custom("alpha") @varying @anim("A", "pingpong") public var alpha:Float;
-	@custom("alpha") @varying @constEnd(1.0) @anim("A", "pingpong") public var alpha:Float;
-
-	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
-		this.x = Std.int(positionX);
-		this.y = Std.int(positionY);
-		this.w = Std.int(width);
-		this.h = Std.int(height);
-		this.color = color;
-		this.rotation = rotation;
-	}
-
-	public function setFlashing(isFlashing:Bool) {
-		// todo - adhere to previously set alpha
-		if (isFlashing) {
-			alphaStart = 0.0;
-			// animate Color from red to yellow
-			animColorFade(Color.RED, Color.GREEN);
-			timeColorFade(0.0, 1.0); // from start-time (0.0) and during 1 seconds
-		} else {
-			alphaStart = 1.0;
-		}
-	}
-}
-
-class PeoteFill extends AbstractFillRectangle {
-	var element:Rectangle;
-
-	public function new(element:Rectangle) {
-		super(element.x, element.y, element.w, element.h, cast element.color);
-		this.element = element;
-	}
-
-	public function draw() {
-		element.x = x;
-		element.y = y;
-		element.w = width;
-		element.h = height;
-	}
-}
-
-class PeoteLine extends AbstractLine {
-	var a:Float = 0;
-	var b:Float = 0;
-
-	public var head:Rectangle;
-	public var end:Rectangle;
-
-	var remove_from_buffer:PeoteLine->Void;
-
-	public var element(default, null):Line;
-	public var rotation_override:Null<Float>;
-
-	public var thick(get, set):Int;
-	
-	public function new(point_from:Vector, point_to:Vector, element:Line, remove_from_buffer:PeoteLine->Void, head:Rectangle, end:Rectangle, color:Color) {
-		super(point_from, point_to, cast color);
-		this.element = element;
-		this.remove_from_buffer = remove_from_buffer;
-		this.head = head;
-		this.end = end;
-		thick = 2;
-		draw();
-	}
-
-	public function draw():Void {
-		element.color = cast color;
-
-		a = point_to.x - point_from.x;
-		b = point_to.y - point_from.y;
-
-		// line thickness
-		element.w = thick;
-
-		// line length - note we add the thickness, otherwise so it finishes too short
-		element.h = Std.int(Math.sqrt(a * a + b * b)) + thick;
-
-		element.x = Std.int(point_from.x);
-		element.y = Std.int(point_from.y);
-
-
-		element.rotation = rotation_override == null ? Math.atan2(point_from.x - point_to.x, -(point_from.y - point_to.y)) * (180 / Math.PI) : rotation_override;
-
-
-		head.x = point_from.x;
-		head.y = point_from.y;
-		head.rotation = element.rotation - 45;
-
-		end.x = point_to.x;
-		end.y = point_to.y;
-		end.rotation = element.rotation  - 45;
-	}
-
-	public function erase():Void {
-		remove_from_buffer(this);
-	}
-
-	function get_thick():Int {
-		return element.w;
-	}
-
-	var cap_offset:Float = 0.3;
-	function set_thick(value:Int):Int {
-		element.w = value;
-		element.px = Std.int(value / 2);
-		element.py = Std.int(value / 2);
-		var cap_size = thick * 0;
-		this.head.w = cap_size;
-		this.head.h = cap_size;
-		this.head.color.a = 40;
-		
-		this.end.w = cap_size;
-		this.end.h = cap_size;
-		this.end.color.a = 40;
-
-		return element.w;
-	}
-}
-
-class Particle extends AbstractParticle {
-	var element:Rectangle;
-
-	public function new(x:Int, y:Int, size:Int, color:RGBA, lifetime_seconds:Float, element:Rectangle) {
-		super(x, y, size, color, lifetime_seconds);
-		this.element = element;
-	}
-
-	public function draw() {
-		element.x = motion.position.x;
-		element.y = motion.position.y;
-		element.color = cast color;
-		element.w = size;
-		element.h = size;
-	}
-}
 
 typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA) -> AbstractLine;
 
@@ -398,30 +226,5 @@ class GraphicsToo extends GraphicsAbstract {
 
 	public function set_color(color:RGBA) {
 		display.color = cast color;
-	}
-}
-
-class Sprite implements Element {
-	@pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float;
-	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float;
-	@rotation public var rotation:Float;
-
-	@posX public var x:Int=0;
-	@posY public var y:Int=0;
-
-	@sizeX public var w:Int;
-
-	@sizeY public var h:Int;
-
-	var OPTIONS = {alpha: true};
-
-	@color public var c:Color;
-
-	public function new(positionX:Int = 0, positionY:Int = 0, width:Int, height:Int, tile:Int = 0, tint:Int = 0xffffffFF, isVisible:Bool = true) {
-		this.x = positionX;
-		this.y = positionY;
-		this.w = width;
-		this.h = height;
-		c = tint;
 	}
 }

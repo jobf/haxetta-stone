@@ -1,7 +1,7 @@
 import automation.Envelope;
 import Drawing;
 import Editor.EditorTranslation;
-import Graphics;
+import graphics.implementation.Graphics;
 import Models;
 import lime.ui.Window;
 import peote.view.*;

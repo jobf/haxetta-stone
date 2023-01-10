@@ -1,6 +1,6 @@
 import Editor;
 import GraphicsAbstract;
-import Graphics;
+import graphics.implementation.Graphics;
 import Models;
 
 using Vector;

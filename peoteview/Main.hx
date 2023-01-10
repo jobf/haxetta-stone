@@ -1,5 +1,5 @@
 
-import Graphics;
+import graphics.implementation.Graphics;
 import Engine;
 import lime.graphics.RenderContext;
 import haxe.CallStack;

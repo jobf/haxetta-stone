@@ -1,8 +1,8 @@
 
 
 import GraphicsAbstract;
-import Graphics.PeoteLine;
-import Graphics.Line;
+import graphics.implementation.PeoteLine;
+
 import Drawing;
 import automation.Oscillator;
 import automation.Envelope;

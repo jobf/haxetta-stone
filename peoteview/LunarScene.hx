@@ -1,5 +1,6 @@
+import graphics.Sprite;
 import lime.app.Application;
-import Graphics;
+import graphics.implementation.Graphics;
 import peote.view.PeoteView;
 import peote.view.Display;
 import dials.Disk;
