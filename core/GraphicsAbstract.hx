@@ -164,8 +164,8 @@ abstract class GraphicsAbstract {
 
 	public function model_to_lines(model:Array<LineModel>, color:RGBA):Array<AbstractLine>{
 		var lines:Array<AbstractLine> = [];
-		for (model in model) {
-			lines.push(make_line(model.from.x, model.from.y, model.to.x, model.to.y, color));
+		for (line in model) {
+			lines.push(make_line(line.from.x, line.from.y, line.to.x, line.to.y, color));
 		}
 		return lines;
 	}

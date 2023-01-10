@@ -29,7 +29,7 @@ class Wheel {
 		this.maximum_items = maximum_items;
 	}
 
-	public var first_is_done = false;
+	public var first_is_done = true;
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
 		if (maximum_items < drawings.length) {

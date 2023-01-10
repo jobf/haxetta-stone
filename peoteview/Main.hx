@@ -40,8 +40,12 @@ class Main extends Application {
 			height: window.height
 		}
 
+		
 		var black = 0x000000ff;
 		var slate = 0x151517ff;
+		implementation_graphics = new Graphics(window, bounds_viewport);
+		implementation_input = new Input(window);
+		implementation_graphics.set_color(slate);
 		// var init_scene:Game->Scene = game -> new DesignerScene(game, bounds_scene, black);
 		var init_scene:Game->Scene = game -> new LunarScene(game, bounds_scene, black);
 		#if model_test
@@ -50,10 +54,6 @@ class Main extends Application {
 		#if model_design
 		init_scene = game -> new DesignerScene(game, bounds_scene, black);
 		#end
-
-		implementation_graphics = new Graphics(window, bounds_viewport);
-		implementation_input = new Input(window);
-		implementation_graphics.set_color(slate);
 
 		game = new Game(init_scene, implementation_graphics, implementation_input);
 		isReady = true;

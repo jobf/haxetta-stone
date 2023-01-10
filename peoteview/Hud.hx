@@ -58,7 +58,7 @@ class Hud {
 	var score:Int = 0;
 	var drawings_score:Array<Drawing> = [];
 	var drawings_lives:Array<Drawing> = [];
-	var score_length = 10;
+	var score_length = 9;
 	public function score_change(difference:Int) {
 		score += difference;
 		if (drawings_score.length > 0) {
