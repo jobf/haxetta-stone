@@ -186,9 +186,8 @@ life
 		wheel_cheese.update(elapsed_seconds);
 		countdown_obstacle_release.update(elapsed_seconds);
 		wheel_obstacle.update(elapsed_seconds);
-		// moon.rotation -= 0.1;//(wheel_obstacle.rotation_speed * 100) * -1;
-		moon.rotation = wheel_obstacle.speed_get() * 55;
-		// drawing.draw
+		moon.rotation -= (wheel_obstacle.rotation_speed) * 55;
+
 		var overlaps = wheel_cheese.overlaps_a_line(drawing.lines);
 		for (cheese in overlaps) {
 			wheel_cheese.remove(cheese);
