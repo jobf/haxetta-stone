@@ -166,10 +166,10 @@ class Designer {
 		figure = map_figure(file.models[model_index]);
 	}
 
-	function clear_figure() {
+	function erase_figure_graphics() {
 		trace('clearing figure with ${figure.lines.length} lines');
 		for (i in 0...figure.lines.length) {
-			line_clear(figure.lines[i]);
+			line_erase(figure.lines[i]);
 		}
 		trace('cleared figure');
 		trace('has remaining lines ${figure.lines.length}');
@@ -177,7 +177,7 @@ class Designer {
 	}
 
 	public function set_active_figure(direction:Int) {
-		clear_figure();
+		erase_figure_graphics();
 		var index_next = (model_index + direction);
 		index_next = (index_next % file.models.length + file.models.length) % file.models.length;
 		trace('next figure $index_next');
@@ -189,7 +189,7 @@ class Designer {
 	}
 
 	public function add_new_figure() {
-		clear_figure();
+		erase_figure_graphics();
 		file.models.push({
 			index: file.models.length,
 			lines: []
@@ -201,7 +201,30 @@ class Designer {
 		figure = map_figure(file.models[model_index]);
 	}
 
-	public function line_clear(line:AbstractLine) {
+	var line_buffer:Array<LineModel>;
+
+	public function buffer_copy(){
+		line_buffer = figure.model;
+	}
+
+	public function buffer_paste(){
+		if(line_buffer != null){
+			for(line in line_buffer){
+				// file.models[model_index]
+				file.models[model_index].lines.push(line);
+			}
+			erase_figure_graphics();
+			figure = map_figure(file.models[model_index]);
+		}
+	}
+
+	public function lines_remove() {
+		erase_figure_graphics();
+		file.models[model_index].lines = [];
+		figure = map_figure(file.models[model_index]);
+	}
+
+	public function line_erase(line:AbstractLine) {
 		trace('designer clean line $line');
 		line.erase();
 	}
@@ -238,6 +261,7 @@ class Designer {
 	function round_to_nearest(value:Float, interval:Float):Float {
 		return Math.ceil(value / interval) * interval;
 	}
+
 }
 
 @:structInit

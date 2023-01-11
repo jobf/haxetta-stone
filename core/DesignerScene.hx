@@ -134,9 +134,18 @@ class DesignerScene extends Scene {
 			KEY_RIGHT => {
 				on_pressed: () -> designer.set_active_figure(1)
 			},
+			KEY_C => {
+				on_pressed: () -> designer.buffer_copy()
+			},
+			KEY_V => {
+				on_pressed: () -> designer.buffer_paste()
+			},
 			// KEY_N => {
 			// 	on_pressed: () -> designer.add_new_figure()
 			// },
+			KEY_R => {
+				on_pressed: () -> designer.lines_remove(),
+			},
 			KEY_S => {
 				on_pressed: () -> Disk.file_write_models(designer.file.models, state_file_path),
 			},
