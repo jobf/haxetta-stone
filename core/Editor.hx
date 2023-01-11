@@ -2,6 +2,7 @@ import GraphicsAbstract;
 import Models;
 import Disk;
 import Engine;
+import haxe.ds.ArraySort;
 
 using Vector;
 
@@ -71,12 +72,16 @@ class Designer {
 
 	public function new(size_segment:Int, graphics:GraphicsAbstract, bounds:RectangleGeometry, file:FileModel) {
 		this.file = file;
-		this.size_segment = Std.int(size_segment * 0.5);
-		this.size_segment_half = -Std.int(size_segment * 0.5);
+		granularity_set(size_segment);
 		this.graphics = graphics;
 		mouse_pointer = graphics.make_fill(0, 0, 10, 10, 0xFF448080);
 		translation = new EditorTranslation(bounds, 1, 1);
 		figure_init();
+	}
+
+	public function granularity_set(size_segment:Int){
+		this.size_segment = Std.int(size_segment * 0.5);
+		this.size_segment_half = -Std.int(size_segment * 0.5);
 	}
 
 	function map_figure(model:FigureModel):Figure {
@@ -146,11 +151,18 @@ class Designer {
 		if (file.models.length == 0) {
 			file.models = [
 				{
+					index: 0,
 					lines: []
 				}
 			];
 		}
-
+		ArraySort.sort(file.models, (a, b) -> {
+			if (a.index < b.index)
+				return -1;
+			if (a.index > b.index)
+				return 1;
+			return 0;
+		});
 		figure = map_figure(file.models[model_index]);
 	}
 
@@ -171,7 +183,7 @@ class Designer {
 		trace('next figure $index_next');
 
 		model_index = index_next;
-		trace('show $model_index');
+		trace('show $model_index : ${file.models[model_index].name}');
 
 		figure = map_figure(file.models[model_index]);
 	}
@@ -179,6 +191,7 @@ class Designer {
 	public function add_new_figure() {
 		clear_figure();
 		file.models.push({
+			index: file.models.length,
 			lines: []
 		});
 

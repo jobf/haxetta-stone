@@ -75,7 +75,7 @@ class Main extends Application {
 		#end
 		#if model_design
 		#end
-		init_scene = game -> new DesignerScene(game, bounds_viewport, black);
+		init_scene = game -> new DesignerScene(game, bounds_viewport, slate);
 
 		game = new Game(init_scene, implementation_graphics, implementation_input);
 		isReady = true;

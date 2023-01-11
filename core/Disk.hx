@@ -33,7 +33,12 @@ class Disk {
 		}
 		#end
 
-		return parse_file_contents(json);
+		if(json.length > 0){
+			return parse_file_contents(json);
+		}
+		return {
+			models: []
+		}
 	}
 
 	public static function parse_file_contents(json:String):FileModel {
@@ -45,9 +50,9 @@ class Disk {
 
 		return {
 			models: [
-				{
-					lines: []
-				}
+				// {
+				// 	lines: []
+				// }
 			]
 		}
 	}

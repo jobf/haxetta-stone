@@ -2,6 +2,8 @@ import Vector;
 
 @:structInit
 class FigureModel{
+	public var index:Int;
+	public var name:String = "";
 	public var lines:Array<LineModel>;
 }
 
