@@ -24,7 +24,8 @@ abstract class AbstractFillRectangle {
 	public var width:Float;
 	public var height:Float;
 	public var color:RGBA;
-
+	public var rotation:Float;
+	
 	public function new(x:Float, y:Float, width:Float, height:Float, color:RGBA) {
 		this.x = x;
 		this.y = y;

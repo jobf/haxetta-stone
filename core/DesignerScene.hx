@@ -26,7 +26,7 @@ class DesignerScene extends Scene {
 	var divisions_total:Int = 8;
 
 	public function init() {
-		game.input.mouse_cursor_hide();
+		// game.input.mouse_cursor_hide();
 
 		mouse_position = game.input.mouse_position;
 		x_center = Std.int(bounds.width * 0.5);

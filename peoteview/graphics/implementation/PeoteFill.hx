@@ -18,5 +18,6 @@ class PeoteFill extends AbstractFillRectangle {
 		element.y = y;
 		element.w = width;
 		element.h = height;
+		element.rotation = rotation;
 	}
 }

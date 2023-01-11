@@ -74,7 +74,9 @@ class Designer {
 		this.file = file;
 		granularity_set(size_segment);
 		this.graphics = graphics;
-		mouse_pointer = graphics.make_fill(0, 0, 10, 10, 0xFF448080);
+		var mouse_pointer_size = Std.int(size_segment * 0.5);
+		mouse_pointer = graphics.make_fill(0, 0, mouse_pointer_size,mouse_pointer_size, 0xFF448080);
+		mouse_pointer.rotation = 45;
 		translation = new EditorTranslation(bounds, 1, 1);
 		figure_init();
 	}
@@ -130,10 +132,12 @@ class Designer {
 	}
 
 	public function update_mouse_pointer(mouse_position:Vector) {
+		// mouse_position.x -= size_segment_half;
+		// mouse_position.y -= size_segment_half;
 		mouse_position.x = round_to_nearest(mouse_position.x, size_segment) - size_segment_half;
 		mouse_position.y = round_to_nearest(mouse_position.y, size_segment) - size_segment_half;
-		mouse_pointer.x = mouse_position.x;
-		mouse_pointer.y = mouse_position.y;
+		mouse_pointer.x = mouse_position.x;// - size_segment;//_half;
+		mouse_pointer.y = mouse_position.y;// - size_segment;//_half;
 		if (isDrawingLine) {
 			var line = figure.line_newest();
 			line.point_to.x = mouse_position.x;
@@ -259,7 +263,7 @@ class Designer {
 	}
 
 	function round_to_nearest(value:Float, interval:Float):Float {
-		return Math.ceil(value / interval) * interval;
+		return Math.floor(value / interval) * interval;
 	}
 
 }
