@@ -44,7 +44,7 @@ class Graphics extends GraphicsAbstract {
 		moon_texture = new Texture(image.width, image.height);
 		moon_texture.setImage(image);
 
-		moon_program.addTexture(moon_texture, "custom");					
+		moon_program.addTexture(moon_texture, "custom");
 		moon_program.snapToPixel(1); // for smooth animation
 		var moon = new Sprite(320,320,1015,1015);
 		moon_buffer.addElement(moon);
@@ -118,6 +118,14 @@ class Graphics extends GraphicsAbstract {
 
 	public function set_color(color:RGBA) {
 		display.color = cast color;
+	}
+
+	public function close() {
+		@:privateAccess
+		fills.clear(fill -> buffer_fills.removeElement(fill.element));
+
+		@:privateAccess
+		lines.clear(line -> buffer_lines.removeElement(line.element));
 	}
 }
 

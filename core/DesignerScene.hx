@@ -86,6 +86,10 @@ class DesignerScene extends Scene {
 		// ?
 	}
 
+	public function close() {
+		// ?
+	}
+
 	function handle_mouse_press_left() {
 		if (!designer.isDrawingLine) {
 			designer.start_drawing_line({

@@ -77,9 +77,10 @@ class LunarScene extends Scene {
 			trace(s);
 		}
 
-		moon = graphics_main.add_moon(Assets.getImage('assets/placeholder_moon.png'));
+		moon = graphics_main.add_moon(Assets.getImage('images/placeholder_moon.png'));
 		moon.c = 0xebd0cfFF;
-		var models_json = Assets.getText('assets/alphabet-01.json');
+
+		var models_json = Assets.getText('models/alphabet-01.json');
 
 		file = Disk.parse_file_contents(models_json);
 
@@ -506,4 +507,6 @@ life
 		settings.disk_load();
 	}
 
+
+	public function close() {}
 }

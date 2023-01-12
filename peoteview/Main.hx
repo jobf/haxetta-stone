@@ -1,4 +1,3 @@
-
 import peote.view.Display;
 import peote.view.PeoteView;
 import graphics.implementation.Graphics;
@@ -7,14 +6,9 @@ import lime.graphics.RenderContext;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
-import GraphicsAbstract;
-import Models;
-import Disk;
+
 
 class Main extends Application {
-	// override function onWindowCreate():Void {
-	// 	window 
-	// }
 	var peoteview:PeoteView;
 	var display_main:Display;
 	var display_hud:Display;
@@ -27,9 +21,9 @@ class Main extends Application {
 	var implementation_graphics:Graphics;
 	var implementation_input:Input;
 
+	override function onWindowCreate() {
+		super.onWindowCreate();
 
-	override function onPreloadComplete() {
-		super.onPreloadComplete();
 		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
 				try
@@ -42,20 +36,17 @@ class Main extends Application {
 	}
 
 	public function init(window:Window) {
-		
+		var black = 0x000000ff;
+		var slate = 0x151517ff;
+
 		var bounds_viewport:RectangleGeometry = {
 			y: 0,
 			x: 0,
 			width: window.width,
 			height: window.height
 		}
-		
-		var black = 0x000000ff;
-		var slate = 0x151517ff;
 
-		// this.window = window;
 		peoteview = new PeoteView(window);
-		
 		display_main = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display_main);
 
@@ -65,26 +56,23 @@ class Main extends Application {
 		implementation_graphics = new Graphics(display_main, bounds_viewport);
 		implementation_input = new Input(window);
 		implementation_graphics.set_color(slate);
-		// var init_scene:Game->Scene = game -> new DesignerScene(game, bounds_scene, black);
-
+		
 		var hud_graphics = new Graphics(display_hud, bounds_viewport);
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
-		
-		init_scene = game -> new TextScene(game, bounds_viewport, slate);
-		#if model_test
-		init_scene = game -> new ModelTestScene(game, bounds_viewport, black);
-		#end
+	
 		#if model_design
-		init_scene = game -> new DesignerScene(game, bounds_viewport, slate);
+		init_scene:Game->Scene = game -> new DesignerScene(game, bounds_viewport, black);
 		#end
 
-		game = new Game(init_scene, implementation_graphics, implementation_input);
+		var init_scene_loader:Game->Scene = game -> new LoadingScene(preloader, init_scene, game, bounds_viewport, 0x00000000);
+		game = new Game(init_scene_loader, implementation_graphics, implementation_input);
+
 		isReady = true;
 	}
 
 	override function update(deltaTime:Int):Void {
 		super.update(deltaTime);
-		
+
 		if (!isReady) {
 			return;
 		}
@@ -93,15 +81,14 @@ class Main extends Application {
 		time += elapsed_seconds;
 		game.update(elapsed_seconds);
 	}
-	
+
 	override function render(context:RenderContext) {
 		super.render(context);
-				
+
 		if (!isReady) {
 			return;
 		}
 
 		game.draw();
 	}
-
 }

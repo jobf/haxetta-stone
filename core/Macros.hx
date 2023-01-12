@@ -5,6 +5,9 @@ import haxe.macro.Expr;
 using haxe.macro.Tools;
 #end
 
+/**
+	Thanks semmi - https://github.com/maitag/input2action/blob/main/src/input2action/util/EnumMacros.hx
+**/
 class EnumMacros {
 	public static macro function valueByName(typePath:Expr):Expr
 		return getEnumMap(true, typePath);

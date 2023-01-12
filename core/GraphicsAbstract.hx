@@ -157,6 +157,8 @@ abstract class GraphicsAbstract {
 
 	abstract public function draw():Void;
 
+	abstract public function close():Void;
+
 	abstract public function make_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA):AbstractLine;
 
 	abstract public function make_fill(x:Int, y:Int, width:Int, height:Int, color:RGBA):AbstractFillRectangle;

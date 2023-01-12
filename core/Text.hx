@@ -3,11 +3,25 @@ import Models;
 import GraphicsAbstract;
 
 @:structInit
-class Font{
+class Font {
 	public var models:Array<Array<LineModel>>;
 	public var width_model:Int;
 	public var height_model:Int;
 	public var width_character:Int = 0;
+}
+
+function font_load_embedded():Font {
+	var models_json = CompileTime.readJsonFile("assets/fonts/code-page-models.json");
+	// var models_json = Assets.getText('fonts/code-page-models.json');
+	var model_file = Disk.parse_file_contents(models_json);
+	var size_model = 64;
+	var width_char = 36;
+	return {
+		models: model_file.models.map(model -> model.lines),
+		width_model: size_model,
+		height_model: size_model,
+		width_character: width_char
+	}
 }
 
 class Text {
@@ -71,7 +85,7 @@ class Word {
 		}
 	}
 
-	public function draw(){
+	public function draw() {
 		for (drawing in drawings) {
 			drawing.draw();
 		}

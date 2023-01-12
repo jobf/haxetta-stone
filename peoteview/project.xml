@@ -20,6 +20,7 @@
 
 	<assets path="assets/images" rename="images" include="*.png" />
 	<!-- <assets path="assets/fonts" rename="fonts" include="*.json" embed="true" /> -->
+	<assets path="assets/models" rename="models" include="*.json" />
 	<assets path="assets/config" rename="config" include="*.json" embed="true" />
 	
 	<haxelib name="lime" />	

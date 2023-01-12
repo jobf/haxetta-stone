@@ -3,14 +3,14 @@ import GraphicsAbstract;
 
 class Game {
 	var current_scene:Scene;
+
 	public var graphics(default, null):GraphicsAbstract;
 	public var input(default, null):InputAbstract;
 
 	public function new(scene_constructor:Game->Scene, graphics:GraphicsAbstract, input:InputAbstract) {
 		this.graphics = graphics;
 		this.input = input;
-		current_scene = scene_constructor(this);
-		current_scene.init();
+		scene_init(scene_constructor);
 	}
 
 	public function update(elapsed_seconds:Float) {
@@ -18,6 +18,19 @@ class Game {
 		input.raise_mouse_button_events();
 		input.raise_keyboard_button_events();
 		current_scene.update(elapsed_seconds);
+	}
+
+	function scene_init(scene_constructor:Game->Scene) {
+		current_scene = scene_constructor(this);
+		current_scene.init();
+	}
+
+	public function scene_change(scene_constructor:Game->Scene) {
+		if (current_scene != null) {
+			graphics.close();
+			current_scene.close();
+			scene_init(scene_constructor);
+		}
 	}
 
 	public function draw() {
@@ -29,6 +42,7 @@ class Game {
 abstract class Scene {
 	var game:Game;
 	var bounds:RectangleGeometry;
+
 	public var color(default, null):RGBA;
 
 	public function new(game:Game, bounds:RectangleGeometry, color:RGBA) {
@@ -52,6 +66,11 @@ abstract class Scene {
 		Make draw calls here
 	**/
 	abstract public function draw():Void;
+
+	/**
+		Clean up the scene here, e.g. remove graphics buffers
+	**/
+	abstract public function close():Void;
 }
 
 @:structInit
