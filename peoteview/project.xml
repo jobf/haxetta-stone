@@ -18,7 +18,9 @@
 
 	<source path="." />
 
-	<assets path="assets" />
+	<assets path="assets/images" rename="images" include="*.png" />
+	<!-- <assets path="assets/fonts" rename="fonts" include="*.json" embed="true" /> -->
+	<assets path="assets/config" rename="config" include="*.json" embed="true" />
 	
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />
@@ -26,6 +28,8 @@
 	<haxelib name="grig.midi" />
 	<haxelib name="format" />
 	<haxelib name="json2object" />
+	<haxelib name="compiletime" />
+
 	<source path="../modules/akai-fire-hx/src" />
 	<source path="../modules/dial-it-in" />
 	<!-- <haxelib name="grig.midi" path="../modules/grig.midi" /> -->

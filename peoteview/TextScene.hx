@@ -7,7 +7,8 @@ class TextScene extends Scene {
 	var test:Word;
 
 	public function init() {
-		var models_json = Assets.getText('assets/code-page-models.json');
+		var models_json = CompileTime.readJsonFile("assets/fonts/code-page-models.json");
+		// var models_json = Assets.getText('fonts/code-page-models.json');
 		var model_file = Disk.parse_file_contents(models_json);
 		var size_model = 64;
 		var width_char = 36;
