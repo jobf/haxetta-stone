@@ -7,7 +7,6 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
 
-
 class Main extends Application {
 	var peoteview:PeoteView;
 	var display_main:Display;
@@ -60,7 +59,19 @@ class Main extends Application {
 		var hud_graphics = new Graphics(display_hud, bounds_viewport);
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
 	
+		
 		#if model_design
+		#if web
+		window.onDropFile.add(file_list -> {
+			if(file_list.length > 0){
+				var list:js.html.FileList = cast file_list;
+				var file = list[0];
+				TextFileWeb.import_content(file);
+			}
+		});
+		#else
+		window.onDropFile.add(s -> trace(s));
+		#end
 		init_scene = game -> new DesignerScene(game, bounds_viewport, black);
 		#end
 
