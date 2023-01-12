@@ -4,9 +4,10 @@ import GraphicsAbstract;
 
 @:structInit
 class Font{
-	public var width_character:Int;
-	public var height_character:Int;
 	public var models:Array<Array<LineModel>>;
+	public var width_model:Int;
+	public var height_model:Int;
+	public var width_character:Int = 0;
 }
 
 class Text {
@@ -25,8 +26,8 @@ class Text {
 		model_translation = new EditorTranslation({
 			y: 0,
 			x: 0,
-			width: font.width_character,
-			height: font.width_character
+			width: font.width_model,
+			height: font.width_model
 		});
 	}
 
@@ -40,7 +41,7 @@ class Text {
 		var drawings:Array<Drawing> = [];
 		for (i in 0...text.length) {
 			var char_code = text.charCodeAt(i);
-			trace('code $char_code letter ${String.fromCharCode(char_code)}');
+			// trace('code $char_code letter ${String.fromCharCode(char_code)}');
 			drawings.push(drawing_create(font.models[char_code], x + font.width_character * i, y, color));
 		}
 
