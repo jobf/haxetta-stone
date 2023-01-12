@@ -36,14 +36,12 @@ class DesignerScene extends Scene {
 		grid_draw(size_segment);
 
 		x_axis_line = cast game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB10);
-		// y_axis_line = cast game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB10);
 		y_axis_line = cast game.graphics.make_line(x_center, 0, x_center, bounds.height, 0xFF85AB10);
 
 		state_file_path = 'code-page-models.json';
 		var file = Disk.file_read(state_file_path);
 		if (file.models.length == 0) {
 			var names_map:Map<CodePage, String> = EnumMacros.nameByValue(CodePage);
-			// var code_page_names = [for (key in names_map.keys()) names_map[key]];
 
 			for (i in 0...256) {
 				file.models.push({
@@ -53,10 +51,8 @@ class DesignerScene extends Scene {
 				});
 			}
 		}
-		// trace(file.models);
 
 		designer = new Designer(size_segment, game.graphics, bounds, file);
-
 		settings_load();
 	}
 
@@ -105,10 +101,6 @@ class DesignerScene extends Scene {
 				x: mouse_position.x,
 				y: mouse_position.y
 			});
-			// for (line in designer.figure.lines) {
-			// 	var l:PeoteLine = cast line;
-			// 	l.thick = 8;
-			// }
 		}
 	}
 

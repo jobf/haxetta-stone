@@ -147,7 +147,7 @@ class Hud {
 
 	function draw_model(model:FigureModel, x:Float, y:Float, color:Int=0xf4f997FF):Drawing {
 		return new Drawing({
-			figure: model
+			model_lines: model.lines
 		}, x, y, graphics.make_line, model_translation, color);
 	}
 

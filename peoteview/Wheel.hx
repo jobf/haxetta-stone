@@ -29,7 +29,6 @@ class Wheel {
 		this.maximum_items = maximum_items;
 	}
 
-	public var first_is_done = true;
 	public function create(x, y, model:FigureModel, model_translation:EditorTranslation, graphics:GraphicsAbstract) {
 		// trace('new drawin');
 		if (maximum_items < drawings.length) {
@@ -38,16 +37,12 @@ class Wheel {
 		}
 		this.x = x;
 		this.y = y;
-		var color = first_is_done ? color : 0xeb1313FF;
+
 		this.model_translation = model_translation;
 		var drawing = new Drawing({
-			figure: model,
+			model_lines: model.lines,
 		}, x, y, graphics.make_line, model_translation, color);
-		drawing.log = first_is_done ? false :true;
-
-		if(first_is_done == false){
-			first_is_done = true;
-		}
+		
 		// drawing.rotation
 		@:privateAccess
 		drawing.origin.y = y_origin;

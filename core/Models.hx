@@ -1,5 +1,11 @@
 import Vector;
 
+
+@:structInit
+class FileModel {
+	public var models:Array<FigureModel>;
+}
+
 @:structInit
 class FigureModel{
 	public var index:Int;

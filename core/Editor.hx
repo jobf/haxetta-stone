@@ -19,6 +19,12 @@ class EditorTranslation {
 		this.bounds_view = bounds_view;
 		this.points_in_translation_x = points_in_translation_x;
 		this.points_in_translation_y = points_in_translation_y;
+		size_set(bounds_view.width, bounds_view.height);
+	}
+
+	public function size_set(width:Int, height:Int){
+		bounds_view.width = width;
+		bounds_view.height = height;
 		x_center = Std.int(bounds_view.width * 0.5);
 		y_center = Std.int(bounds_view.height * 0.5);
 		bounds_width_half = bounds_view.width * 0.5;
@@ -132,12 +138,10 @@ class Designer {
 	}
 
 	public function update_mouse_pointer(mouse_position:Vector) {
-		// mouse_position.x -= size_segment_half;
-		// mouse_position.y -= size_segment_half;
 		mouse_position.x = round_to_nearest(mouse_position.x, size_segment) - size_segment_half;
 		mouse_position.y = round_to_nearest(mouse_position.y, size_segment) - size_segment_half;
-		mouse_pointer.x = mouse_position.x;// - size_segment;//_half;
-		mouse_pointer.y = mouse_position.y;// - size_segment;//_half;
+		mouse_pointer.x = mouse_position.x;
+		mouse_pointer.y = mouse_position.y;
 		if (isDrawingLine) {
 			var line = figure.line_newest();
 			line.point_to.x = mouse_position.x;

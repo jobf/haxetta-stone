@@ -13,14 +13,9 @@ class Line implements Element {
 	@posX public var x:Int;
 	@posY public var y:Int;
 
-	// @pivotX @formula("w * 0.5") public var px_offset:Float;
-	// @pivotY @formula("w * 0.5") public var py_offset:Float;
-
-	// pivot x (rotation offset)
-	@pivotX public var px:Int = 0;
-
-	// pivot y (rotation offset)
-	@pivotY public var py:Int = 0;
+	// (rotation offset)
+	@pivotX @formula("w * 0.5")public var px:Int = 0;
+	@pivotY @formula("w * 0.5") public var py:Int = 0;
 
 	var OPTIONS = {alpha: true};
 

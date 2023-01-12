@@ -70,12 +70,13 @@ class Main extends Application {
 		var hud_graphics = new Graphics(display_hud, bounds_viewport);
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
 		
+		init_scene = game -> new TextScene(game, bounds_viewport, slate);
 		#if model_test
 		init_scene = game -> new ModelTestScene(game, bounds_viewport, black);
 		#end
 		#if model_design
-		#end
 		init_scene = game -> new DesignerScene(game, bounds_viewport, slate);
+		#end
 
 		game = new Game(init_scene, implementation_graphics, implementation_input);
 		isReady = true;
