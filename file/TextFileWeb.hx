@@ -13,4 +13,18 @@ class TextFileWeb{
 		}
 		return content;
 	}
+
+	public static function export_content(file_path:String){
+		var content = get_content(file_path);
+		if(content == null){
+			return;
+		}
+
+		var blob = new js.html.Blob([content]);
+		var url = js.html.URL.createObjectURL(blob);
+		var anchor = js.Browser.document.createAnchorElement();
+		anchor.href = url;
+		anchor.download = file_path;
+		anchor.click();
+	}
 }

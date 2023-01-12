@@ -133,6 +133,9 @@ class DesignerScene extends Scene {
 			KEY_C => {
 				on_pressed: () -> designer.buffer_copy()
 			},
+			KEY_E => {
+				on_pressed: () -> export()
+			},
 			KEY_V => {
 				on_pressed: () -> designer.buffer_paste()
 			},
@@ -313,5 +316,11 @@ class DesignerScene extends Scene {
 		var size_segment = divisions_calculate_size_segment();
 		grid_draw(size_segment);
 		designer.granularity_set(size_segment);
+	}
+
+	function export(){
+		#if web
+		TextFileWeb.export_content(state_file_path);
+		#end
 	}
 }
