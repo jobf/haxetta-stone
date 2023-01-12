@@ -3,11 +3,6 @@ import GraphicsAbstract;
 import Engine;
 import Text;
 
-// @:structInit
-// class Preloader {
-// 	public var onPreloadProgress:(loaded:Int, total:Int) -> Void = (loaded, total) -> trace('loaded $loaded, total $total');
-// 	public var onPreloadComplete:Void = trace('onPreloadComplete');
-// }
 class LoadingScene extends Scene {
 	var text:Text;
 	var test:Word;

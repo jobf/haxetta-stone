@@ -14,6 +14,7 @@
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="../core" />
+	<source path="../file" />
 	<source path="../moon_harvest" />
 
 	<source path="." />

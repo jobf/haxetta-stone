@@ -61,7 +61,7 @@ class Main extends Application {
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
 	
 		#if model_design
-		init_scene:Game->Scene = game -> new DesignerScene(game, bounds_viewport, black);
+		init_scene = game -> new DesignerScene(game, bounds_viewport, black);
 		#end
 
 		var init_scene_loader:Game->Scene = game -> new LoadingScene(preloader, init_scene, game, bounds_viewport, 0x00000000);
