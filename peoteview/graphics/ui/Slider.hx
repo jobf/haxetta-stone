@@ -15,14 +15,12 @@ class Slider {
 	var label:Word;
 	var track:AbstractLine;
 	var handle:AbstractFillRectangle;
+
 	public var is_dragging(default, null):Bool;
 	public var x(get, never):Int;
 	public var x_min(get, never):Int;
 	public var x_max(get, never):Int;
-
-
-
-
+	public var on_move:Float->Void = f -> trace('on_move $f');
 
 	public function new(geometry:RectangleGeometry, label:String, color:RGBA, graphics:GraphicsCore) {
 		this.label = graphics.word_make(geometry.x, geometry.y, label, color);
@@ -42,11 +40,11 @@ class Slider {
 		return x_overlaps && y_overlaps;
 	}
 
-	public function click(){
+	public function click() {
 		is_dragging = true;
 		trace('click!');
 	}
-	
+
 	public function release() {
 		is_dragging = false;
 		trace('!click');
@@ -62,6 +60,8 @@ class Slider {
 
 	public function move(x_mouse:Int) {
 		handle.x = x_mouse;
+		var x_proportional = handle.x - track.point_from.x;
+		on_move(x_proportional / track.length);
 	}
 
 	function get_x_min():Int {
@@ -102,8 +102,8 @@ class Ui {
 	public function handle_mouse_moved(x_mouse:Int, y_mouse:Int) {
 		for (slider in sliders) {
 			if (slider.is_dragging) {
-				if(x_mouse != slider.x){
-					if(x_mouse > slider.x_min && x_mouse < slider.x_max){
+				if (x_mouse != slider.x) {
+					if (x_mouse > slider.x_min && x_mouse < slider.x_max) {
 						slider.move(x_mouse);
 					}
 				}

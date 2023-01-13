@@ -1,3 +1,5 @@
+import GraphicsAbstract;
+import graphics.implementation.Graphics;
 import GraphicsAbstract.RGBA;
 import graphics.ui.Slider;
 import Engine;
@@ -8,6 +10,8 @@ class TextScene extends Scene {
 	var test:Word;
 	var slider:Slider;
 	var ui:Ui;
+	var fill:AbstractFillRectangle;
+
 
 	public function init() {
 		var font = font_load_embedded();
@@ -18,6 +22,9 @@ class TextScene extends Scene {
 		var color:RGBA = 0xffffffFF;
 		text = new Text(font, game.graphics);
 		test = text.word_make(30, 200, "TEST", color);
+
+		var width_fill = 40;
+		fill = game.graphics.make_fill(300, 300, width_fill, width_fill, 0xff00ffFF);
 
 		ui = new Ui({
 			word_make: text.word_make,
@@ -30,7 +37,13 @@ class TextScene extends Scene {
 			x: 200,
 			width: 200,
 			height: 50 + font.height_model
-		}, "ZOOM", color);
+		}, "WIDTH", color);
+
+		var width_max = 100;
+		var width_min = width_fill;
+		slider.on_move = f -> {
+			fill.width = (width_max * f) + width_min;
+		};
 
 		// todo - make on_pressed an event dispatcher
 		game.input.on_pressed = button -> switch button {
