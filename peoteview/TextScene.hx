@@ -1,6 +1,6 @@
 import peote.view.Color;
 import GraphicsAbstract;
-import graphics.ui.Slider;
+import graphics.ui.Ui;
 import Engine;
 import Text;
 
