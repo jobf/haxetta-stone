@@ -72,12 +72,19 @@ class Text {
 			model_lines: model_Lines
 		}, x, y, graphics.make_line, model_translation, color);
 	}
+
+
 }
 
 @:structInit
 class Word {
 	var text(default, null):String;
 	var drawings(default, null):Array<Drawing>;
+
+	public var height(get, never):Int;
+	function get_height():Int{
+		return Std.int(Math.abs(drawings[0].lines[0].point_from.y + drawings[0].lines[0].point_to.y));
+	}
 
 	public function erase() {
 		for (drawing in drawings) {
@@ -91,3 +98,5 @@ class Word {
 		}
 	}
 }
+
+typedef MakeWord = (x:Int, y:Int, text:String, color:RGBA) -> Word;

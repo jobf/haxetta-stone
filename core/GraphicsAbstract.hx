@@ -7,12 +7,18 @@ abstract class AbstractLine {
 	public var point_from:Vector;
 	public var point_to:Vector;
 	public var color:RGBA;
+	public var length(get, never):Float;
+
+	function get_length():Float{
+		return point_from.distance_to(point_to);
+	}
 
 	public function new(point_from:Vector, point_to:Vector, color:RGBA) {
 		this.point_from = point_from;
 		this.point_to = point_to;
 		this.color = color;
 	}
+
 
 	abstract public function draw():Void;
 	abstract public function erase():Void;

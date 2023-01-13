@@ -58,7 +58,7 @@ class Main extends Application {
 		
 		var hud_graphics = new Graphics(display_hud, bounds_viewport);
 		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
-	
+		init_scene = game -> new TextScene(game, bounds_viewport, black);
 		
 		#if model_design
 		#if web
