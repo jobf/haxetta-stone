@@ -11,6 +11,8 @@ class TextScene extends Scene {
 	var slider:Slider;
 	var ui:Ui;
 	var fill:AbstractFillRectangle;
+	var toggle:Toggle;
+
 
 
 	public function init() {
@@ -38,6 +40,17 @@ class TextScene extends Scene {
 			width: 200,
 			height: 50 + font.height_model
 		}, "WIDTH", color);
+
+		var is_enabled = true;
+		toggle = ui.make_toggle({
+			y: 480,
+			x: 200,
+			width: Std.int(font.width_model * 1.3),
+			height: 50 + font.height_model
+		}, "VISIBLE", color, is_enabled);
+		toggle.on_change = b -> {
+			fill.color.a = b ? 255 : 0;
+		}
 
 		var width_max = 100;
 		var width_min = width_fill;

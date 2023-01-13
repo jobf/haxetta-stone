@@ -73,8 +73,49 @@ class Slider {
 	}
 }
 
+
+class Toggle {
+	var label:Word;
+	var track:AbstractLine;
+	var handle:AbstractFillRectangle;
+
+	public var is_enabled(default, null):Bool;
+	public var on_change:Bool->Void = b -> trace('on_change $b');
+
+	public function new(geometry:RectangleGeometry, label:String, color:RGBA, graphics:GraphicsCore, is_enabled:Bool) {
+		this.label = graphics.word_make(geometry.x, geometry.y, label, color);
+		var y_track = geometry.y + Std.int(geometry.height * 0.5);
+		this.track = graphics.line_make(geometry.x, y_track, geometry.x + geometry.width, y_track, color);
+		var size_handle = Std.int(geometry.height * 0.3);
+		this.handle = graphics.fill_make(geometry.x, y_track, size_handle, size_handle, color);
+		this.is_enabled = is_enabled;
+		handle_move();
+	}
+
+	public function overlaps_handle(x_mouse:Int, y_mouse:Int) {
+		x_mouse = Std.int(x_mouse + handle.width * 0.5);
+		y_mouse = Std.int(y_mouse + handle.height * 0.5);
+
+		var x_overlaps = x_mouse > handle.x && handle.x + handle.width > x_mouse;
+		var y_overlaps = y_mouse > handle.y && handle.y + handle.height > y_mouse;
+		return x_overlaps && y_overlaps;
+	}
+
+	public function click() {
+		is_enabled = !is_enabled;
+		handle_move();
+		on_change(is_enabled);
+	}
+
+	inline function handle_move() {
+		var x_handle = is_enabled ? track.point_to.x : track.point_from.x;
+		handle.x = x_handle;
+	}
+}
+
 class Ui {
 	var sliders:Array<Slider> = [];
+	var toggles:Array<Toggle> = [];
 	var graphics:GraphicsCore;
 
 	public function new(graphics:GraphicsCore) {
@@ -85,10 +126,20 @@ class Ui {
 		return sliders.pushAndReturn(new Slider(geometry, label, color, graphics));
 	}
 
+	public function make_toggle(geometry:RectangleGeometry, label:String, color:RGBA, is_enabled:Bool):Toggle {
+		return toggles.pushAndReturn(new Toggle(geometry, label, color, graphics, is_enabled));
+	}
+
 	public function handle_mouse_click(x_mouse:Int, y_mouse:Int) {
 		for (slider in sliders) {
 			if (slider.overlaps_handle(x_mouse, y_mouse)) {
 				slider.click();
+			}
+		}
+
+		for (toggle in toggles) {
+			if (toggle.overlaps_handle(x_mouse, y_mouse)) {
+				toggle.click();
 			}
 		}
 	}
