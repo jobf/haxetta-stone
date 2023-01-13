@@ -113,9 +113,44 @@ class Toggle {
 	}
 }
 
+class Button {
+	var label:Word;
+	var track:AbstractLine;
+	var background:AbstractFillRectangle;
+
+	public var on_click:Void->Void = () -> trace('on_click');
+
+	public function new(geometry:RectangleGeometry, label:String, color_text:RGBA, color_background:RGBA, graphics:GraphicsCore) {
+		var x_center = Std.int(geometry.width * 0.5);
+		var x_background = Std.int(geometry.x + x_center);
+		var y_background = Std.int(geometry.y + geometry.height * 0);
+		this.background = graphics.fill_make(x_background, y_background, geometry.width, geometry.height, color_background);
+
+		// var width_label = label.length * 14;
+		// var width_label_center = width_label * 0.5;
+		// var width_char_center = 7;
+		// var x_label = Std.int(geometry.x + x_center - width_label_center + width_char_center);
+		this.label = graphics.word_make(geometry.x, geometry.y, label, color_text, x_center);
+	}
+
+	public function overlaps_background(x_mouse:Int, y_mouse:Int) {
+		x_mouse = Std.int(x_mouse + background.width * 0.5);
+		y_mouse = Std.int(y_mouse + background.height * 0.5);
+
+		var x_overlaps = x_mouse > background.x && background.x + background.width > x_mouse;
+		var y_overlaps = y_mouse > background.y && background.y + background.height > y_mouse;
+		return x_overlaps && y_overlaps;
+	}
+
+	public function click() {
+		on_click();
+	}
+}
+
 class Ui {
 	var sliders:Array<Slider> = [];
 	var toggles:Array<Toggle> = [];
+	var buttons:Array<Button> = [];
 	var graphics:GraphicsCore;
 
 	public function new(graphics:GraphicsCore) {
@@ -130,6 +165,10 @@ class Ui {
 		return toggles.pushAndReturn(new Toggle(geometry, label, color, graphics, is_enabled));
 	}
 
+	public function make_button(geometry:RectangleGeometry, label:String, color_text:RGBA, color_background:RGBA):Button {
+		return buttons.pushAndReturn(new Button(geometry, label, color_text, color_background, graphics));
+	}
+
 	public function handle_mouse_click(x_mouse:Int, y_mouse:Int) {
 		for (slider in sliders) {
 			if (slider.overlaps_handle(x_mouse, y_mouse)) {
@@ -140,6 +179,12 @@ class Ui {
 		for (toggle in toggles) {
 			if (toggle.overlaps_handle(x_mouse, y_mouse)) {
 				toggle.click();
+			}
+		}
+
+		for(button in buttons){
+			if (button.overlaps_background(x_mouse, y_mouse)) {
+				button.click();
 			}
 		}
 	}

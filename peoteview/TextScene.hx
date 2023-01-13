@@ -1,6 +1,5 @@
+import peote.view.Color;
 import GraphicsAbstract;
-import graphics.implementation.Graphics;
-import GraphicsAbstract.RGBA;
 import graphics.ui.Slider;
 import Engine;
 import Text;
@@ -12,8 +11,7 @@ class TextScene extends Scene {
 	var ui:Ui;
 	var fill:AbstractFillRectangle;
 	var toggle:Toggle;
-
-
+	var button:Button;
 
 	public function init() {
 		var font = font_load_embedded();
@@ -41,6 +39,10 @@ class TextScene extends Scene {
 			height: 50 + font.height_model
 		}, "WIDTH", color);
 
+		var width_max = 100;
+		var width_min = width_fill;
+		slider.on_move = f -> fill.width = (width_max * f) + width_min;
+
 		var is_enabled = true;
 		toggle = ui.make_toggle({
 			y: 480,
@@ -48,22 +50,23 @@ class TextScene extends Scene {
 			width: Std.int(font.width_model * 1.3),
 			height: 50 + font.height_model
 		}, "VISIBLE", color, is_enabled);
-		toggle.on_change = b -> {
-			fill.color.a = b ? 255 : 0;
-		}
 
-		var width_max = 100;
-		var width_min = width_fill;
-		slider.on_move = f -> {
-			fill.width = (width_max * f) + width_min;
-		};
+		toggle.on_change = b -> fill.color.a = b ? 255 : 0;
+
+		button = ui.make_button({
+			y: 580,
+			x: 200,
+			width: Std.int(font.width_model * 8),
+			height: 50 + font.height_model
+		}, "COLOUR", 0x000000FF, color);
+
+		button.on_click = () -> fill.color = cast Color.random();
 
 		// todo - make on_pressed an event dispatcher
 		game.input.on_pressed = button -> switch button {
 			case MOUSE_LEFT: click();
 			case _:
 		}
-
 
 		// todo - make on_released an event dispatcher
 		game.input.on_released = button -> switch button {
@@ -90,11 +93,12 @@ class TextScene extends Scene {
 	}
 
 	var mouse_position_previous:Vector;
+
 	public function update(elapsed_seconds:Float) {
 		var is_x_mouse_changed = game.input.mouse_position.x != mouse_position_previous.x;
 		var is_y_mouse_changed = game.input.mouse_position.y != mouse_position_previous.y;
 
-		if(is_x_mouse_changed || is_y_mouse_changed){
+		if (is_x_mouse_changed || is_y_mouse_changed) {
 			mouse_position_previous.x = game.input.mouse_position.x;
 			mouse_position_previous.y = game.input.mouse_position.y;
 			var x_mouse = Std.int(game.input.mouse_position.x);
