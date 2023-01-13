@@ -19,5 +19,6 @@ class PeoteFill extends AbstractFillRectangle {
 		element.w = width;
 		element.h = height;
 		element.rotation = rotation;
+		element.color = cast color;
 	}
 }
