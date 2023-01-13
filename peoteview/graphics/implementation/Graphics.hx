@@ -102,6 +102,7 @@ class Graphics extends GraphicsAbstract {
 			line.draw();
 		}
 		for (fill in fills) {
+			// trace('draw fill');
 			fill.draw();
 		}
 		buffer_fills.update();
@@ -128,6 +129,3 @@ class Graphics extends GraphicsAbstract {
 		lines.clear(line -> buffer_lines.removeElement(line.element));
 	}
 }
-
-
-typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA) -> AbstractLine;

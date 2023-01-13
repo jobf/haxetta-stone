@@ -26,12 +26,13 @@ abstract class AbstractFillRectangle {
 	public var color:RGBA;
 	public var rotation:Float;
 	
-	public function new(x:Float, y:Float, width:Float, height:Float, color:RGBA) {
+	public function new(x:Float, y:Float, width:Float, height:Float, rotation:Float, color:RGBA) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.color = color;
+		this.rotation = rotation;
 	}
 
 	abstract public function draw():Void;
@@ -234,3 +235,8 @@ abstract RGBA(Int) from Int to Int from UInt to UInt {
 		return a;
 	}
 }
+
+
+
+typedef MakeLine = (from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:RGBA) -> AbstractLine;
+typedef MakeFillRectangle = (x:Int, y:Int, width:Int, height:Int, color:RGBA) -> AbstractFillRectangle;

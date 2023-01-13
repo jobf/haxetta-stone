@@ -15,7 +15,7 @@ class Rectangle implements Element {
 
 	var OPTIONS = {alpha: true};
 
-	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float = 0, color:Color = 0x556677ff) {
+	public function new(positionX:Float, positionY:Float, width:Float, height:Float, rotation:Float, color:Color = 0x556677ff) {
 		this.x = positionX;
 		this.y = positionY;
 		this.w = width;

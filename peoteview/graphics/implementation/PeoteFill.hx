@@ -9,7 +9,7 @@ class PeoteFill extends AbstractFillRectangle {
 	var element:Rectangle;
 
 	public function new(element:Rectangle) {
-		super(element.x, element.y, element.w, element.h, cast element.color);
+		super(element.x, element.y, element.w, element.h, element.rotation, cast element.color);
 		this.element = element;
 	}
 
