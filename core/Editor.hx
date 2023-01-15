@@ -70,6 +70,8 @@ class Designer {
 	var size_segment:Int;
 	var size_segment_half:Int;
 	var graphics:GraphicsAbstract;
+	var bounds:RectangleGeometry;
+
 	public var file(default, null):FileModel;
 	var translation:EditorTranslation;
 
@@ -80,6 +82,7 @@ class Designer {
 		this.file = file;
 		granularity_set(size_segment);
 		this.graphics = graphics;
+		this.bounds = bounds;
 		var mouse_pointer_size = Std.int(size_segment * 0.5);
 		mouse_pointer = graphics.make_fill(0, 0, mouse_pointer_size,mouse_pointer_size, 0xFF448080);
 		mouse_pointer.rotation = 45;
@@ -245,7 +248,12 @@ class Designer {
 	}
 
 	public function start_drawing_line(point:Vector) {
-		isDrawingLine = true;
+		if(point.x > bounds.x + bounds.width
+			|| point.y > bounds.y + bounds.height)
+			{
+				return;
+			}
+			isDrawingLine = true;
 		var x = round_to_nearest(point.x, size_segment) - size_segment_half;
 		var y = round_to_nearest(point.y, size_segment) - size_segment_half;
 		var line:AbstractLine = graphics.make_line(x, y, x, y, 0xFFFFFFff);
@@ -254,6 +262,9 @@ class Designer {
 	}
 
 	public function stop_drawing_line(point:Vector) {
+		if(!isDrawingLine){
+			return;
+		}
 		isDrawingLine = false;
 		trace('stop_drawing_line ${point.x} ${point.y}');
 		var line = figure.line_newest();
