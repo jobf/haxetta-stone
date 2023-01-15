@@ -38,12 +38,15 @@ class Main extends Application {
 		var black = 0x000000ff;
 		var slate = 0x151517ff;
 
-		var bounds_viewport:RectangleGeometry = {
+		var viewport_window:RectangleGeometry = {
 			y: 0,
 			x: 0,
 			width: window.width,
 			height: window.height
 		}
+
+
+
 
 		peoteview = new PeoteView(window);
 		display_main = new Display(0, 0, window.width, window.height);
@@ -52,13 +55,13 @@ class Main extends Application {
 		display_hud = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display_hud);
 
-		implementation_graphics = new Graphics(display_main, bounds_viewport);
+		implementation_graphics = new Graphics(display_main, viewport_window);
 		implementation_input = new Input(window);
 		implementation_graphics.set_color(slate);
 		
-		var hud_graphics = new Graphics(display_hud, bounds_viewport);
-		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, bounds_viewport, game, black);
-		init_scene = game -> new TextScene(game, bounds_viewport, black);
+		var hud_graphics = new Graphics(display_hud, viewport_window);
+		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, viewport_window, game, black);
+		init_scene = game -> new TextScene(game, viewport_window, black);
 		
 		#if model_design
 		#if web
@@ -72,10 +75,11 @@ class Main extends Application {
 		#else
 		window.onDropFile.add(s -> trace(s));
 		#end
-		init_scene = game -> new DesignerScene(game, bounds_viewport, black);
+
+		init_scene = game -> new DesignerScene(game, viewport_window, black);
 		#end
 
-		var init_scene_loader:Game->Scene = game -> new LoadingScene(preloader, init_scene, game, bounds_viewport, 0x00000000);
+		var init_scene_loader:Game->Scene = game -> new LoadingScene(preloader, init_scene, game, viewport_window, 0x00000000);
 		game = new Game(init_scene_loader, implementation_graphics, implementation_input);
 
 		isReady = true;

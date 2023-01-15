@@ -15,9 +15,9 @@ class TextScene extends Scene {
 
 	public function init() {
 		var font = font_load_embedded();
-		font.width_model = 26;
-		font.height_model = 26;
-		font.width_character = 14;
+		font.width_model = 18;
+		font.height_model = 18;
+		font.width_character = 10;
 
 		var color:RGBA = 0xffffffFF;
 		text = new Text(font, game.graphics);
@@ -62,17 +62,15 @@ class TextScene extends Scene {
 
 		button.on_click = () -> fill.color = cast Color.random();
 
-		// todo - make on_pressed an event dispatcher
-		game.input.on_pressed = button -> switch button {
+		game.input.on_pressed.add(button -> switch button {
 			case MOUSE_LEFT: click();
 			case _:
-		}
+		});
 
-		// todo - make on_released an event dispatcher
-		game.input.on_released = button -> switch button {
+		game.input.on_released.add(button -> switch button {
 			case MOUSE_LEFT: release();
 			case _:
-		}
+		});
 
 		mouse_position_previous = {
 			x: game.input.mouse_position.x,

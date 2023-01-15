@@ -152,11 +152,9 @@ life
 
 
 		controller = new Controller(actions, game.input);
-		game.input.on_pressed = button -> controller.handle_button(PRESSED, button);
-		game.input.on_released = button -> controller.handle_button(RELEASED, button);
+		game.input.on_pressed.add(button -> controller.handle_button(PRESSED, button));
+		game.input.on_released.add(button -> controller.handle_button(RELEASED, button));
 
-
-		
 		performer.rotation_speed = 0.0003;
 		
 		

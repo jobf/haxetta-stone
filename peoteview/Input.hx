@@ -22,24 +22,24 @@ class Input extends InputAbstract {
 
 	public function raise_mouse_button_events() {
 		for (button in mouse_down) {
-			on_pressed(button);
+			on_pressed.dispatch(button);
 		}
 		mouse_down = [];
 
 		for (button in mouse_up) {
-			on_released(button);
+			on_released.dispatch(button);
 		}
 		mouse_up = [];
 	}
 
 	public function raise_keyboard_button_events() {
 		for (button in keyboard_down) {
-			on_pressed(button);
+			on_pressed.dispatch(button);
 		}
 		keyboard_down = [];
 
 		for (button in keyboard_up) {
-			on_released(button);
+			on_released.dispatch(button);
 		}
 		keyboard_up = [];
 	}

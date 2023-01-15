@@ -7,8 +7,8 @@
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
 	
 	<!-- <window fps="60" width="800" height="600" vsync="true" antialiasing="4" resizable="true" depth-buffer="true" stencil-buffer="false" /> -->
-	<window width="640" height="640" fps="60" vsync="true" resizable="false" />
-	<window if="html5||android" width="640" height="640" />
+	<window width="800" height="640" fps="60" vsync="true" resizable="false" />
+	<window if="html5||android" width="800" height="640" />
 	
 	<app main="Main" path="dist" file="Main" />
 	<!-- <define name="stats" if="html5" /> -->

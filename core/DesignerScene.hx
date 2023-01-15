@@ -4,13 +4,18 @@ import Editor;
 import Models;
 import GraphicsAbstract;
 import Controller;
-import InputAbstract;
 import Engine;
 import Disk;
 import dials.SettingsController;
 import dials.Disk;
 import Macros;
 import CodePage;
+import peote.view.Color;
+import graphics.ui.Ui;
+import graphics.ui.Ui.Button as ButtonUI;
+import Text;
+import InputAbstract.Button;
+// import akaifirehx.fire.Control.Button as InputButton;
 
 using Vector;
 
@@ -24,19 +29,25 @@ class DesignerScene extends Scene {
 	var settings:SettingsController;
 	var state_file_path:String;
 	var divisions_total:Int = 8;
-
+	var viewport_designer:RectangleGeometry;
 	public function init() {
 		// game.input.mouse_cursor_hide();
+		viewport_designer = {
+			y: 0,
+			x: 0,
+			width: bounds.height,
+			height: bounds.height
+		}
 
 		mouse_position = game.input.mouse_position;
-		x_center = Std.int(bounds.width * 0.5);
-		y_center = Std.int(bounds.height * 0.5);
+		x_center = Std.int(viewport_designer.width * 0.5);
+		y_center = Std.int(viewport_designer.width * 0.5);
 
 		var size_segment = divisions_calculate_size_segment();
 		grid_draw(size_segment);
 
-		x_axis_line = cast game.graphics.make_line(0, y_center, bounds.width, y_center, 0xFF85AB10);
-		y_axis_line = cast game.graphics.make_line(x_center, 0, x_center, bounds.height, 0xFF85AB10);
+		x_axis_line = cast game.graphics.make_line(0, y_center, viewport_designer.width, y_center, 0xFF85AB10);
+		y_axis_line = cast game.graphics.make_line(x_center, 0, x_center, viewport_designer.height, 0xFF85AB10);
 
 		state_file_path = 'code-page-models.json';
 		var file = Disk.file_read(state_file_path);
@@ -52,7 +63,7 @@ class DesignerScene extends Scene {
 			}
 		}
 
-		designer = new Designer(size_segment, game.graphics, bounds, file);
+		designer = new Designer(size_segment, game.graphics, viewport_designer, file);
 		settings_load();
 	}
 
@@ -66,20 +77,45 @@ class DesignerScene extends Scene {
 				lines_grid.remove(lines_grid[delete_index]);
 			}
 		}
-		for (x in 0...Std.int(bounds.width / size_segment)) {
+		for (x in 0...Std.int(viewport_designer.width / size_segment)) {
 			var x_ = Std.int(x * size_segment);
-			lines_grid.push(game.graphics.make_line(x_, 0, x_, bounds.height, 0xD1D76210));
+			lines_grid.push(game.graphics.make_line(x_, 0, x_, viewport_designer.height, 0xD1D76210));
 		}
-		for (y in 0...Std.int(bounds.height / size_segment)) {
+		for (y in 0...Std.int(viewport_designer.height / size_segment)) {
 			var y_ = Std.int(y * size_segment);
-			lines_grid.push(game.graphics.make_line(0, y_, bounds.width, y_, 0xD1D76210));
+			lines_grid.push(game.graphics.make_line(0, y_, viewport_designer.width, y_, 0xD1D76210));
 		}
 	}
 
+	function release() {
+		var x_mouse = Std.int(game.input.mouse_position.x);
+		var y_mouse = Std.int(game.input.mouse_position.y);
+		ui.handle_mouse_release(x_mouse, y_mouse);
+		
+	}
+
+	function click() {
+		var x_mouse = Std.int(game.input.mouse_position.x);
+		var y_mouse = Std.int(game.input.mouse_position.y);
+		ui.handle_mouse_click(x_mouse, y_mouse);
+	}
+
+	var mouse_position_previous:Vector;
 	public function update(elapsed_seconds:Float) {
 		mouse_position.x = game.input.mouse_position.x;
 		mouse_position.y = game.input.mouse_position.y;
 		designer.update_mouse_pointer(mouse_position);
+
+		var is_x_mouse_changed = game.input.mouse_position.x != mouse_position_previous.x;
+		var is_y_mouse_changed = game.input.mouse_position.y != mouse_position_previous.y;
+
+		if (is_x_mouse_changed || is_y_mouse_changed) {
+			mouse_position_previous.x = game.input.mouse_position.x;
+			mouse_position_previous.y = game.input.mouse_position.y;
+			var x_mouse = Std.int(game.input.mouse_position.x);
+			var y_mouse = Std.int(game.input.mouse_position.y);
+			ui.handle_mouse_moved(x_mouse, y_mouse);
+		}
 	}
 
 	public function draw() {
@@ -112,7 +148,79 @@ class DesignerScene extends Scene {
 		designer.line_under_cursor_remove();
 	}
 
+	var text:Text;
+	var test:Word;
+	var slider:Slider;
+	var ui:Ui;
+	var fill:AbstractFillRectangle;
+	var toggle:Toggle;
+	var button:ButtonUI;
+
 	function settings_load() {
+		var font = font_load_embedded();
+		font.width_model = 18;
+		font.height_model = 18;
+		font.width_character = 10;
+
+		var color:RGBA = 0xffffffFF;
+		text = new Text(font, game.graphics);
+		test = text.word_make(30, 200, "TEST", color);
+
+		var width_fill = 40;
+		fill = game.graphics.make_fill(300, 300, width_fill, width_fill, 0xff00ffFF);
+
+		ui = new Ui({
+			word_make: text.word_make,
+			line_make: game.graphics.make_line,
+			fill_make: game.graphics.make_fill
+		});
+
+		slider = ui.make_slider({
+			y: 400,
+			x: 640,
+			width: 200,
+			height: 50 + font.height_model
+		}, "WIDTH", color);
+
+		var width_max = 100;
+		var width_min = width_fill;
+		slider.on_move = f -> fill.width = (width_max * f) + width_min;
+
+		var is_enabled = true;
+		toggle = ui.make_toggle({
+			y: 480,
+			x: 640,
+			width: Std.int(font.width_model * 1.3),
+			height: 50 + font.height_model
+		}, "VISIBLE", color, is_enabled);
+
+		toggle.on_change = b -> fill.color.a = b ? 255 : 0;
+
+		button = ui.make_button({
+			y: 580,
+			x: 640,
+			width: Std.int(font.width_model * 8),
+			height: 50 + font.height_model
+		}, "COLOUR", 0x000000FF, color);
+
+		button.on_click = () -> fill.color = cast Color.random();
+		// todo - make on_pressed an event dispatcher
+		game.input.on_pressed.add(button -> switch button {
+			case MOUSE_LEFT: click();
+			case _:
+		});
+
+		// todo - make on_released an event dispatcher
+		game.input.on_released.add(button -> switch button {
+			case MOUSE_LEFT: release();
+			case _:
+		});
+
+		mouse_position_previous = {
+			x: game.input.mouse_position.x,
+			y: game.input.mouse_position.y
+		}
+
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
 				on_pressed: () -> handle_mouse_press_left(),
@@ -157,17 +265,18 @@ class DesignerScene extends Scene {
 
 		];
 
-		game.input.on_pressed = button -> {
+		game.input.on_pressed.add(button -> {
 			if (actions.exists(button)) {
 				actions[button].on_pressed();
 			}
-		}
+		});
 
-		game.input.on_released = button -> {
+		game.input.on_released.add(button -> {
 			if (actions.exists(button)) {
 				actions[button].on_released();
 			}
-		}
+		});
+
 		var page:Page = {
 			pads: [],
 			name: "one",
@@ -300,7 +409,7 @@ class DesignerScene extends Scene {
 	}
 
 	function divisions_calculate_size_segment() {
-		return Std.int(game.graphics.viewport_bounds.width / divisions_total);
+		return Std.int(viewport_designer.height / divisions_total);
 	}
 
 	function grid_set_granularity(direction:Int) {
