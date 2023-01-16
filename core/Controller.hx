@@ -4,6 +4,7 @@ import InputAbstract;
 class Action {
 	public var on_pressed:Void->Void = () -> return;
 	public var on_released:Void->Void = () -> return;
+	public var name:String = "";
 }
 
 @:structInit

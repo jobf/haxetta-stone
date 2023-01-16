@@ -15,8 +15,8 @@ import graphics.ui.Ui;
 import graphics.ui.Ui.Button as ButtonUI;
 import Text;
 import InputAbstract.Button;
-// import akaifirehx.fire.Control.Button as InputButton;
 
+// import akaifirehx.fire.Control.Button as InputButton;
 using Vector;
 
 class DesignerScene extends Scene {
@@ -30,6 +30,13 @@ class DesignerScene extends Scene {
 	var state_file_path:String;
 	var divisions_total:Int = 8;
 	var viewport_designer:RectangleGeometry;
+	var graphics_hud:Graphics;
+
+	public function new(graphics_hud:Graphics, game:Game, bounds:RectangleGeometry, color:RGBA) {
+		super(game, bounds, color);
+		this.graphics_hud = graphics_hud;
+	}
+
 	public function init() {
 		// game.input.mouse_cursor_hide();
 		viewport_designer = {
@@ -91,7 +98,6 @@ class DesignerScene extends Scene {
 		var x_mouse = Std.int(game.input.mouse_position.x);
 		var y_mouse = Std.int(game.input.mouse_position.y);
 		ui.handle_mouse_release(x_mouse, y_mouse);
-		
 	}
 
 	function click() {
@@ -101,6 +107,7 @@ class DesignerScene extends Scene {
 	}
 
 	var mouse_position_previous:Vector;
+
 	public function update(elapsed_seconds:Float) {
 		mouse_position.x = game.input.mouse_position.x;
 		mouse_position.y = game.input.mouse_position.y;
@@ -119,6 +126,7 @@ class DesignerScene extends Scene {
 	}
 
 	public function draw() {
+		text.draw();
 		// ?
 	}
 
@@ -149,7 +157,7 @@ class DesignerScene extends Scene {
 	}
 
 	var text:Text;
-	var test:Word;
+	var label_model:Word;
 	var slider:Slider;
 	var ui:Ui;
 	var fill:AbstractFillRectangle;
@@ -161,49 +169,18 @@ class DesignerScene extends Scene {
 		font.width_model = 18;
 		font.height_model = 18;
 		font.width_character = 10;
+		text = new Text(font, game.graphics);
 
 		var color:RGBA = 0xffffffFF;
-		text = new Text(font, game.graphics);
-		test = text.word_make(30, 200, "TEST", color);
-
-		var width_fill = 40;
-		fill = game.graphics.make_fill(300, 300, width_fill, width_fill, 0xff00ffFF);
 
 		ui = new Ui({
 			word_make: text.word_make,
 			line_make: game.graphics.make_line,
 			fill_make: game.graphics.make_fill
+			// line_make: graphics_hud.make_line,
+			// fill_make: graphics_hud.make_fill
 		});
 
-		slider = ui.make_slider({
-			y: 400,
-			x: 640,
-			width: 200,
-			height: 50 + font.height_model
-		}, "WIDTH", color);
-
-		var width_max = 100;
-		var width_min = width_fill;
-		slider.on_move = f -> fill.width = (width_max * f) + width_min;
-
-		var is_enabled = true;
-		toggle = ui.make_toggle({
-			y: 480,
-			x: 640,
-			width: Std.int(font.width_model * 1.3),
-			height: 50 + font.height_model
-		}, "VISIBLE", color, is_enabled);
-
-		toggle.on_change = b -> fill.color.a = b ? 255 : 0;
-
-		button = ui.make_button({
-			y: 580,
-			x: 640,
-			width: Std.int(font.width_model * 8),
-			height: 50 + font.height_model
-		}, "COLOUR", 0x000000FF, color);
-
-		button.on_click = () -> fill.color = cast Color.random();
 		// todo - make on_pressed an event dispatcher
 		game.input.on_pressed.add(button -> switch button {
 			case MOUSE_LEFT: click();
@@ -224,59 +201,99 @@ class DesignerScene extends Scene {
 		var actions:Map<Button, Action> = [
 			MOUSE_LEFT => {
 				on_pressed: () -> handle_mouse_press_left(),
-				on_released: () -> handle_mouse_release_left()
+				on_released: () -> handle_mouse_release_left(),
 			},
 			MOUSE_RIGHT => {
 				on_pressed: () -> handle_mouse_press_right(),
-			},
-			// MOUSE_MIDDLE => {
-			// 	on_pressed: () -> designer.save_state(false),
-			// },
-			KEY_LEFT => {
-				on_pressed: () -> designer.set_active_figure(-1)
-			},
-			KEY_RIGHT => {
-				on_pressed: () -> designer.set_active_figure(1)
-			},
-			KEY_C => {
-				on_pressed: () -> designer.buffer_copy()
-			},
-			KEY_E => {
-				on_pressed: () -> export()
-			},
-			KEY_V => {
-				on_pressed: () -> designer.buffer_paste()
-			},
-			// KEY_N => {
-			// 	on_pressed: () -> designer.add_new_figure()
-			// },
-			KEY_R => {
-				on_pressed: () -> designer.lines_remove(),
-			},
-			KEY_S => {
-				on_pressed: () -> Disk.file_write_models(designer.file.models, state_file_path),
-			},
-			KEY_O => {
-				on_pressed: () -> grid_set_granularity(-1),
-			},
-			KEY_P => {
-				on_pressed: () -> grid_set_granularity(1),
 			}
-
 		];
+
+		var y_button = 50;
+		var x_button = 675;
+
+		var add_button:(Button, Action) -> Void = (button_key, action) -> {
+			var button = ui.make_button({
+				y: y_button,
+				x: x_button,
+				width: Std.int(font.width_character * 10),
+				height: 10 + font.height_model
+			}, action.name, 0x151517ff, 0xd0b85087);
+
+			button.on_click = () -> action.on_pressed();
+			actions[button_key] = action;
+			y_button += 10 + font.height_model + 10;
+		}
+
+
+		add_button(KEY_LEFT, {
+			on_pressed: () -> {
+				designer.set_active_figure(-1);
+				// label_model.erase();
+				// label_model = text.word_make(20, 600, designer.model_name(), color);
+			},
+			name: "PREVIOUS"
+		});
+
+		add_button(KEY_RIGHT, {
+			on_pressed: () -> {
+				designer.set_active_figure(1);
+				// label_model.erase();
+				// label_model = text.word_make(20, 600, designer.model_name(), color);
+			},
+			name: "NEXT"
+		});
+
+		add_button(KEY_C, {
+			on_pressed: () -> designer.buffer_copy(),
+			name: "COPY"
+		});
+
+		add_button(KEY_V, {
+			on_pressed: () -> designer.buffer_paste(),
+			name: "PASTE"
+		});
+
+		// add_button(KEY_N, {
+		// 	on_pressed: () -> designer.add_new_figure(),
+		// 	name: "NEW"
+		// });
+
+		add_button(KEY_R, {
+			on_pressed: () -> designer.lines_remove(),
+			name: "CLEAR"
+		});
+
+		add_button(KEY_S, {
+			on_pressed: () -> Disk.file_write_models(designer.file.models, state_file_path),
+			name: "SAVE"
+		});
+
+		add_button(KEY_E, {
+			on_pressed: () -> export(),
+			name: "EXPORT"
+		});
+
+		add_button(KEY_O, {
+			on_pressed: () -> grid_set_granularity(-1),
+			name: "GRID LESS"
+		});
+
+		add_button(KEY_P, {
+			on_pressed: () -> grid_set_granularity(1),
+			name: "GRID MORE"
+		});
 
 		game.input.on_pressed.add(button -> {
 			if (actions.exists(button)) {
 				actions[button].on_pressed();
 			}
 		});
-
 		game.input.on_released.add(button -> {
 			if (actions.exists(button)) {
 				actions[button].on_released();
 			}
 		});
-
+		
 		var page:Page = {
 			pads: [],
 			name: "one",
@@ -284,10 +301,11 @@ class DesignerScene extends Scene {
 
 		settings = new SettingsController(new DiskSys());
 		settings.page_add(page);
-
 		var g:Graphics = cast game.graphics;
+
 		@:privateAccess
 		var display = g.display;
+
 		display.zoom = 1;
 		display.xOffset = 0;
 		display.yOffset = 0;
@@ -367,7 +385,6 @@ class DesignerScene extends Scene {
 		// 		// }
 		// 	]
 		// }, page.index);
-
 		// settings.pad_add({
 		// 	name: "y_axis_line",
 		// 	index_palette: 0,
@@ -427,7 +444,7 @@ class DesignerScene extends Scene {
 		designer.granularity_set(size_segment);
 	}
 
-	function export(){
+	function export() {
 		#if web
 		TextFileWeb.export_content(state_file_path);
 		#end

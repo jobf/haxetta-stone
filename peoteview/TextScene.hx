@@ -103,6 +103,7 @@ class TextScene extends Scene {
 			var y_mouse = Std.int(game.input.mouse_position.y);
 			ui.handle_mouse_moved(x_mouse, y_mouse);
 		}
+		text.draw();
 	}
 
 	public function draw() {

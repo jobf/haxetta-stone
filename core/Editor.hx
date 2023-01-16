@@ -2,6 +2,7 @@ import GraphicsAbstract;
 import Models;
 import Disk;
 import Engine;
+import graphics.implementation.Graphics;
 import haxe.ds.ArraySort;
 
 using Vector;
@@ -69,7 +70,7 @@ class Designer {
 
 	var size_segment:Int;
 	var size_segment_half:Int;
-	var graphics:GraphicsAbstract;
+	var graphics:Graphics;
 	var bounds:RectangleGeometry;
 
 	public var file(default, null):FileModel;
@@ -81,7 +82,7 @@ class Designer {
 	public function new(size_segment:Int, graphics:GraphicsAbstract, bounds:RectangleGeometry, file:FileModel) {
 		this.file = file;
 		granularity_set(size_segment);
-		this.graphics = graphics;
+		this.graphics = cast graphics;
 		this.bounds = bounds;
 		var mouse_pointer_size = Std.int(size_segment * 0.5);
 		mouse_pointer = graphics.make_fill(0, 0, mouse_pointer_size,mouse_pointer_size, 0xFF448080);
@@ -141,6 +142,10 @@ class Designer {
 	}
 
 	public function update_mouse_pointer(mouse_position:Vector) {
+		if(mouse_position.x > bounds.width || mouse_position.y > bounds.height){
+			return;
+		}
+		
 		mouse_position.x = round_to_nearest(mouse_position.x, size_segment) - size_segment_half;
 		mouse_position.y = round_to_nearest(mouse_position.y, size_segment) - size_segment_half;
 		mouse_pointer.x = mouse_position.x;
@@ -179,6 +184,8 @@ class Designer {
 
 	function erase_figure_graphics() {
 		trace('clearing figure with ${figure.lines.length} lines');
+		// todo refactor to have separate graphics buffer for lines in designer
+		// graphics.buffer_lines.clear(true, true);
 		for (i in 0...figure.lines.length) {
 			line_erase(figure.lines[i]);
 		}
@@ -194,7 +201,7 @@ class Designer {
 		trace('next figure $index_next');
 
 		model_index = index_next;
-		trace('show $model_index : ${file.models[model_index].name}');
+		trace('show ${model_name()}');
 
 		figure = map_figure(file.models[model_index]);
 	}
@@ -238,6 +245,10 @@ class Designer {
 	public function line_erase(line:AbstractLine) {
 		trace('designer clean line $line');
 		line.erase();
+	}
+
+	public function model_name():String{
+		return '$model_index : ${file.models[model_index].name}';
 	}
 
 	function map_line(from:Vector, to:Vector):LineModel {

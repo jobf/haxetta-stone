@@ -45,9 +45,6 @@ class Main extends Application {
 			height: window.height
 		}
 
-
-
-
 		peoteview = new PeoteView(window);
 		display_main = new Display(0, 0, window.width, window.height);
 		peoteview.addDisplay(display_main);
@@ -60,8 +57,7 @@ class Main extends Application {
 		implementation_graphics.set_color(slate);
 		
 		var hud_graphics = new Graphics(display_hud, viewport_window);
-		var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, viewport_window, game, black);
-		init_scene = game -> new TextScene(game, viewport_window, black);
+		// var init_scene:Game->Scene = game -> new LunarScene(hud_graphics, viewport_window, game, black);
 		
 		#if model_design
 		#if web
@@ -76,7 +72,10 @@ class Main extends Application {
 		window.onDropFile.add(s -> trace(s));
 		#end
 
-		init_scene = game -> new DesignerScene(game, viewport_window, black);
+		var init_scene = game -> new DesignerScene(hud_graphics, game, viewport_window, black);
+		#else
+
+		var init_scene = game -> new TextScene(game, viewport_window, black);
 		#end
 
 		var init_scene_loader:Game->Scene = game -> new LoadingScene(preloader, init_scene, game, viewport_window, 0x00000000);

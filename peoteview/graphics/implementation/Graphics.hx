@@ -18,7 +18,7 @@ class Graphics extends GraphicsAbstract {
 	var moon_buffer:Buffer<Sprite>;
 	var moon_program:Program;
 	var display:Display;
-	var buffer_lines:Buffer<Line>;
+	public var buffer_lines(default, null):Buffer<Line>;
 	var buffer_fills:Buffer<Rectangle>;
 
 
